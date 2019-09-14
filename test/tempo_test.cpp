@@ -1,8 +1,13 @@
-#include "rhythm_n_beats.h"
+#include "libjungle.h"
 #include <gtest/gtest.h>
 
-TEST(Rnb, HelloWorld)
+TEST(Tempo, HelloWorld)
 {
-	auto x = rnb::hello_world();
-	EXPECT_EQ(x, std::string("Hello, world!\n"));
+	auto x = "Hello, world!";
+	EXPECT_EQ(x, x);
+
+	auto tempo = jungle::tempo::Tempo(200); // 200bpm
+	tempo.start();
+	tempo.stop();
+	tempo.reset();
 }
