@@ -1,22 +1,25 @@
 #ifndef JUNGLE_H
 #define JUNGLE_H
 
+#include <functional>
 #include <memory>
 #include <vector>
 
 namespace jungle {
 namespace tempo {
+
+using Func = std::function<void()>;
+
 class Tempo {
  public:
+  int bpm;
+  int period_us;
   Tempo(int bpm);
-  ~Tempo();  // explicit destructors cause of PIMPL
   void start();
-  void stop();
-  void reset();
+  void register_func(Func f);
 
  private:
-  class impl;
-  std::unique_ptr<impl> pimpl;
+  std::vector<Func> funcs;
 };
 };  // namespace tempo
 
@@ -32,8 +35,8 @@ class Engine {
   void play_tone(Tone tone);
 
  private:
-  class impl;
-  std::unique_ptr<impl> pimpl;
+  struct SoundIo *soundio;
+  struct SoundIoDevice *device;
 };
 };  // namespace audio
 };  // namespace jungle

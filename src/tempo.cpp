@@ -8,66 +8,42 @@
 #include <vector>
 #include "libjungle.h"
 
-class jungle::tempo::Tempo::impl {
- public:
-  //impl(const impl&) = delete;
-  //impl(const impl&) = delete;
+jungle::tempo::Tempo::Tempo(int bpm) {
+  if (!std::chrono::steady_clock::is_steady)
+    throw std::runtime_error(
+        "std::chrono::steady_clock is unsteady on this platform");
 
-  int bpm;
-  int period_ms;
-  std::vector<void (*)()> funcs;
+  period_us = 1000000.0 * 60.0 / (double)bpm;
 
-  impl(int bpm) : bpm(bpm) {
-    if (!std::chrono::steady_clock::is_steady)
-      throw std::runtime_error(
-          "std::chrono::steady_clock is unsteady on this platform");
+  std::cout << std::fixed;
+  std::cout << std::setprecision(2);
+}
 
-    period_ms = 1000.0 * 60.0 / (double)bpm;
+void jungle::tempo::Tempo::register_func(Func f) { funcs.push_back(f); }
 
-    std::cout << std::fixed;
-    std::cout << std::setprecision(2);
-  };
+void jungle::tempo::Tempo::start() {
+  std::cout << "Starting periodic async executor with bpm: " << bpm
+            << " period: " << period_us << " us" << std::endl;
 
-  void register_func(void (*f)()) { funcs.push_back(f); }
-
-  void start() {
-    std::cout << "Starting periodic async executor with bpm: " << bpm
-              << " period: " << period_ms << " (ms)" << std::endl;
-    auto _ = std::async(std::launch::async, &impl::blocking_ticker, this);
-
-    std::cout << "press ctrl-c to exit" << std::endl;
-    getchar();
-  }
-
-  void blocking_ticker() {
+  auto blocking_ticker = [&]() {
     while (true) {
       auto start = std::chrono::steady_clock::now();
-      std::this_thread::sleep_for(std::chrono::milliseconds(period_ms));
+      std::this_thread::sleep_for(std::chrono::microseconds(period_us));
 
       for (auto &f : funcs) auto _ = std::async(std::launch::async, f);
 
       auto end = std::chrono::steady_clock::now();
-      std::chrono::duration<double, std::milli> diff = end - start;
+      std::chrono::duration<double, std::micro> diff = end - start;
       auto drift_pct =
-          ((diff.count() - (double)period_ms) / (double)period_ms) * 100.0;
+          ((diff.count() - (double)period_us) / (double)period_us) * 100.0;
 
       std::cout << "clock drift " << drift_pct << "%\r";
       std::fflush(stdout);
     }
-  }
-};
+  };
 
-jungle::tempo::Tempo::Tempo(int bpm)
-    : pimpl(std::make_unique<impl>(impl(bpm))) {}
+  auto _ = std::async(std::launch::async, blocking_ticker);
 
-jungle::tempo::Tempo::~Tempo() = default;
-
-void jungle::tempo::Tempo::start() {
-  std::cout << "Start" << std::endl;
-  // this->pimpl->register_func(print_hello);
-  this->pimpl->start();
+  std::cout << "press ctrl-c to exit" << std::endl;
+  getchar();
 }
-
-void jungle::tempo::Tempo::stop() { std::cout << "Stop" << std::endl; }
-
-void jungle::tempo::Tempo::reset() { std::cout << "Reset" << std::endl; }
