@@ -28,8 +28,8 @@ class Engine {
  public:
   Engine();
   ~Engine();
-  const Tone generate_tone(int duration_ns, double pitch_hz);
-  void play_tone(const Tone tone);
+  Tone generate_tone(int duration_us, double pitch_hz);
+  void play_tone(Tone tone);
 
  private:
   class impl;

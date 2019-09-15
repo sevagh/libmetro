@@ -10,6 +10,9 @@
 
 class jungle::tempo::Tempo::impl {
  public:
+  //impl(const impl&) = delete;
+  //impl(const impl&) = delete;
+
   int bpm;
   int period_ms;
   std::vector<void (*)()> funcs;

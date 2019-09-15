@@ -3,23 +3,26 @@
 #include <cfloat>
 #include <cmath>
 #include <future>
+#include <algorithm>
 #include <iostream>
 #include <memory>
 #include <vector>
 #include "libjungle.h"
 
-static std::vector<double> generate_sinewave(int duration_ns,
-                                             double sample_rate_hz,
+static const double SAMPLE_RATE_HZ = 48000.0;
+
+static std::vector<double> generate_sinewave(int duration_us,
                                              double pitch_hz);
 
 static void write_callback(struct SoundIoOutStream *outstream,
                            int frame_count_min, int frame_count_max);
 
+static std::future<void> eventloop_handle;
+
 class jungle::audio::Engine::impl {
  public:
   struct SoundIo *soundio;
   struct SoundIoDevice *device;
-  struct SoundIoOutStream *outstream;
 
   impl() {
     int err;
@@ -40,17 +43,25 @@ class jungle::audio::Engine::impl {
     device = soundio_get_output_device(soundio, default_out_device_index);
     if (!device) throw std::runtime_error("out of memory");
 
+    eventloop_handle = std::async(std::launch::async, &impl::blocking_eventloop, this);
+
     std::cout << "Using default output device: " << device->name << std::endl;
   }
 
-  void play_tone(const jungle::audio::Tone t) {
+  void blocking_eventloop() {
+    for(;;)
+  	soundio_wait_events(soundio);
+  }
+
+  void play_tone(jungle::audio::Tone t) {
     std::cout << "playing a tone with size: " << t.size() << std::endl;
 
     int err;
-    outstream = soundio_outstream_create(device);
+
+    struct SoundIoOutStream *outstream = soundio_outstream_create(device);
     outstream->format = SoundIoFormatFloat32NE;
+    outstream->userdata = reinterpret_cast<void *>(&t);
     outstream->write_callback = write_callback;
-    outstream->userdata = static_cast<void *>(&t);
 
     if ((err = soundio_outstream_open(outstream)))
       throw std::runtime_error(std::string("unable to open device: ") +
@@ -60,57 +71,41 @@ class jungle::audio::Engine::impl {
       throw std::runtime_error(std::string("unable to start device: ") +
                                soundio_strerror(err));
 
-    auto _ = std::async(std::launch::async, &impl::blocking_eventloop, this);
+    soundio_outstream_destroy(outstream);
   };
 
-  const jungle::audio::Tone generate_tone(int duration_ns, double pitch_hz) {
-    return generate_sinewave(duration_ns, outstream->sample_rate, pitch_hz);
-  }
-
-  void blocking_eventloop() {
-    for (;;) soundio_wait_events(soundio);
+  jungle::audio::Tone generate_tone(int duration_us, double pitch_hz) {
+    return generate_sinewave(duration_us, pitch_hz);
   }
 
   ~impl() {
-    soundio_outstream_destroy(outstream);
     soundio_device_unref(device);
     soundio_destroy(soundio);
   };
 };
 
-jungle::audio::Engine::Engine() {
-  impl pimpl_;
-  try {
-    pimpl_ = impl();
-  } catch (const std::runtime_error &ex) {
-    std::cerr << "Error initializing audio engine: " << ex.what() << std::endl;
-    throw;
-  }
-
-  pimpl = std::make_unique<impl>(pimpl_);
-}
-
+jungle::audio::Engine::Engine() : pimpl(std::make_unique<impl>(impl())) {}
+ 
 jungle::audio::Engine::~Engine() = default;
 
-const jungle::audio::Tone jungle::audio::Engine::generate_tone(
-    int duration_ns, double pitch_hz) {
-  return this->pimpl->generate_tone(duration_ns, pitch_hz);
+jungle::audio::Tone jungle::audio::Engine::generate_tone(
+    int duration_us, double pitch_hz) {
+  return this->pimpl->generate_tone(duration_us, pitch_hz);
 }
 
-void jungle::audio::Engine::play_tone(const jungle::audio::Tone tone) {
+void jungle::audio::Engine::play_tone(jungle::audio::Tone tone) {
   this->pimpl->play_tone(tone);
 }
 
-static std::vector<double> generate_sinewave(int duration_ns,
-                                             double sample_rate_hz,
+static std::vector<double> generate_sinewave(int duration_us,
                                              double pitch_hz) {
-  size_t size = duration_ns * sample_rate_hz / 1000000000.0;
+  size_t size = duration_us * SAMPLE_RATE_HZ / 1000000.0;
   size_t lut_size = size / 4;
 
   std::vector<int> lut{};
   double *_tone_single_channel = (double *)malloc(sizeof(double) * size / 2);
 
-  double delta_phi = pitch_hz * lut_size * 1.0 / sample_rate_hz;
+  double delta_phi = pitch_hz * lut_size * 1.0 / SAMPLE_RATE_HZ;
   double phase = 0.0;
 
   for (int i = 0; i < signed(lut_size); ++i) {
@@ -147,10 +142,14 @@ static void write_callback(struct SoundIoOutStream *outstream,
   float float_sample_rate = outstream->sample_rate;
   float seconds_per_frame = 1.0f / float_sample_rate;
   struct SoundIoChannelArea *areas;
-  int frames_left = frame_count_max;
-  int err;
 
-  auto t = static_cast<jungle::audio::Tone &>(outstream->userdata);
+  if (outstream->userdata == nullptr)
+	  return;
+
+  auto tone = reinterpret_cast<jungle::audio::Tone &>(outstream->userdata);
+
+  int frames_left = std::min(frame_count_max, (int)tone.size());
+  int err;
 
   while (frames_left > 0) {
     int frame_count = frames_left;
@@ -163,15 +162,11 @@ static void write_callback(struct SoundIoOutStream *outstream,
 
     if (!frame_count) break;
 
-    float pitch = 440.0f;
-    float radians_per_second = pitch * 2.0f * M_PI;
     for (int frame = 0; frame < frame_count; frame += 1) {
-      float sample = sinf((seconds_offset + frame * seconds_per_frame) *
-                          radians_per_second);
       for (int channel = 0; channel < layout->channel_count; channel += 1) {
         float *ptr =
             (float *)(areas[channel].ptr + areas[channel].step * frame);
-        *ptr = sample;
+        *ptr = tone[frame];
       }
     }
     seconds_offset =
