@@ -25,38 +25,43 @@ add_definitions("-Wundef")
 add_definitions("-Wunreachable-code")
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++2a -pthread -D_GNU_SOURCE")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DJUNGLE_VERSION=\"${VERSION}\"")
 
 #------------------------------------------------------------------------------#
 # DEPS
 #------------------------------------------------------------------------------#
 
+list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake")
+
 include(FindPkgConfig)
 
-pkg_check_modules(GTEST "gtest")
-if(GTEST_FOUND)
-	message("GTEST: ON")
+find_package(GTest)
+if(GTest_FOUND)
+	message("GTest: ON")
 else()
-	message("GTEST: OFF")
+	message("GTest: OFF")
 endif()
+
+find_package(SoundIo REQUIRED)
 
 #------------------------------------------------------------------------------#
 # LIBS
 #------------------------------------------------------------------------------#
 
-include_directories("${PROJECT_SOURCE_DIR}/src" "${PROJECT_SOURCE_DIR}/include" ${GTEST_INCLUDE_DIRS})
+include_directories("${PROJECT_SOURCE_DIR}/src" "${PROJECT_SOURCE_DIR}/include" ${GTEST_INCLUDE_DIRS} ${SOUNDIO_INCLUDE_DIR})
 link_directories(${GTEST_LIBRARY_DIRS})
 
 set(JUNGLE_SOURCES
-    src/tempo.cpp)
+    src/tempo.cpp
+    src/audio.cpp)
 
 set(JUNGLE_DEPS
     jungle_static
-    rt)
+    ${SOUNDIO_LIBRARY})
 
 add_library(jungle_static STATIC ${JUNGLE_SOURCES})
 add_library(jungle SHARED ${JUNGLE_SOURCES})
-target_link_libraries(jungle rt)
+
+target_link_libraries(jungle ${SOUNDIO_LIBRARY})
 
 #------------------------------------------------------------------------------#
 # BINS
@@ -67,7 +72,7 @@ function(jungle_example name)
 	target_link_libraries(${name}_example ${JUNGLE_DEPS})
 endfunction()
 
-#jungle_example(tempo)
+jungle_example(libjungle)
 
 #------------------------------------------------------------------------------#
 # INSTALL
@@ -124,7 +129,7 @@ function(jungle_gtest name)
 	endif()
 endfunction()
 
-jungle_gtest(tempo)
+#jungle_gtest(tempo)
 
 #------------------------------------------------------------------------------#
 # BENCHS
@@ -167,7 +172,7 @@ if(CLANG_FORMAT_EXEC)
 	message("CLANG-FORMAT: ${CLANG_FORMAT_EXEC}")
 	set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 	add_custom_target(clang-format
-		COMMAND ${CLANG_FORMAT_EXEC} -i src/*.cpp test/*.cpp include/*.h
+		COMMAND ${CLANG_FORMAT_EXEC} -style=Google -i src/*.cpp example/*.cpp include/*.h
 		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 else()
     message("CLANG-TIDY: DISABLED - install clang to enable")

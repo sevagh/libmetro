@@ -1,8 +1,8 @@
 prefix=@pc_prefix@
 includedir=${prefix}/include
 
-Name: rhythm-n-beats
+Name: libjungle
 Description: Rhythm and beat toolkit
 Version: @pc_version@
 Cflags: -I${includedir}
-Libs: -lrnb_static -lrt
+Libs: -ljungle_static
