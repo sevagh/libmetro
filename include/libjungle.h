@@ -36,11 +36,12 @@ class Engine {
   Engine();
   ~Engine();
   Tone generate_tone(int duration_us, double pitch_hz);
-  void play_tone(Tone tone);
+  void play_tone(Tone &tone);
 
  private:
   struct SoundIo *soundio;
   struct SoundIoDevice *device;
+  struct SoundIoOutStream *outstream;
 };
 };  // namespace audio
 };  // namespace jungle

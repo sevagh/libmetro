@@ -5,7 +5,7 @@ int main() {
   std::cout << "init audio engine" << std::endl;
   auto audio_engine = jungle::audio::Engine();
 
-  int bpm = 200;
+  int bpm = 100;
   std::cout << "init " << bpm << "bpm tempo ticker" << std::endl;
 
   auto tempo = jungle::tempo::Tempo(bpm);
