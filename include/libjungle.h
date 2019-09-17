@@ -6,6 +6,9 @@
 #include <vector>
 
 namespace jungle {
+
+void eventloop();
+
 namespace tempo {
 
 using Func = std::function<void()>;
@@ -16,10 +19,11 @@ class Tempo {
   int period_us;
   Tempo(int bpm);
   void start();
-  void register_func(Func f);
+  void register_func_cycle(std::vector<Func> cycle);
 
  private:
-  std::vector<Func> funcs;
+  std::vector<std::vector<Func>> func_cycles;
+  std::vector<size_t> func_cycle_indices;
 };
 };  // namespace tempo
 

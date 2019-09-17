@@ -52,7 +52,8 @@ link_directories(${GTEST_LIBRARY_DIRS})
 
 set(JUNGLE_SOURCES
     src/tempo.cpp
-    src/audio.cpp)
+    src/audio.cpp
+    src/jungle.cpp)
 
 set(JUNGLE_DEPS
     jungle_static

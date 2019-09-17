@@ -8,7 +8,7 @@
 #include <vector>
 #include "libjungle.h"
 
-jungle::tempo::Tempo::Tempo(int bpm) {
+jungle::tempo::Tempo::Tempo(int bpm) : bpm(bpm) {
   if (!std::chrono::steady_clock::is_steady)
     throw std::runtime_error(
         "std::chrono::steady_clock is unsteady on this platform");
@@ -19,7 +19,10 @@ jungle::tempo::Tempo::Tempo(int bpm) {
   std::cout << std::setprecision(2);
 }
 
-void jungle::tempo::Tempo::register_func(Func f) { funcs.push_back(f); }
+void jungle::tempo::Tempo::register_func_cycle(std::vector<Func> cycle) {
+  func_cycles.push_back(cycle);
+  func_cycle_indices.push_back(0);
+}
 
 void jungle::tempo::Tempo::start() {
   std::cout << "Starting periodic async executor with bpm: " << bpm
@@ -30,7 +33,12 @@ void jungle::tempo::Tempo::start() {
       auto start = std::chrono::steady_clock::now();
       std::this_thread::sleep_for(std::chrono::microseconds(period_us));
 
-      for (auto &f : funcs) auto _ = std::async(std::launch::async, f);
+      for (size_t i = 0; i < func_cycles.size(); ++i) {
+        auto _ = std::async(std::launch::async,
+                            func_cycles[i][func_cycle_indices[i]]);
+        func_cycle_indices[i] =
+            (func_cycle_indices[i] + 1) % func_cycles[i].size();
+      }
 
       auto end = std::chrono::steady_clock::now();
       std::chrono::duration<double, std::micro> diff = end - start;
@@ -43,7 +51,4 @@ void jungle::tempo::Tempo::start() {
   };
 
   auto _ = std::async(std::launch::async, blocking_ticker);
-
-  std::cout << "press ctrl-c to exit" << std::endl;
-  getchar();
 }

@@ -74,7 +74,7 @@ void jungle::audio::Engine::play_tone(jungle::audio::Tone tone) {
     throw std::runtime_error(std::string("unable to start device: ") +
                              soundio_strerror(err));
 
-  soundio_outstream_destroy(outstream);
+  // soundio_outstream_destroy(outstream);
 }
 
 static std::vector<double> generate_sinewave(int duration_us, double pitch_hz) {
@@ -132,11 +132,8 @@ static void write_callback(struct SoundIoOutStream *outstream,
   while (frames_left > 0) {
     int frame_count = frames_left;
 
-    if ((err =
-             soundio_outstream_begin_write(outstream, &areas, &frame_count))) {
-      fprintf(stderr, "%s\n", soundio_strerror(err));
-      exit(1);
-    }
+    if ((err = soundio_outstream_begin_write(outstream, &areas, &frame_count)))
+      throw std::runtime_error(soundio_strerror(err));
 
     if (!frame_count) break;
 
@@ -150,10 +147,10 @@ static void write_callback(struct SoundIoOutStream *outstream,
     seconds_offset =
         fmodf(seconds_offset + seconds_per_frame * frame_count, 1.0f);
 
-    if ((err = soundio_outstream_end_write(outstream))) {
-      fprintf(stderr, "%s\n", soundio_strerror(err));
-      exit(1);
-    }
+    if ((err = soundio_outstream_end_write(outstream)))
+      throw std::runtime_error(soundio_strerror(err));
+    else
+      outstream->userdata = nullptr;
 
     frames_left -= frame_count;
   }
