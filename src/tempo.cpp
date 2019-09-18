@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <chrono>
-#include <future>
 #include <iomanip>
 #include <iostream>
 #include <memory>
@@ -13,7 +12,7 @@ jungle::tempo::Tempo::Tempo(int bpm) : bpm(bpm) {
     throw std::runtime_error(
         "std::chrono::steady_clock is unsteady on this platform");
 
-  period_us = 1000000.0 * 60.0 / (double)bpm;
+  period_us = 1000000.0 * (60.0 / bpm);
 
   std::cout << std::fixed;
   std::cout << std::setprecision(2);
@@ -30,16 +29,14 @@ void jungle::tempo::Tempo::start() {
 
   auto blocking_ticker = [&]() {
     while (true) {
-      auto start = std::chrono::steady_clock::now();
-      std::this_thread::sleep_for(std::chrono::microseconds(period_us));
-
       for (size_t i = 0; i < func_cycles.size(); ++i) {
-        auto _ = std::async(std::launch::async,
-                            func_cycles[i][func_cycle_indices[i]]);
+        std::thread(func_cycles[i][func_cycle_indices[i]]).detach();
         func_cycle_indices[i] =
             (func_cycle_indices[i] + 1) % func_cycles[i].size();
       }
 
+      auto start = std::chrono::steady_clock::now();
+      std::this_thread::sleep_for(std::chrono::microseconds(period_us));
       auto end = std::chrono::steady_clock::now();
       std::chrono::duration<double, std::micro> diff = end - start;
       auto drift_pct =
@@ -50,5 +47,5 @@ void jungle::tempo::Tempo::start() {
     }
   };
 
-  auto _ = std::async(std::launch::async, blocking_ticker);
+  std::thread(blocking_ticker).detach();
 }

@@ -29,19 +29,41 @@ class Tempo {
 
 namespace audio {
 
-using Tone = std::vector<double>;
+class Tone {
+ public:
+  int duration_us;
+  double pitch_hz;
+  std::vector<float> data;
+  Tone(int duration_us, double pitch_hz);
+};
+
+class Engine;
+
+class Stream {
+  friend class Engine;
+
+ public:
+  Stream(Engine &engine, int latency_us);
+  ~Stream();
+  void play_tone(Tone &tone);
+  void stop();
+
+ private:
+  Engine &parent;
+  struct SoundIoOutStream *outstream;
+  struct SoundIoRingBuffer *ringbuf;
+};
 
 class Engine {
+  friend class Stream;
+
  public:
   Engine();
   ~Engine();
-  Tone generate_tone(int duration_us, double pitch_hz);
-  void play_tone(Tone &tone);
 
  private:
   struct SoundIo *soundio;
   struct SoundIoDevice *device;
-  struct SoundIoOutStream *outstream;
 };
 };  // namespace audio
 };  // namespace jungle

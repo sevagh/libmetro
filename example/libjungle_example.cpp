@@ -2,23 +2,27 @@
 #include "libjungle.h"
 
 int main() {
-  std::cout << "init audio engine" << std::endl;
-  auto audio_engine = jungle::audio::Engine();
+  int bpm = 300;
+  auto tempo = jungle::tempo::Tempo(bpm);
 
-  int bpm = 100;
   std::cout << "init " << bpm << "bpm tempo ticker" << std::endl;
 
-  auto tempo = jungle::tempo::Tempo(bpm);
+  auto audio_engine = jungle::audio::Engine();
+  auto stream = jungle::audio::Stream(audio_engine, tempo.period_us / 5);
+
+  std::cout << "init audio engine" << std::endl;
 
   std::cout << "Generating tones" << std::endl;
 
-  auto downbeat = audio_engine.generate_tone(tempo.period_us / 2, 540.0);
-  auto beat = audio_engine.generate_tone(tempo.period_us / 2, 350.0);
+  auto downbeat = jungle::audio::Tone(tempo.period_us, 440.0);
+  auto beat = jungle::audio::Tone(tempo.period_us, 350.0);
 
   // create a cycle of lambdas
   std::vector<jungle::tempo::Func> beat22 = {
-      [&]() { audio_engine.play_tone(downbeat); },
-      [&]() { audio_engine.play_tone(beat); },
+      [&]() { stream.play_tone(downbeat); },
+      [&]() { stream.play_tone(beat); },
+      [&]() { stream.play_tone(beat); },
+      [&]() { stream.play_tone(beat); },
   };
 
   tempo.register_func_cycle(beat22);
