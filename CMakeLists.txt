@@ -175,7 +175,7 @@ if(CLANG_FORMAT_EXEC)
 	message("CLANG-FORMAT: ${CLANG_FORMAT_EXEC}")
 	set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 	add_custom_target(clang-format
-		COMMAND ${CLANG_FORMAT_EXEC} -style=Google -i src/*.cpp example/*.cpp include/*.h
+		COMMAND ${CLANG_FORMAT_EXEC} -i src/*.cpp example/*.cpp include/*.h
 		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
 else()
     message("CLANG-TIDY: DISABLED - install clang to enable")

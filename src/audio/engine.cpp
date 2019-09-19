@@ -8,8 +8,6 @@
 #include <vector>
 #include "libjungle.h"
 
-static const double SAMPLE_RATE_HZ = 48000.0;
-
 jungle::audio::Engine::Engine() {
   int err;
 

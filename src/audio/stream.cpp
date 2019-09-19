@@ -10,8 +10,6 @@
 #include <vector>
 #include "libjungle.h"
 
-static const double SAMPLE_RATE_HZ = 48000.0;
-
 static void write_callback(struct SoundIoOutStream *outstream,
                            int frame_count_min, int frame_count_max);
 
@@ -24,6 +22,7 @@ jungle::audio::Stream::Stream(jungle::audio::Engine &engine, int latency_us) : p
   outstream->write_callback = write_callback;
 
   outstream->software_latency = latency_us/1000000.0;
+  outstream->sample_rate = jungle::SAMPLE_RATE_HZ;
 
   if ((err = soundio_outstream_open(outstream)))
     throw std::runtime_error(std::string("unable to open device: ") +
@@ -37,7 +36,7 @@ jungle::audio::Stream::Stream(jungle::audio::Engine &engine, int latency_us) : p
 jungle::audio::Stream::~Stream() { soundio_outstream_destroy(outstream); }
 
 void jungle::audio::Stream::play_tone(jungle::audio::Tone &tone) {
-  outstream->userdata = reinterpret_cast<void*>(&tone.data);
+  outstream->userdata = reinterpret_cast<void*>(&tone);
 }
 
 static void write_callback(struct SoundIoOutStream *outstream,
@@ -48,7 +47,7 @@ static void write_callback(struct SoundIoOutStream *outstream,
 
   if (outstream->userdata == nullptr) return;
 
-  auto tone = reinterpret_cast<std::vector<float>*>(outstream->userdata);
+  auto tone = reinterpret_cast<jungle::audio::Tone*>(outstream->userdata);
 
   size_t frames_left = frame_count_min;
   if (frames_left == 0)

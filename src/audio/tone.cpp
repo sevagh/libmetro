@@ -9,14 +9,8 @@
 #include <vector>
 #include "libjungle.h"
 
-static const double SAMPLE_RATE_HZ = 48000.0;
-
-static std::vector<float> generate_sinewave(int duration_us, double pitch_hz);
-
-jungle::audio::Tone::Tone(int duration_us, double pitch_hz) : duration_us(duration_us), pitch_hz(pitch_hz), data(generate_sinewave(duration_us, pitch_hz)) { }
-
-static std::vector<float> generate_sinewave(int duration_us, double pitch_hz) {
-  size_t size = duration_us * SAMPLE_RATE_HZ / 1000000.0;
+jungle::audio::Tone jungle::audio::generate_tone(float pitch_hz) {
+  size_t size = jungle::SAMPLE_RATE_HZ;
   size_t lut_size = size / 4;
 
   std::vector<int> lut{};
