@@ -1,18 +1,22 @@
 #include "libjungle.h"
 #include <iostream>
 
-int main()
+int main(int argc, char** argv)
 {
-	int bpm = 10;
+	if (argc < 2) {
+		std::cerr << "Usage: " << argv[0] << " bpm" << std::endl;
+		exit(1);
+	}
+
+	int bpm = std::stoi(argv[1]);
 	auto tempo = jungle::tempo::Tempo(bpm);
 
 	std::cout << "init " << bpm << "bpm tempo ticker" << std::endl;
 
 	auto audio_engine = jungle::audio::Engine();
-	auto stream = jungle::audio::Stream(audio_engine, tempo.period_us / 10);
+	auto stream = audio_engine.new_stream();
 
 	std::cout << "init audio engine" << std::endl;
-
 	std::cout << "Generating tones" << std::endl;
 
 	auto downbeat = jungle::audio::generate_tone(440.0);

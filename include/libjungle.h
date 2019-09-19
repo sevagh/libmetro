@@ -3,6 +3,7 @@
 
 #include <functional>
 #include <memory>
+#include <soundio/soundio.h>
 #include <vector>
 
 namespace jungle {
@@ -34,28 +35,26 @@ namespace audio {
 	using Tone = std::vector<float>;
 	Tone generate_tone(float pitch_hz);
 
-	class Engine;
-
-	class Stream {
-		friend class Engine;
-
-	public:
-		Stream(Engine& engine, int latency_us);
-		~Stream();
-		void play_tone(Tone& tone);
-
-	private:
-		Engine& parent;
-		struct SoundIoOutStream* outstream;
-		struct SoundIoRingBuffer* ringbuf;
-	};
-
 	class Engine {
-		friend class Stream;
-
 	public:
 		Engine();
 		~Engine();
+
+		class Stream {
+			friend class Engine;
+
+		public:
+			Stream() = delete;
+			~Stream();
+			void play_tone(Tone& tone);
+
+		private:
+			Stream(struct SoundIoDevice* device);
+			struct SoundIoOutStream* outstream;
+			struct SoundIoRingBuffer* ringbuf;
+		};
+
+		Stream new_stream();
 
 	private:
 		struct SoundIo* soundio;

@@ -75,7 +75,7 @@ function(jungle_example name)
 	target_link_libraries(${name}_example ${JUNGLE_DEPS})
 endfunction()
 
-jungle_example(libjungle)
+jungle_example(metro44_from_scratch)
 
 #------------------------------------------------------------------------------#
 # INSTALL
@@ -152,31 +152,7 @@ endfunction()
 #jungle_cmocka_bench(tempo)
 
 #------------------------------------------------------------------------------#
-# CLANG-TIDY
+# CLANG-TIDY, CLANG_FORMAT
 #------------------------------------------------------------------------------#
 
-find_program(CLANG_TIDY_EXEC "clang-tidy")
-if(CLANG_TIDY_EXEC)
-    message("CLANG-TIDY: ${CLANG_TIDY_EXEC}")
-    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-    add_custom_target(clang-tidy
-        COMMAND ${CLANG_TIDY_EXEC} -p ${CMAKE_BINARY_DIR} -header-filter='.*' src/*.cpp test/*.cpp example/*.cpp
-        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-else()
-    message("CLANG-TIDY: DISABLED - install clang to enable")
-endif()
-
-#------------------------------------------------------------------------------#
-# CLANG-FORMAT
-#------------------------------------------------------------------------------#
-
-find_program(CLANG_FORMAT_EXEC "clang-format")
-if(CLANG_FORMAT_EXEC)
-	message("CLANG-FORMAT: ${CLANG_FORMAT_EXEC}")
-	set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-	add_custom_target(clang-format
-		COMMAND ${CLANG_FORMAT_EXEC} -i src/*.cpp example/*.cpp include/*.h
-		WORKING_DIRECTORY ${CMAKE_SOURCE_DIR})
-else()
-    message("CLANG-TIDY: DISABLED - install clang to enable")
-endif()
+include(cmake/clang-cxx-dev-tools.cmake)
