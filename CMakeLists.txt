@@ -55,6 +55,7 @@ set(JUNGLE_SOURCES
     src/audio/engine.cpp
     src/audio/tone.cpp
     src/audio/stream.cpp
+    src/metronome.cpp
     src/jungle.cpp)
 
 set(JUNGLE_DEPS
@@ -76,6 +77,7 @@ function(jungle_example name)
 endfunction()
 
 jungle_example(metro44_from_scratch)
+jungle_example(metro44_native)
 
 #------------------------------------------------------------------------------#
 # INSTALL

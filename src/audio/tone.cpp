@@ -9,36 +9,44 @@
 #include <stdio.h>
 #include <vector>
 
-jungle::audio::Tone jungle::audio::generate_tone(float pitch_hz)
+static bool abs_compare(int a, int b) { return (std::abs(a) < std::abs(b)); }
+
+jungle::audio::Tone jungle::audio::generate_tone(float pitch_hz,
+                                                 float volume_pct)
 {
-	size_t size = jungle::SAMPLE_RATE_HZ;
+	size_t size = jungle::SampleRateHz;
 	size_t lut_size = size / 4;
 
 	std::vector<int> lut{};
 	float* _tone = ( float* )malloc(sizeof(float) * size / 2);
 
-	float delta_phi = pitch_hz * lut_size * 1.0 / SAMPLE_RATE_HZ;
+	float delta_phi = pitch_hz * lut_size * 1.0 / jungle::SampleRateHz;
 	float phase = 0.0;
 
 	for (int i = 0; i < signed(lut_size); ++i) {
 		lut.push_back(( int )roundf(0x7FFF * sinf(2.0 * M_PI * i / lut_size)));
 	}
 
-	float min = DBL_MAX;
-	float max = -DBL_MAX;
 	for (int i = 0; i < signed(size / 2); ++i) {
-		int val = float(lut[( int )phase]);
-		if (val > max) {
-			max = val;
-		}
-		if (val < min) {
-			min = val;
-		}
-		_tone[i] = val;
+		_tone[i] = float(lut[( int )phase]);
 		phase += delta_phi;
 		if (phase >= lut_size)
 			phase -= lut_size;
 	}
 
-	return std::vector<float>(_tone, _tone + size / 2);
+	auto tone = std::vector<float>(_tone, _tone + size / 2);
+	auto max_elem = *std::max_element(tone.begin(), tone.end(), abs_compare);
+
+	// normalize to 1.0 * volume_pct
+	std::transform(tone.begin(), tone.end(), tone.begin(),
+	               [volume_pct, max_elem](float elem) {
+		               return (volume_pct / 100.0) * (1.0 / max_elem) * elem;
+	               });
+
+	return tone;
+}
+
+jungle::audio::Tone jungle::audio::generate_tone(float pitch_hz)
+{
+	return generate_tone(pitch_hz, 100.0);
 }

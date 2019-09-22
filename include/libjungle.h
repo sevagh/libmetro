@@ -8,32 +8,41 @@
 
 namespace jungle {
 
-const float SAMPLE_RATE_HZ = 48000.0;
+const float SampleRateHz = 48000.0;
+
+using EventFunc = std::function<void()>;
+
+class EventCycle {
+public:
+	std::vector<EventFunc> events;
+	EventCycle(std::vector<EventFunc> events);
+	void dispatch_next_event();
+
+private:
+	size_t index;
+};
 
 void eventloop();
 
 namespace tempo {
-
-	using Func = std::function<void()>;
-
 	class Tempo {
 	public:
 		int bpm;
 		int period_us;
 		Tempo(int bpm);
 		void start();
-		void register_func_cycle(std::vector<Func> cycle);
+		void register_event_cycle(jungle::EventCycle& cycle);
 
 	private:
-		std::vector<std::vector<Func>> func_cycles;
-		std::vector<size_t> func_cycle_indices;
+		std::vector<jungle::EventCycle*> event_cycles;
 	};
 }; // namespace tempo
 
 namespace audio {
 
 	using Tone = std::vector<float>;
-	Tone generate_tone(float pitch_hz);
+	Tone generate_tone(float pitch_hz); // 100% volume
+	Tone generate_tone(float pitch_hz, float volume_pct);
 
 	class Engine {
 	public:
@@ -61,6 +70,17 @@ namespace audio {
 		struct SoundIoDevice* device;
 	};
 }; // namespace audio
+
+namespace metronome {
+	// metronome beeps for common time signatures
+	extern jungle::audio::Tone StrongDownbeat;
+	extern jungle::audio::Tone StrongBeat;
+	extern jungle::audio::Tone WeakDownbeat;
+	extern jungle::audio::Tone WeakBeat;
+
+	jungle::EventCycle
+	metronome_common_time(jungle::audio::Engine::Stream& stream);
+}; // namespace metronome
 }; // namespace jungle
 
 #endif /* JUNGLE_H */

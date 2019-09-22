@@ -19,18 +19,22 @@ int main(int argc, char** argv)
 	std::cout << "init audio engine" << std::endl;
 	std::cout << "Generating tones" << std::endl;
 
-	auto downbeat = jungle::audio::generate_tone(440.0);
-	auto beat = jungle::audio::generate_tone(350.0);
+	auto strong_downbeat = jungle::audio::generate_tone(440.0, 100.0);
+	auto strong_beat = jungle::audio::generate_tone(350.0, 100.0);
+
+	auto weak_downbeat = jungle::audio::generate_tone(440.0, 50.0);
+	auto weak_beat = jungle::audio::generate_tone(350.0, 50.0);
 
 	// create a cycle of lambdas
-	std::vector<jungle::tempo::Func> beat22 = {
-	    [&]() { stream.play_tone(downbeat); },
-	    [&]() { stream.play_tone(beat); },
-	    [&]() { stream.play_tone(beat); },
-	    [&]() { stream.play_tone(beat); },
-	};
+	jungle::EventCycle beat22
+	    = jungle::EventCycle(std::vector<jungle::EventFunc>({
+	        [&]() { stream.play_tone(strong_downbeat); },
+	        [&]() { stream.play_tone(strong_beat); },
+	        [&]() { stream.play_tone(weak_downbeat); },
+	        [&]() { stream.play_tone(weak_beat); },
+	    }));
 
-	tempo.register_func_cycle(beat22);
+	tempo.register_event_cycle(beat22);
 	tempo.start();
 
 	jungle::eventloop();

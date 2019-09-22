@@ -24,7 +24,7 @@ jungle::audio::Engine::Stream::Stream(struct SoundIoDevice* device)
 	outstream->write_callback = write_callback;
 
 	outstream->software_latency = 0.04;
-	outstream->sample_rate = jungle::SAMPLE_RATE_HZ;
+	outstream->sample_rate = jungle::SampleRateHz;
 
 	if ((err = soundio_outstream_open(outstream)))
 		throw std::runtime_error(std::string("unable to open device: ")

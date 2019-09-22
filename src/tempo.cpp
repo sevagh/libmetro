@@ -7,6 +7,17 @@
 #include <thread>
 #include <vector>
 
+jungle::EventCycle::EventCycle(std::vector<jungle::EventFunc> events)
+    : events(events)
+    , index(0){};
+
+void jungle::EventCycle::dispatch_next_event()
+{
+	auto ret = events.at(index);
+	index = (index + 1) % events.size(); // wraparound cycle
+	std::thread(ret).detach();
+}
+
 jungle::tempo::Tempo::Tempo(int bpm)
     : bpm(bpm)
 {
@@ -20,10 +31,9 @@ jungle::tempo::Tempo::Tempo(int bpm)
 	std::cout << std::setprecision(2);
 }
 
-void jungle::tempo::Tempo::register_func_cycle(std::vector<Func> cycle)
+void jungle::tempo::Tempo::register_event_cycle(jungle::EventCycle& cycle)
 {
-	func_cycles.push_back(cycle);
-	func_cycle_indices.push_back(0);
+	event_cycles.push_back(&cycle);
 }
 
 void jungle::tempo::Tempo::start()
@@ -33,11 +43,8 @@ void jungle::tempo::Tempo::start()
 
 	auto blocking_ticker = [&]() {
 		while (true) {
-			for (size_t i = 0; i < func_cycles.size(); ++i) {
-				std::thread(func_cycles[i][func_cycle_indices[i]]).detach();
-				func_cycle_indices[i]
-				    = (func_cycle_indices[i] + 1) % func_cycles[i].size();
-			}
+			for (auto ec : event_cycles)
+				ec->dispatch_next_event();
 
 			auto start = std::chrono::steady_clock::now();
 			std::this_thread::sleep_for(std::chrono::microseconds(period_us));
