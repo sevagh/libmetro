@@ -17,9 +17,13 @@ int main(int argc, char** argv)
 	auto stream = audio_engine.new_stream();
 
 	std::cout << "init audio engine" << std::endl;
+	std::cout << "tempo.period_us: " << tempo.period_us << std::endl;
+	std::cout << "tempo.period_us/2.0: " << tempo.period_us / 2.0 << std::endl;
 
-	auto metronome_event_cycle = jungle::metronome::metronome_common_time(
-	    stream, tempo.period_us / 2.0);
+	int duration_us = tempo.period_us / 2.0;
+
+	auto metronome_event_cycle
+	    = jungle::metronome::metronome_common_time(stream, duration_us);
 
 	tempo.register_event_cycle(metronome_event_cycle);
 	tempo.start();

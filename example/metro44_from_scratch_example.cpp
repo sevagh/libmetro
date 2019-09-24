@@ -25,12 +25,18 @@ int main(int argc, char** argv)
 	auto weak_downbeat = jungle::audio::Tone(440.0, 50.0);
 	auto weak_beat = jungle::audio::Tone(350.0, 50.0);
 
+	int duration_us = tempo.period_us / 2.0;
+
 	// create a cycle of lambdas
 	jungle::EventCycle beat22 = jungle::EventCycle(std::vector<jungle::EventFunc>({
-	    [&]() { strong_downbeat.play_on_stream(stream, tempo.period_us / 2.0); },
-	    [&]() { strong_beat.play_on_stream(stream, tempo.period_us / 2.0); },
-	    [&]() { weak_downbeat.play_on_stream(stream, tempo.period_us / 2.0); },
-	    [&]() { weak_beat.play_on_stream(stream, tempo.period_us / 2.0); },
+	    [&, duration_us]() {
+		    strong_downbeat.play_on_stream(stream, duration_us);
+	    },
+	    [&, duration_us]() { strong_beat.play_on_stream(stream, duration_us); },
+	    [&, duration_us]() {
+		    weak_downbeat.play_on_stream(stream, duration_us);
+	    },
+	    [&, duration_us]() { weak_beat.play_on_stream(stream, duration_us); },
 	}));
 
 	tempo.register_event_cycle(beat22);

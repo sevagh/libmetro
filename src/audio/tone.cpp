@@ -53,9 +53,17 @@ void jungle::audio::Tone::play_on_stream(jungle::audio::Engine::Stream& stream,
 {
 	auto ringbuf = stream.ringbuf;
 	char* buf = soundio_ring_buffer_write_ptr(ringbuf);
-	int fill_count = stream.outstream->software_latency
-	                 * (duration_us / 1000000.0 * stream.outstream->sample_rate)
-	                 * stream.outstream->bytes_per_frame;
+	// int fill_count = stream.outstream->software_latency
+	//                 * (duration_us / 1000000.0 *
+	//                 stream.outstream->sample_rate)
+	//                 * stream.outstream->bytes_per_frame;
+	int fill_count = (duration_us / 1000000.0 * stream.outstream->sample_rate)
+	                 * sizeof(float);
+	std::cout << "duration us: " << duration_us << std::endl;
+	std::cout << "duration us/1000000.0: " << duration_us / 1000000.0
+	          << std::endl;
+	std::cout << "tone size: " << tone.size() << std::endl;
+	std::cout << "desired fill count: " << fill_count << std::endl;
 	memcpy(buf, tone.data(), fill_count);
 	soundio_ring_buffer_advance_write_ptr(ringbuf, fill_count);
 }
