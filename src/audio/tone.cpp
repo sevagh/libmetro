@@ -1,18 +1,22 @@
 #include "libjungle.h"
 #include <algorithm>
 #include <cfloat>
+#include <chrono>
 #include <cmath>
+#include <cstring>
 #include <future>
 #include <iostream>
 #include <memory>
 #include <soundio/soundio.h>
 #include <stdio.h>
+#include <thread>
 #include <vector>
 
 static bool abs_compare(int a, int b) { return (std::abs(a) < std::abs(b)); }
 
-jungle::audio::Tone jungle::audio::generate_tone(float pitch_hz,
-                                                 float volume_pct)
+jungle::audio::Tone::Tone(float pitch_hz, float volume_pct)
+    : pitch_hz(pitch_hz)
+    , volume_pct(volume_pct)
 {
 	size_t size = jungle::SampleRateHz;
 	size_t lut_size = size / 4;
@@ -34,7 +38,7 @@ jungle::audio::Tone jungle::audio::generate_tone(float pitch_hz,
 			phase -= lut_size;
 	}
 
-	auto tone = std::vector<float>(_tone, _tone + size / 2);
+	tone = std::vector<float>(_tone, _tone + size / 2);
 	auto max_elem = *std::max_element(tone.begin(), tone.end(), abs_compare);
 
 	// normalize to 1.0 * volume_pct
@@ -42,11 +46,16 @@ jungle::audio::Tone jungle::audio::generate_tone(float pitch_hz,
 	               [volume_pct, max_elem](float elem) {
 		               return (volume_pct / 100.0) * (1.0 / max_elem) * elem;
 	               });
-
-	return tone;
 }
 
-jungle::audio::Tone jungle::audio::generate_tone(float pitch_hz)
+void jungle::audio::Tone::play_on_stream(jungle::audio::Engine::Stream& stream,
+                                         int duration_us)
 {
-	return generate_tone(pitch_hz, 100.0);
+	auto ringbuf = stream.ringbuf;
+	char* buf = soundio_ring_buffer_write_ptr(ringbuf);
+	int fill_count = stream.outstream->software_latency
+	                 * (duration_us / 1000000.0 * stream.outstream->sample_rate)
+	                 * stream.outstream->bytes_per_frame;
+	memcpy(buf, tone.data(), fill_count);
+	soundio_ring_buffer_advance_write_ptr(ringbuf, fill_count);
 }

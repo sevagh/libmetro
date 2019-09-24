@@ -18,11 +18,11 @@ int main(int argc, char** argv)
 
 	std::cout << "init audio engine" << std::endl;
 
-	auto metronome_event_cycle
-	    = jungle::metronome::metronome_common_time(stream);
+	auto metronome_event_cycle = jungle::metronome::metronome_common_time(
+	    stream, tempo.period_us / 2.0);
 
 	tempo.register_event_cycle(metronome_event_cycle);
 	tempo.start();
 
-	jungle::eventloop();
+	audio_engine.eventloop();
 }

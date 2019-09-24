@@ -35,12 +35,18 @@ jungle::audio::Engine::Engine()
 
 jungle::audio::Engine::Stream jungle::audio::Engine::new_stream()
 {
-	auto stream = jungle::audio::Engine::Stream(device);
-	return stream;
+	return jungle::audio::Engine::Stream(this);
 }
 
 jungle::audio::Engine::~Engine()
 {
 	soundio_device_unref(device);
 	soundio_destroy(soundio);
+}
+
+void jungle::audio::Engine::eventloop()
+{
+	std::cout << "press ctrl-c to exit" << std::endl;
+	for (;;)
+		soundio_wait_events(soundio);
 }

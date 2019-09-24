@@ -22,8 +22,6 @@ private:
 	size_t index;
 };
 
-void eventloop();
-
 namespace tempo {
 	class Tempo {
 	public:
@@ -39,28 +37,27 @@ namespace tempo {
 }; // namespace tempo
 
 namespace audio {
-
-	using Tone = std::vector<float>;
-	Tone generate_tone(float pitch_hz); // 100% volume
-	Tone generate_tone(float pitch_hz, float volume_pct);
+	class Tone;
 
 	class Engine {
 	public:
 		Engine();
 		~Engine();
+		void eventloop();
 
 		class Stream {
 			friend class Engine;
+			friend class Tone;
 
 		public:
+			struct SoundIoRingBuffer* ringbuf;
 			Stream() = delete;
 			~Stream();
-			void play_tone(Tone& tone);
 
 		private:
-			Stream(struct SoundIoDevice* device);
+			Stream(Engine* parent_engine);
 			struct SoundIoOutStream* outstream;
-			struct SoundIoRingBuffer* ringbuf;
+			Engine* parent_engine;
 		};
 
 		Stream new_stream();
@@ -68,6 +65,17 @@ namespace audio {
 	private:
 		struct SoundIo* soundio;
 		struct SoundIoDevice* device;
+	};
+
+	class Tone {
+	public:
+		std::vector<float> tone;
+		float pitch_hz;
+		float volume_pct;
+		Tone(float pitch_hz, float volume_pct);
+		Tone(float pitch_hz)
+		    : Tone(pitch_hz, 100.0){};
+		void play_on_stream(Engine::Stream& stream, int duration_us);
 	};
 }; // namespace audio
 
@@ -79,7 +87,8 @@ namespace metronome {
 	extern jungle::audio::Tone WeakBeat;
 
 	jungle::EventCycle
-	metronome_common_time(jungle::audio::Engine::Stream& stream);
+	metronome_common_time(jungle::audio::Engine::Stream& stream,
+	                      int duration_us);
 }; // namespace metronome
 }; // namespace jungle
 

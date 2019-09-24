@@ -55,8 +55,7 @@ set(JUNGLE_SOURCES
     src/audio/engine.cpp
     src/audio/tone.cpp
     src/audio/stream.cpp
-    src/metronome.cpp
-    src/jungle.cpp)
+    src/metronome.cpp)
 
 set(JUNGLE_DEPS
     jungle_static
