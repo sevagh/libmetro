@@ -54,26 +54,29 @@ void jungle::audio::Tone::play_on_stream(jungle::audio::Engine::Stream& stream)
 	assert(jungle::SampleRateHz == stream.outstream->sample_rate);
 	assert(tone.size() == jungle::SampleRateHz);
 
-	auto ringbuf = stream.ringbuf;
-
-	// fill the ringbuffer with 48,000 samples, which should finish in
+	// fill the stream.ringbuffer with 48,000 samples, which should finish in
 	// outstream->software_latency
 	// http://libsound.io/doc-1.1.0/structSoundIoOutStream.html#a20aac1422d3cc64b679616bb8447f06d
-	char* buf = soundio_ring_buffer_write_ptr(ringbuf);
+	char* buf = soundio_ring_buffer_write_ptr(stream.ringbuf);
 	size_t fill_count = stream.outstream->software_latency
 	                    * stream.outstream->sample_rate
 	                    * stream.outstream->bytes_per_frame;
 	fill_count = std::min(fill_count, tone.size() * sizeof(float));
+
+	// in case there's stuff in the ringbuffer, we don't want to overflow
+	fill_count -= soundio_ring_buffer_fill_count(stream.ringbuf);
+
 	memcpy(buf, tone.data(), fill_count);
-	soundio_ring_buffer_advance_write_ptr(ringbuf, fill_count);
+	soundio_ring_buffer_advance_write_ptr(stream.ringbuf, fill_count);
 
 	// wait for how long a beep should be
 	std::this_thread::sleep_for(
 	    std::chrono::duration<float, std::ratio<1, 1>>(stream.latency_s));
 
-	// then, fill it with many many many 0s to create a smooth transition to
+	// then, stuff it with 0s to create a smooth transition to
 	// silence
-	fill_count = soundio_ring_buffer_capacity(ringbuf);
+	fill_count = soundio_ring_buffer_capacity(stream.ringbuf)
+	             - soundio_ring_buffer_fill_count(stream.ringbuf);
 	memset(buf, 0, fill_count);
-	soundio_ring_buffer_advance_write_ptr(ringbuf, fill_count);
+	soundio_ring_buffer_advance_write_ptr(stream.ringbuf, fill_count);
 }
