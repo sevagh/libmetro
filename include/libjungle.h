@@ -55,12 +55,13 @@ namespace audio {
 			~Stream();
 
 		private:
-			Stream(Engine* parent_engine);
-			struct SoundIoOutStream* outstream;
 			Engine* parent_engine;
+			float latency_s;
+			Stream(Engine* parent_engine, float latency_s);
+			struct SoundIoOutStream* outstream;
 		};
 
-		Stream new_stream();
+		Stream new_stream(float latency_s);
 
 	private:
 		struct SoundIo* soundio;

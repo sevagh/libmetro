@@ -13,12 +13,12 @@ int main(int argc, char** argv)
 
 	std::cout << "init " << bpm << "bpm tempo ticker" << std::endl;
 
+	float best_latency_s = (tempo.period_us / 4.0) / 1000000.0;
+
 	auto audio_engine = jungle::audio::Engine();
-	auto stream = audio_engine.new_stream();
+	auto stream = audio_engine.new_stream(best_latency_s);
 
 	std::cout << "init audio engine" << std::endl;
-	std::cout << "tempo.period_us: " << tempo.period_us << std::endl;
-	std::cout << "tempo.period_us/2.0: " << tempo.period_us / 2.0 << std::endl;
 
 	auto metronome_event_cycle
 	    = jungle::metronome::metronome_common_time(stream);

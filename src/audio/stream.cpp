@@ -15,8 +15,10 @@ static void write_callback(struct SoundIoOutStream* outstream,
                            int frame_count_min,
                            int frame_count_max);
 
-jungle::audio::Engine::Stream::Stream(jungle::audio::Engine* parent_engine)
+jungle::audio::Engine::Stream::Stream(jungle::audio::Engine* parent_engine,
+                                      float latency_s)
     : parent_engine(parent_engine)
+    , latency_s(latency_s)
 {
 	int err;
 
@@ -25,15 +27,14 @@ jungle::audio::Engine::Stream::Stream(jungle::audio::Engine* parent_engine)
 	outstream->format = SoundIoFormatFloat32NE;
 	outstream->write_callback = write_callback;
 
-	outstream->software_latency = 0.04;
+	outstream->software_latency = latency_s;
 	outstream->sample_rate = jungle::SampleRateHz;
 
 	if ((err = soundio_outstream_open(outstream)))
 		throw std::runtime_error(std::string("unable to open device: ")
 		                         + soundio_strerror(err));
 
-	int ringbuf_capacity = outstream->software_latency * 2
-	                       * outstream->sample_rate
+	int ringbuf_capacity = outstream->software_latency * outstream->sample_rate
 	                       * outstream->bytes_per_frame;
 	ringbuf
 	    = soundio_ring_buffer_create(parent_engine->soundio, ringbuf_capacity);
@@ -45,10 +46,8 @@ jungle::audio::Engine::Stream::Stream(jungle::audio::Engine* parent_engine)
 	outstream->userdata = reinterpret_cast<void*>(ringbuf);
 
 	char* buf = soundio_ring_buffer_write_ptr(ringbuf);
-	int fill_count = outstream->software_latency * outstream->sample_rate
-	                 * outstream->bytes_per_frame;
-	memset(buf, 0, fill_count);
-	soundio_ring_buffer_advance_write_ptr(ringbuf, fill_count);
+	memset(buf, 0, ringbuf_capacity);
+	soundio_ring_buffer_advance_write_ptr(ringbuf, ringbuf_capacity);
 
 	if ((err = soundio_outstream_start(outstream)))
 		throw std::runtime_error(std::string("unable to start device: ")

@@ -33,9 +33,9 @@ jungle::audio::Engine::Engine()
 	std::cout << "Using default output device: " << device->name << std::endl;
 }
 
-jungle::audio::Engine::Stream jungle::audio::Engine::new_stream()
+jungle::audio::Engine::Stream jungle::audio::Engine::new_stream(float latency_s)
 {
-	return jungle::audio::Engine::Stream(this);
+	return jungle::audio::Engine::Stream(this, latency_s);
 }
 
 jungle::audio::Engine::~Engine()
