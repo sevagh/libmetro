@@ -20,10 +20,8 @@ int main(int argc, char** argv)
 	std::cout << "tempo.period_us: " << tempo.period_us << std::endl;
 	std::cout << "tempo.period_us/2.0: " << tempo.period_us / 2.0 << std::endl;
 
-	int duration_us = tempo.period_us / 2.0;
-
 	auto metronome_event_cycle
-	    = jungle::metronome::metronome_common_time(stream, duration_us);
+	    = jungle::metronome::metronome_common_time(stream);
 
 	tempo.register_event_cycle(metronome_event_cycle);
 	tempo.start();

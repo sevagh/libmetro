@@ -75,7 +75,7 @@ namespace audio {
 		Tone(float pitch_hz, float volume_pct);
 		Tone(float pitch_hz)
 		    : Tone(pitch_hz, 100.0){};
-		void play_on_stream(Engine::Stream& stream, int duration_us);
+		void play_on_stream(Engine::Stream& stream);
 	};
 }; // namespace audio
 
@@ -87,8 +87,7 @@ namespace metronome {
 	extern jungle::audio::Tone WeakBeat;
 
 	jungle::EventCycle
-	metronome_common_time(jungle::audio::Engine::Stream& stream,
-	                      int duration_us);
+	metronome_common_time(jungle::audio::Engine::Stream& stream);
 }; // namespace metronome
 }; // namespace jungle
 
