@@ -6,6 +6,7 @@
 #include <memory>
 #include <soundio/soundio.h>
 #include <stdio.h>
+#include <stk/Stk.h>
 #include <vector>
 
 jungle::audio::Engine::Engine()
@@ -31,6 +32,10 @@ jungle::audio::Engine::Engine()
 		throw std::runtime_error("out of memory");
 
 	std::cout << "Using default output device: " << device->name << std::endl;
+
+	stk::Stk::showWarnings(true);
+	stk::Stk::setSampleRate(jungle::SampleRateHz);
+	std::cout << "Configured STK settings" << std::endl;
 }
 
 jungle::audio::Engine::Stream jungle::audio::Engine::new_stream(float latency_s)

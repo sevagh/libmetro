@@ -4,7 +4,11 @@
 #include <functional>
 #include <memory>
 #include <soundio/soundio.h>
+#include <stk/Stk.h>
 #include <vector>
+
+// re-alias StkFloat to float, not double
+typedef float StkFloat;
 
 namespace jungle {
 
@@ -71,8 +75,6 @@ namespace audio {
 	class Tone {
 	public:
 		std::vector<float> tone;
-		float pitch_hz;
-		float volume_pct;
 		Tone(float pitch_hz, float volume_pct);
 		Tone(float pitch_hz)
 		    : Tone(pitch_hz, 100.0){};

@@ -42,12 +42,13 @@ else()
 endif()
 
 find_package(SoundIo REQUIRED)
+find_package(Stk REQUIRED)
 
 #------------------------------------------------------------------------------#
 # LIBS
 #------------------------------------------------------------------------------#
 
-include_directories("${PROJECT_SOURCE_DIR}/src" "${PROJECT_SOURCE_DIR}/include" ${GTEST_INCLUDE_DIRS} ${SOUNDIO_INCLUDE_DIR})
+include_directories("${PROJECT_SOURCE_DIR}/src" "${PROJECT_SOURCE_DIR}/include" ${GTEST_INCLUDE_DIRS} ${SOUNDIO_INCLUDE_DIR} ${STK_INCLUDE_DIR})
 link_directories(${GTEST_LIBRARY_DIRS})
 
 set(JUNGLE_SOURCES
@@ -59,12 +60,13 @@ set(JUNGLE_SOURCES
 
 set(JUNGLE_DEPS
     jungle_static
-    ${SOUNDIO_LIBRARY})
+    ${SOUNDIO_LIBRARY}
+    ${STK_LIBRARY})
 
 add_library(jungle_static STATIC ${JUNGLE_SOURCES})
 add_library(jungle SHARED ${JUNGLE_SOURCES})
 
-target_link_libraries(jungle ${SOUNDIO_LIBRARY})
+target_link_libraries(jungle ${SOUNDIO_LIBRARY} ${STK_LIBRARY})
 
 #------------------------------------------------------------------------------#
 # BINS
