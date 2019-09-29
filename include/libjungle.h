@@ -7,9 +7,6 @@
 #include <stk/Stk.h>
 #include <vector>
 
-// re-alias StkFloat to float, not double
-typedef float StkFloat;
-
 namespace jungle {
 
 const float SampleRateHz = 48000.0;
@@ -74,21 +71,17 @@ namespace audio {
 
 	class Tone {
 	public:
-		std::vector<float> tone;
 		Tone(float pitch_hz, float volume_pct);
 		Tone(float pitch_hz)
 		    : Tone(pitch_hz, 100.0){};
 		void play_on_stream(Engine::Stream& stream);
+
+	private:
+		stk::StkFrames frames;
 	};
 }; // namespace audio
 
 namespace metronome {
-	// metronome beeps for common time signatures
-	extern jungle::audio::Tone StrongDownbeat;
-	extern jungle::audio::Tone StrongBeat;
-	extern jungle::audio::Tone WeakDownbeat;
-	extern jungle::audio::Tone WeakBeat;
-
 	jungle::EventCycle
 	metronome_common_time(jungle::audio::Engine::Stream& stream);
 }; // namespace metronome

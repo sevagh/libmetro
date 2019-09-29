@@ -23,7 +23,6 @@ int main(int argc, char** argv)
 
 	auto strong_downbeat = jungle::audio::Tone(540.0, 100.0);
 	auto strong_beat = jungle::audio::Tone(350.0, 100.0);
-
 	auto weak_downbeat = jungle::audio::Tone(440.0, 50.0);
 	auto weak_beat = jungle::audio::Tone(350.0, 50.0);
 
