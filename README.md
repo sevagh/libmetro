@@ -16,4 +16,4 @@ I found the stk examples and libsoundio examples a good enough starting point to
 
 ### Notes
 
-* my [fork of stk](https://github.com/sevagh/stk) has been compiled with `typedef float StkFloat` (instead of double) to match the floats I use in libjungle (enforced by libsoundio)
+* my [fork of stk](https://github.com/sevagh/stk) has been compiled with `typedef float StkFloat` (instead of double) to match the floats I use in libjungle (enforced by libsoundio). RAWWAVE_PATH has been set to `./rawwaves/` and the directory has to be copied from stk to libjungle.

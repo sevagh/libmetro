@@ -45,21 +45,12 @@ jungle::audio::timbre::DrumTap::DrumTap(float volume_pct)
 	stk::StkFrames frames_(jungle::SampleRateHz, 2);
 
 	// 138.0 sounds vaguely drum-like
-	drummer.noteOn(138.0, 1.0);
+	drummer.noteOn(138.0, volume_pct / 100.0);
 	drummer.tick(frames_, 0);
 	drummer.tick(frames_, 1);
 	drummer.noteOff(0.0);
 
 	frames = frames_;
-
-	// normalize to 1.0 * volume_pct since libsoundio expects floats between
-	// -1.0 and 1.0
-	stk::StkFloat max_elem = -DBL_MAX;
-	for (size_t i = 0; i < frames.size(); ++i)
-		max_elem = std::max(frames[i], max_elem);
-
-	for (size_t i = 0; i < frames.size(); ++i)
-		frames[i] = (volume_pct / 100.0) * (1.0 / max_elem) * frames[i];
 }
 
 void jungle::audio::timbre::play_on_stream(jungle::audio::Engine::Stream& stream,

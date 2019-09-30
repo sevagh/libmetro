@@ -10,7 +10,7 @@ find_program(CLANG_FORMAT "clang-format")
 if(CLANG_FORMAT)
   add_custom_target(
     clang-format
-    COMMAND /usr/bin/clang-format
+    COMMAND clang-format
     -i
     -style=file
     ${ALL_CXX_SOURCE_FILES}
@@ -22,11 +22,21 @@ find_program(CLANG_TIDY "clang-tidy")
 if(CLANG_TIDY)
   add_custom_target(
     clang-tidy
-    COMMAND /usr/bin/clang-tidy
+    COMMAND clang-tidy
     ${ALL_CXX_SOURCE_FILES}
     -config=''
     --
     -std=c++2a
-    ${INCLUDE_DIRECTORIES}
+    -I ${INCLUDE_DIRECTORIES}
+    )
+endif()
+
+# Adding cppclean target if executable is found
+find_program(CPP_CLEAN "cppclean")
+if(CPP_CLEAN)
+  add_custom_target(
+    cpp-clean
+    COMMAND cppclean
+    ${CMAKE_CURRENT_SOURCE_DIR}
     )
 endif()

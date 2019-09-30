@@ -2,6 +2,7 @@
 #define JUNGLE_H
 
 #include <functional>
+#include <map>
 #include <memory>
 #include <soundio/soundio.h>
 #include <stk/Stk.h>
@@ -101,6 +102,13 @@ namespace audio {
 namespace metronome {
 	jungle::EventCycle
 	metronome_common_time(jungle::audio::Engine::Stream& stream);
+
+	static std::map<
+	    std::string,
+	    std::function<jungle::EventCycle(jungle::audio::Engine::Stream&)>>
+	    time_signature_mappings = {
+	        {"4/4", metronome_common_time},
+	};
 }; // namespace metronome
 }; // namespace jungle
 
