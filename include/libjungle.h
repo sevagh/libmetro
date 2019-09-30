@@ -38,8 +38,6 @@ namespace tempo {
 }; // namespace tempo
 
 namespace audio {
-	class Tone;
-
 	class Engine {
 	public:
 		Engine();
@@ -48,18 +46,17 @@ namespace audio {
 
 		class Stream {
 			friend class Engine;
-			friend class Tone;
 
 		public:
+			float latency_s;
+			struct SoundIoOutStream* outstream;
 			struct SoundIoRingBuffer* ringbuf;
 			Stream() = delete;
 			~Stream();
 
 		private:
 			Engine* parent_engine;
-			float latency_s;
 			Stream(Engine* parent_engine, float latency_s);
-			struct SoundIoOutStream* outstream;
 		};
 
 		Stream new_stream(float latency_s);
@@ -69,17 +66,37 @@ namespace audio {
 		struct SoundIoDevice* device;
 	};
 
-	class Tone {
-	public:
-		Tone(float pitch_hz, float volume_pct);
-		Tone(float pitch_hz)
-		    : Tone(pitch_hz, 100.0){};
-		void play_on_stream(Engine::Stream& stream);
+	namespace timbre {
+		class Timbre {
+		public:
+			virtual stk::StkFrames& get_frames() = 0;
+		};
 
-	private:
-		stk::StkFrames frames;
-	};
-}; // namespace audio
+		void play_on_stream(Engine::Stream& stream, Timbre& timbre);
+
+		class Pulse : public Timbre {
+		public:
+			Pulse(float pitch_hz, float volume_pct);
+			Pulse(float pitch_hz)
+			    : Pulse(pitch_hz, 100.0){};
+			stk::StkFrames& get_frames() { return frames; }
+
+		private:
+			stk::StkFrames frames;
+		};
+
+		class DrumTap : public Timbre {
+		public:
+			DrumTap(float volume_pct);
+			DrumTap()
+			    : DrumTap(100.0){};
+			stk::StkFrames& get_frames() { return frames; }
+
+		private:
+			stk::StkFrames frames;
+		};
+	}; // namespace timbre
+};     // namespace audio
 
 namespace metronome {
 	jungle::EventCycle

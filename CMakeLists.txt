@@ -54,7 +54,7 @@ link_directories(${GTEST_LIBRARY_DIRS})
 set(JUNGLE_SOURCES
     src/tempo.cpp
     src/audio/engine.cpp
-    src/audio/tone.cpp
+    src/audio/timbre.cpp
     src/audio/stream.cpp
     src/metronome.cpp)
 
@@ -73,11 +73,12 @@ target_link_libraries(jungle ${SOUNDIO_LIBRARY} ${STK_LIBRARY})
 #------------------------------------------------------------------------------#
 
 function(jungle_example name)
-	add_executable(${name}_example example/${name}_example.cpp)
+	add_executable(${name}_example example/${name}.cpp)
 	target_link_libraries(${name}_example ${JUNGLE_DEPS})
 endfunction()
 
 jungle_example(metro44_from_scratch)
+jungle_example(metro44_from_scratch_drum_timbre)
 jungle_example(metro44_native)
 
 #------------------------------------------------------------------------------#

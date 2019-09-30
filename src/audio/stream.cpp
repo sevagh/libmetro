@@ -17,8 +17,8 @@ static void write_callback(struct SoundIoOutStream* outstream,
 
 jungle::audio::Engine::Stream::Stream(jungle::audio::Engine* parent_engine,
                                       float latency_s)
-    : parent_engine(parent_engine)
-    , latency_s(latency_s)
+    : latency_s(latency_s)
+    , parent_engine(parent_engine)
 {
 	int err;
 
