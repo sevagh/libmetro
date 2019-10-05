@@ -68,13 +68,30 @@ add_library(jungle SHARED ${JUNGLE_SOURCES})
 
 target_link_libraries(jungle ${SOUNDIO_LIBRARY} ${STK_LIBRARY})
 
+find_program(
+  CLANG_TIDY_EXE
+  NAMES "clang-tidy"
+  DOC "Path to clang-tidy executable"
+  )
+if(NOT CLANG_TIDY_EXE)
+  message(STATUS "clang-tidy not found.")
+else()
+  message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
+  set(DO_CLANG_TIDY "${CLANG_TIDY_EXE}" "-checks=*,-clang-analyzer-alpha.*")
+endif()
+#uncomment this
+#set_target_properties(
+#	jungle PROPERTIES
+#	CXX_CLANG_TIDY "${DO_CLANG_TIDY}"
+#)
+
 #------------------------------------------------------------------------------#
 # BINS
 #------------------------------------------------------------------------------#
 
 function(jungle_example name)
-	add_executable(${name}_example example/${name}.cpp)
-	target_link_libraries(${name}_example ${JUNGLE_DEPS})
+	add_executable(example_${name} example/${name}.cpp)
+	target_link_libraries(example_${name} ${JUNGLE_DEPS})
 endfunction()
 
 jungle_example(metro44_from_scratch)
@@ -123,20 +140,20 @@ endif()
 
 function(jungle_gtest name)
 	if(GTEST_FOUND)
-		add_executable(${name}_test test/${name}_test.cpp)
-		target_link_libraries(${name}_test ${JUNGLE_TESTS_DEPS})
+		add_executable(test_${name} test/${name}.cpp)
+		target_link_libraries(test_${name} ${JUNGLE_TESTS_DEPS})
 
-		add_test(${name}_test ${BIN_DIR}/${name}_test)
-		set_tests_properties(${name}_test PROPERTIES LABELS "test")
+		add_test(test_${name} ${BIN_DIR}/test_${name})
+		set_tests_properties(test_${name} PROPERTIES LABELS "test")
 
 		if(VALGRIND_EXEC)
-		    add_test(${name}_valgrind ${VALGRIND_EXEC} ${VALGRIND_ARGS} ${BIN_DIR}/${name}_test)
+		    add_test(${name}_valgrind ${VALGRIND_EXEC} ${VALGRIND_ARGS} ${BIN_DIR}/test_${name})
 		    set_tests_properties(${name}_valgrind PROPERTIES LABELS "valgrind")
 		endif()
 	endif()
 endfunction()
 
-#jungle_gtest(tempo)
+jungle_gtest(audio_engine)
 
 #------------------------------------------------------------------------------#
 # BENCHS

@@ -2,7 +2,7 @@
 
 file(GLOB_RECURSE
      ALL_CXX_SOURCE_FILES
-     *.cpp *.h
+     src/*.cpp example/*.cpp include/*.h test/*.cpp
      )
 
 # Adding clang-format target if executable is found
@@ -17,26 +17,13 @@ if(CLANG_FORMAT)
     )
 endif()
 
-# Adding clang-tidy target if executable is found
-find_program(CLANG_TIDY "clang-tidy")
-if(CLANG_TIDY)
-  add_custom_target(
-    clang-tidy
-    COMMAND clang-tidy
-    ${ALL_CXX_SOURCE_FILES}
-    -config=''
-    --
-    -std=c++2a
-    -I ${INCLUDE_DIRECTORIES}
-    )
-endif()
-
 # Adding cppclean target if executable is found
 find_program(CPP_CLEAN "cppclean")
 if(CPP_CLEAN)
   add_custom_target(
     cpp-clean
     COMMAND cppclean
+    --include-path ../include/
     ${CMAKE_CURRENT_SOURCE_DIR}
     )
 endif()

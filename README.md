@@ -1,9 +1,32 @@
 Version will be 0.0.1 for a while - very experimental codebase.
 
-### Third-party libraries used, and why
+Dev dependencies:
 
-* stk - https://github.com/thestk/stk - used to generate tones, beeps, drum taps, etc. as arrays of floats to play through libsoundio
-* libsoundio - https://github.com/andrewrk/libsoundio - a high-quality, modern, real-time cross-platform audio library, to avoid interfacing with platform-specific audio code (e.g. ALSA, CoreAudio)
+* stk - https://github.com/thestk/stk
+* libsoundio - https://github.com/andrewrk/libsoundio
+* cppclean - https://github.com/myint/cppclean
+* clang, clang-tools-extra
+* valgrind for leak checks on the gtest tests
+
+clang-tidy can be automatically run during the compile step:
+
+```cmake
+find_program(
+  CLANG_TIDY_EXE
+  NAMES "clang-tidy"
+  DOC "Path to clang-tidy executable"
+  )
+if(NOT CLANG_TIDY_EXE)
+  message(STATUS "clang-tidy not found.")
+else()
+  message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
+  set(DO_CLANG_TIDY "${CLANG_TIDY_EXE}" "-checks=*,-clang-analyzer-alpha.*")
+endif()
+set_target_properties(
+        jungle PROPERTIES
+        CXX_CLANG_TIDY "${DO_CLANG_TIDY}"
+)
+```
 
 ### Learning resources
 
