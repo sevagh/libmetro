@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <cfloat>
 #include <cmath>
-#include <iostream>
 #include <memory>
 #include <soundio/soundio.h>
 #include <stdio.h>
@@ -31,11 +30,8 @@ jungle::audio::Engine::Engine()
 	if (!device)
 		throw std::runtime_error("out of memory");
 
-	std::cout << "Using default output device: " << device->name << std::endl;
-
 	stk::Stk::showWarnings(true);
 	stk::Stk::setSampleRate(jungle::SampleRateHz);
-	std::cout << "Configured STK settings" << std::endl;
 }
 
 jungle::audio::Engine::Stream jungle::audio::Engine::new_stream(float latency_s)
@@ -51,7 +47,6 @@ jungle::audio::Engine::~Engine()
 
 void jungle::audio::Engine::eventloop()
 {
-	std::cout << "press ctrl-c to exit" << std::endl;
 	for (;;)
 		soundio_wait_events(soundio);
 }

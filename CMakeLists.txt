@@ -154,6 +154,7 @@ function(jungle_gtest name)
 endfunction()
 
 jungle_gtest(audio_engine)
+jungle_gtest(clock_drift)
 
 #------------------------------------------------------------------------------#
 # BENCHS
