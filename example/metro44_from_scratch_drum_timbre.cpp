@@ -12,11 +12,9 @@ int main(int argc, char** argv)
 	auto tempo = jungle::tempo::Tempo(bpm);
 
 	std::cout << "init " << bpm << "bpm tempo ticker" << std::endl;
-	float best_latency_s = (tempo.period_us / 2.0) / 1000000.0;
-	std::cout << "best latency: " << best_latency_s << std::endl;
 
 	auto audio_engine = jungle::audio::Engine();
-	auto stream = audio_engine.new_stream(best_latency_s);
+	auto stream = audio_engine.new_stream(tempo.period_us);
 
 	std::cout << "init audio engine" << std::endl;
 	std::cout << "Generating tones" << std::endl;

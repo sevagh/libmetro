@@ -1,6 +1,7 @@
 #include "libjungle.h"
 #include <algorithm>
 #include <cfloat>
+#include <chrono>
 #include <cmath>
 #include <memory>
 #include <soundio/soundio.h>
@@ -34,9 +35,11 @@ jungle::audio::Engine::Engine()
 	stk::Stk::setSampleRate(jungle::SampleRateHz);
 }
 
-jungle::audio::Engine::Stream jungle::audio::Engine::new_stream(float latency_s)
+jungle::audio::Engine::Stream
+jungle::audio::Engine::new_stream(std::chrono::microseconds ticker_period)
 {
-	return jungle::audio::Engine::Stream(this, latency_s);
+	float best_latency_s = (ticker_period.count() / 2.0) / 1000000.0;
+	return jungle::audio::Engine::Stream(this, best_latency_s);
 }
 
 jungle::audio::Engine::~Engine()

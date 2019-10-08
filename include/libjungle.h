@@ -1,11 +1,13 @@
 #ifndef JUNGLE_H
 #define JUNGLE_H
 
+#include <chrono>
 #include <functional>
 #include <map>
 #include <memory>
 #include <soundio/soundio.h>
 #include <stk/Stk.h>
+#include <thread>
 #include <vector>
 
 namespace jungle {
@@ -28,13 +30,16 @@ namespace tempo {
 	class Tempo {
 	public:
 		int bpm;
-		int period_us;
+		std::chrono::microseconds period_us;
 		Tempo(int bpm);
+		~Tempo();
 		void start();
+		void stop();
 		void register_event_cycle(jungle::EventCycle& cycle);
 
 	private:
 		std::vector<jungle::EventCycle*> event_cycles;
+		std::thread ticker;
 	};
 }; // namespace tempo
 
@@ -57,10 +62,12 @@ namespace audio {
 
 		private:
 			Engine* parent_engine;
-			Stream(Engine* parent_engine, float latency_s);
+			Stream(Engine* parent_engine,
+			       float latency_s); // private constructor - only Engines can
+			                         // create Streams
 		};
 
-		Stream new_stream(float latency_s);
+		Stream new_stream(std::chrono::microseconds ticker_period);
 
 	private:
 		struct SoundIo* soundio;

@@ -1,5 +1,3 @@
-#thanks https://www.labri.fr/perso/fleury/posts/programming/using-clang-tidy-and-clang-format.html
-
 file(GLOB_RECURSE
      ALL_CXX_SOURCE_FILES
      src/*.cpp example/*.cpp include/*.h test/*.cpp
