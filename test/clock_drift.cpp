@@ -20,12 +20,26 @@ TEST_P(TempoTest, ClockDriftSingleEvents)
 	std::cout << "Testing if tick drift is within " << tolerance << " for "
 	          << bpm << " bpm ticker, 1 minute worth of ticks" << std::endl;
 
+	double expected_delta
+	    = std::chrono::duration_cast<std::chrono::duration<double>>(
+	          tempo.period_us)
+	          .count(); // amount of time we expect to elapse between events
+	tolerance *= expected_delta;
+
 	jungle::EventCycle record_time
 	    = jungle::EventCycle(std::vector<jungle::EventFunc>({
 	        [&]() {
 		        times.push_back(
 		            std::chrono::duration_cast<std::chrono::microseconds>(
 		                std::chrono::system_clock::now().time_since_epoch()));
+
+		        if (times.size() > 1) {
+			        double delta
+			            = std::chrono::duration_cast<std::chrono::duration<double>>(
+			                  times.end()[-1] - times.end()[-2])
+			                  .count();
+			        ASSERT_NEAR(delta, expected_delta, tolerance);
+		        }
 	        },
 	    }));
 
@@ -36,20 +50,8 @@ TEST_P(TempoTest, ClockDriftSingleEvents)
 	std::this_thread::sleep_for(std::chrono::minutes(1));
 
 	tempo.stop();
-
-	double expected_delta
-	    = std::chrono::duration_cast<std::chrono::duration<double>>(
-	          tempo.period_us)
-	          .count(); // amount of time we expect to elapse between events
-	tolerance *= expected_delta;
-
-	for (size_t i = 1; i < times.size(); ++i) {
-		double delta
-		    = std::chrono::duration_cast<std::chrono::duration<double>>(
-		          times[i] - times[i - 1])
-		          .count();
-		EXPECT_NEAR(delta, expected_delta, tolerance);
-	}
 }
 
-INSTANTIATE_TEST_CASE_P(TempoTest, TempoTest, ::testing::Values(10, 200, 400));
+// INSTANTIATE_TEST_CASE_P(TempoTest, TempoTest, ::testing::Values(10, 200,
+// 400));
+INSTANTIATE_TEST_CASE_P(TempoTest, TempoTest, ::testing::Values(400));

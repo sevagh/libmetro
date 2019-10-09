@@ -1,6 +1,7 @@
 #ifndef JUNGLE_H
 #define JUNGLE_H
 
+#include <atomic>
 #include <chrono>
 #include <functional>
 #include <map>
@@ -9,7 +10,6 @@
 #include <stk/Stk.h>
 #include <thread>
 #include <vector>
-#include <atomic>
 
 namespace jungle {
 
@@ -40,7 +40,7 @@ namespace tempo {
 
 	private:
 		std::vector<jungle::EventCycle*> event_cycles;
-	        std::atomic<bool> ticker_on;
+		std::atomic<bool> ticker_on;
 	};
 }; // namespace tempo
 
