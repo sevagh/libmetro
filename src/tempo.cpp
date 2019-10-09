@@ -6,6 +6,7 @@
 #include <thread>
 #include <typeinfo>
 #include <vector>
+#include <atomic>
 
 jungle::EventCycle::EventCycle(std::vector<jungle::EventFunc> events)
     : events(events)
@@ -19,7 +20,8 @@ void jungle::EventCycle::dispatch_next_event()
 }
 
 jungle::tempo::Tempo::Tempo(int bpm)
-    : bpm(bpm)
+    : bpm(bpm),
+      ticker_on({ true })
 {
 	if (!std::chrono::steady_clock::is_steady)
 		throw std::runtime_error("std::chrono::steady_clock is unsteady on "
@@ -34,45 +36,39 @@ void jungle::tempo::Tempo::register_event_cycle(jungle::EventCycle& cycle)
 	event_cycles.push_back(&cycle);
 }
 
-/*
 static std::chrono::nanoseconds estimate_cpu_tick_ns()
 {
     auto t0 = std::chrono::steady_clock::now();
     auto t1 = std::chrono::steady_clock::now();
     return std::chrono::duration_cast<std::chrono::nanoseconds>(t1 - t0);
 }
-sleeping for this tiny amount behaves similar to a busy-wait loop, 100% cpu
-usage
-*/
 
 void jungle::tempo::Tempo::start()
 {
-	// auto cpu_tick_ns = estimate_cpu_tick_ns();
-	// pick a nanosecond sleep somewhere between CPU ticks and desired bpm
-	auto tempo_partial_tick_us = period_us / 50.0;
+	auto cpu_tick_ns = estimate_cpu_tick_ns();
 
-	// std::cout << "cpu_tick_ns: " << cpu_tick_ns.count() << std::endl;
-	// std::cout << "tempo_tick_us: " << tempo_tick_ns.count() << std::endl;
+	std::cout << "cpu_tick  ns: " << cpu_tick_ns.count() << std::endl;
+	std::cout << "period    ns: " << std::chrono::duration_cast<std::chrono::nanoseconds>(period_us).count() << std::endl;
+	std::cout << "period/10 ns: " << std::chrono::duration_cast<std::chrono::nanoseconds>(period_us/10.0).count() << std::endl;
 
-	auto blocking_ticker = [&]() {
+	auto blocking_ticker = [&](std::atomic<bool>& on) {
 		auto previous_tick = std::chrono::steady_clock::now();
-		while (true) {
+		while (on) {
 			for (auto ec : event_cycles)
 				ec->dispatch_next_event();
 
 			while (std::chrono::duration_cast<std::chrono::microseconds>(
 			           std::chrono::steady_clock::now() - previous_tick)
-			       < period_us) {
-				std::this_thread::sleep_for(tempo_partial_tick_us);
-			};
+			       < period_us)
+				std::this_thread::sleep_for(cpu_tick_ns);
 
 			previous_tick = std::chrono::steady_clock::now();
 		}
 	};
 
-	ticker = std::thread(blocking_ticker);
+	std::thread(blocking_ticker, std::ref(ticker_on)).detach();
 }
 
-void jungle::tempo::Tempo::stop() { ticker.join(); }
+void jungle::tempo::Tempo::stop() { ticker_on = false; }
 
 jungle::tempo::Tempo::~Tempo() { stop(); }

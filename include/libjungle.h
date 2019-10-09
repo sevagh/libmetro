@@ -9,6 +9,7 @@
 #include <stk/Stk.h>
 #include <thread>
 #include <vector>
+#include <atomic>
 
 namespace jungle {
 
@@ -39,7 +40,7 @@ namespace tempo {
 
 	private:
 		std::vector<jungle::EventCycle*> event_cycles;
-		std::thread ticker;
+	        std::atomic<bool> ticker_on;
 	};
 }; // namespace tempo
 

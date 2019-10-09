@@ -18,12 +18,11 @@ TEST_P(TempoTest, ClockDriftSingleEvents)
 	double tolerance = 5.0 / 100.0; //%
 
 	std::cout << "Testing if tick drift is within " << tolerance << " for "
-	          << bpm << " bpm ticker, for 1 minute worth of ticks" << std::endl;
+	          << bpm << " bpm ticker, 1 minute worth of ticks" << std::endl;
 
 	jungle::EventCycle record_time
 	    = jungle::EventCycle(std::vector<jungle::EventFunc>({
 	        [&]() {
-		        std::cout << "TICK!" << std::endl;
 		        times.push_back(
 		            std::chrono::duration_cast<std::chrono::microseconds>(
 		                std::chrono::system_clock::now().time_since_epoch()));
@@ -35,6 +34,8 @@ TEST_P(TempoTest, ClockDriftSingleEvents)
 
 	// run the test for as many beats as makes 1 minute
 	std::this_thread::sleep_for(std::chrono::minutes(1));
+
+	tempo.stop();
 
 	double expected_delta
 	    = std::chrono::duration_cast<std::chrono::duration<double>>(
@@ -51,6 +52,4 @@ TEST_P(TempoTest, ClockDriftSingleEvents)
 	}
 }
 
-// INSTANTIATE_TEST_CASE_P(TempoTest, TempoTest, ::testing::Values(10, 200,
-// 400));
-INSTANTIATE_TEST_CASE_P(TempoTest, TempoTest, ::testing::Values(200, 400));
+INSTANTIATE_TEST_CASE_P(TempoTest, TempoTest, ::testing::Values(10, 200, 400));

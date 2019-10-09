@@ -3,7 +3,7 @@
 # based on https://github.com/RAttab/optics/blob/master/CMakeLists.txt
 #------------------------------------------------------------------------------#
 
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 3.14)
 project(libjungle)
 set(VERSION 0.0.1)
 
@@ -17,6 +17,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/bin)
 
+set(CMAKE_CXX_STANDARD 20)
+
 set(BIN_DIR ${PROJECT_SOURCE_DIR}/bin)
 
 add_definitions("-Wall")
@@ -24,7 +26,7 @@ add_definitions("-Wextra")
 add_definitions("-Wundef")
 add_definitions("-Wunreachable-code")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -std=c++2a -pthread -D_GNU_SOURCE")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -ggdb -pthread")
 
 #------------------------------------------------------------------------------#
 # DEPS
