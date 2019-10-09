@@ -70,6 +70,10 @@ add_library(jungle SHARED ${JUNGLE_SOURCES})
 
 target_link_libraries(jungle ${SOUNDIO_LIBRARY} ${STK_LIBRARY})
 
+#------------------------------------------------------------------------------#
+# CLANG-TIDY
+#------------------------------------------------------------------------------#
+
 find_program(
   CLANG_TIDY_EXE
   NAMES "clang-tidy"
@@ -127,8 +131,6 @@ jungle_pc(jungle_static)
 #------------------------------------------------------------------------------#
 
 if(GTEST_FOUND)
-	#add_library(jungle_tests STATIC test/bench.cpp test/test.cpp)
-	#set(JUNGLE_TESTS_DEPS jungle_tests ${CMOCKA_LIBRARIES})
 	set(JUNGLE_TESTS_DEPS ${JUNGLE_DEPS} gtest gtest_main pthread)
 endif()
 
@@ -156,27 +158,10 @@ function(jungle_gtest name)
 endfunction()
 
 jungle_gtest(audio_engine)
-jungle_gtest(clock_drift)
+jungle_gtest(clock_accuracy)
 
 #------------------------------------------------------------------------------#
-# BENCHS
-#------------------------------------------------------------------------------#
-
-#function(jungle_cmocka_bench name)
-#    if(CMOCKA_FOUND)
-#        add_executable(${name}_bench test/${name}_bench.c)
-#	target_link_libraries(${name}_bench jungle_tests ${JUNGLE_TESTS_DEPS})
-#        set_property(TARGET ${name}_bench APPEND PROPERTY COMPILE_OPTIONS ${CMOCKA_CFLAGS})
-#
-#        add_test(${name}_bench ${BIN_DIR}/${name}_bench)
-#        set_tests_properties(${name}_bench PROPERTIES LABELS "bench")
-#    endif()
-#endfunction()
-#
-#jungle_cmocka_bench(tempo)
-
-#------------------------------------------------------------------------------#
-# CLANG-TIDY, CLANG_FORMAT
+# CLANG_FORMAT, CPPCLEAN
 #------------------------------------------------------------------------------#
 
 include(cmake/clang-cxx-dev-tools.cmake)

@@ -8,17 +8,18 @@
 class TempoTest : public testing::TestWithParam<int> {
 };
 
-TEST_P(TempoTest, ClockDriftSingleEvents)
+TEST_P(TempoTest, ClockAccuracy)
 {
 	int bpm = GetParam();
 
 	std::vector<std::chrono::microseconds> times;
 
 	auto tempo = jungle::tempo::Tempo(bpm);
-	double tolerance = 5.0 / 100.0; //%
+	double tolerance = 5.0; //%
 
-	std::cout << "Testing if tick drift is within " << tolerance << " for "
-	          << bpm << " bpm ticker, 1 minute worth of ticks" << std::endl;
+	std::cout << "Testing if ticks are accurate within " << tolerance
+	          << "% for " << bpm << " bpm ticker, 1 minute worth of ticks"
+	          << std::endl;
 
 	double expected_delta
 	    = std::chrono::duration_cast<std::chrono::duration<double>>(
@@ -52,6 +53,4 @@ TEST_P(TempoTest, ClockDriftSingleEvents)
 	tempo.stop();
 }
 
-// INSTANTIATE_TEST_CASE_P(TempoTest, TempoTest, ::testing::Values(10, 200,
-// 400));
-INSTANTIATE_TEST_CASE_P(TempoTest, TempoTest, ::testing::Values(400));
+INSTANTIATE_TEST_CASE_P(TempoTest, TempoTest, ::testing::Values(10, 200, 400));

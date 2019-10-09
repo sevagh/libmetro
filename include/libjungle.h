@@ -40,7 +40,9 @@ namespace tempo {
 
 	private:
 		std::vector<jungle::EventCycle*> event_cycles;
+
 		std::atomic<bool> ticker_on;
+		std::thread ticker_thread;
 	};
 }; // namespace tempo
 

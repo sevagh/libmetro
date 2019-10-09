@@ -53,9 +53,14 @@ void jungle::tempo::Tempo::start()
 		}
 	};
 
-	std::thread(blocking_ticker, std::ref(ticker_on)).detach();
+	ticker_thread = std::thread(blocking_ticker, std::ref(ticker_on));
 }
 
-void jungle::tempo::Tempo::stop() { ticker_on = false; }
+void jungle::tempo::Tempo::stop()
+{
+	ticker_on = false;
+	if (ticker_thread.joinable())
+		ticker_thread.join();
+}
 
 jungle::tempo::Tempo::~Tempo() { stop(); }
