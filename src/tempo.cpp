@@ -19,6 +19,18 @@ void jungle::EventCycle::dispatch_next_event()
 	std::thread(ret).detach();
 }
 
+void jungle::tempo::precise_sleep_us(std::chrono::microseconds dur)
+{
+	std::chrono::microseconds dur_us
+	    = std::chrono::duration_cast<std::chrono::microseconds>(dur);
+
+	auto start_tick = std::chrono::steady_clock::now();
+	while (std::chrono::duration_cast<std::chrono::microseconds>(
+	           std::chrono::steady_clock::now() - start_tick)
+	       < dur_us)
+		std::this_thread::sleep_for(std::chrono::nanoseconds(1));
+}
+
 jungle::tempo::Tempo::Tempo(int bpm)
     : bpm(bpm)
     , ticker_on({true})
@@ -39,17 +51,11 @@ void jungle::tempo::Tempo::register_event_cycle(jungle::EventCycle& cycle)
 void jungle::tempo::Tempo::start()
 {
 	auto blocking_ticker = [&](std::atomic<bool>& on) {
-		auto previous_tick = std::chrono::steady_clock::now();
 		while (on) {
 			for (auto ec : event_cycles)
 				ec->dispatch_next_event();
 
-			while (std::chrono::duration_cast<std::chrono::microseconds>(
-			           std::chrono::steady_clock::now() - previous_tick)
-			       < period_us)
-				std::this_thread::sleep_for(std::chrono::nanoseconds(1));
-
-			previous_tick = std::chrono::steady_clock::now();
+			precise_sleep_us(period_us);
 		}
 	};
 

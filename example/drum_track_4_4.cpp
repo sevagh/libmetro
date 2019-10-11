@@ -19,19 +19,19 @@ int main(int argc, char** argv)
 	std::cout << "init audio engine" << std::endl;
 	std::cout << "Generating tones" << std::endl;
 
-	auto strong_downbeat = jungle::audio::timbre::DrumTap(100.0);
-	auto strong_beat = jungle::audio::timbre::DrumTap(100.0);
-	auto weak_downbeat = jungle::audio::timbre::DrumTap(50.0);
-	auto weak_beat = jungle::audio::timbre::DrumTap(50.0);
+	auto hihat = jungle::audio::timbre::Drum(42);
+	auto snare = jungle::audio::timbre::Drum(38);
+	auto bass = jungle::audio::timbre::Drum(45);
 
-	// create a cycle of lambdas
 	jungle::EventCycle beat22 = jungle::EventCycle(std::vector<jungle::EventFunc>({
 	    [&]() {
-		    jungle::audio::timbre::play_on_stream(stream, strong_downbeat);
+		    jungle::audio::timbre::play_on_stream(stream, {&hihat, &snare});
 	    },
-	    [&]() { jungle::audio::timbre::play_on_stream(stream, strong_beat); },
-	    [&]() { jungle::audio::timbre::play_on_stream(stream, weak_downbeat); },
-	    [&]() { jungle::audio::timbre::play_on_stream(stream, weak_beat); },
+	    [&]() { jungle::audio::timbre::play_on_stream(stream, {&hihat}); },
+	    [&]() {
+		    jungle::audio::timbre::play_on_stream(stream, {&hihat, &bass});
+	    },
+	    [&]() { jungle::audio::timbre::play_on_stream(stream, {&hihat}); },
 	}));
 
 	tempo.register_event_cycle(beat22);

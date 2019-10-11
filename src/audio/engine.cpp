@@ -1,5 +1,6 @@
 #include "libjungle.h"
 #include <algorithm>
+#include <cassert>
 #include <cfloat>
 #include <chrono>
 #include <cmath>
@@ -33,6 +34,7 @@ jungle::audio::Engine::Engine()
 
 	stk::Stk::showWarnings(true);
 	stk::Stk::setSampleRate(jungle::SampleRateHz);
+	assert(sizeof(stk::StkFloat) == 4);
 }
 
 jungle::audio::Engine::Stream

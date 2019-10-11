@@ -4,6 +4,7 @@
 #include <atomic>
 #include <chrono>
 #include <functional>
+#include <list>
 #include <map>
 #include <memory>
 #include <soundio/soundio.h>
@@ -28,6 +29,9 @@ private:
 };
 
 namespace tempo {
+	// a steady-clock based precise sleep with 1ns resolution
+	void precise_sleep_us(std::chrono::microseconds dur);
+
 	class Tempo {
 	public:
 		int bpm;
@@ -60,7 +64,7 @@ namespace audio {
 			float latency_s;
 			struct SoundIoOutStream* outstream;
 			struct SoundIoRingBuffer* ringbuf;
-			Stream() = delete;
+			Stream() = delete; // disallow the empty constructor
 			~Stream();
 
 		private:
@@ -83,7 +87,7 @@ namespace audio {
 			virtual stk::StkFrames& get_frames() = 0;
 		};
 
-		void play_on_stream(Engine::Stream& stream, Timbre& timbre);
+		void play_on_stream(Engine::Stream& stream, std::list<Timbre*> timbres);
 
 		class Pulse : public Timbre {
 		public:
@@ -96,11 +100,11 @@ namespace audio {
 			stk::StkFrames frames;
 		};
 
-		class DrumTap : public Timbre {
+		class Drum : public Timbre {
 		public:
-			DrumTap(float volume_pct);
-			DrumTap()
-			    : DrumTap(100.0){};
+			Drum(int midi_drum_instrument, float volume_pct);
+			Drum(int midi_drum_instrument)
+			    : Drum(midi_drum_instrument, 100.0){};
 			stk::StkFrames& get_frames() { return frames; }
 
 		private:

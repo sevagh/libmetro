@@ -7,6 +7,7 @@
 #include <cstring>
 #include <future>
 #include <iostream>
+#include <list>
 #include <memory>
 #include <soundio/soundio.h>
 #include <stdio.h>
@@ -37,15 +38,19 @@ jungle::audio::timbre::Pulse::Pulse(float pitch_hz, float volume_pct)
 		frames[i] = (volume_pct / 100.0) * (1.0 / max_elem) * frames[i];
 }
 
-jungle::audio::timbre::DrumTap::DrumTap(float volume_pct)
+static float midi2freq(int midi)
+{
+	return 440.0 * pow(2.0, (float(midi) - 69.0) / 12.0);
+}
+
+jungle::audio::timbre::Drum::Drum(int midi_drum_instrument, float volume_pct)
 {
 	stk::Drummer drummer;
 
 	// 2 channels
 	stk::StkFrames frames_(jungle::SampleRateHz, 2);
 
-	// 138.0 sounds vaguely drum-like
-	drummer.noteOn(138.0, volume_pct / 100.0);
+	drummer.noteOn(midi2freq(midi_drum_instrument), volume_pct / 100.0);
 	drummer.tick(frames_, 0);
 	drummer.tick(frames_, 1);
 	drummer.noteOff(0.0);
@@ -53,14 +58,20 @@ jungle::audio::timbre::DrumTap::DrumTap(float volume_pct)
 	frames = frames_;
 }
 
-void jungle::audio::timbre::play_on_stream(jungle::audio::Engine::Stream& stream,
-                                           jungle::audio::timbre::Timbre& timbre)
+void jungle::audio::timbre::play_on_stream(
+    jungle::audio::Engine::Stream& stream,
+    std::list<jungle::audio::timbre::Timbre*> timbres)
 {
-	auto frames = timbre.get_frames();
+	stk::StkFrames frames(jungle::SampleRateHz, 2);
 
-	assert(jungle::SampleRateHz == stream.outstream->sample_rate);
-	assert(sizeof(stk::StkFloat) == 4);
-	assert(frames.size() == 2 * jungle::SampleRateHz);
+	// sum input timbres in case of simultaneous sounds
+	for (auto timbre : timbres) {
+		auto timbre_frames = timbre->get_frames();
+		assert(timbre_frames.size() == 2 * jungle::SampleRateHz);
+
+		for (size_t i = 0; i < 2 * jungle::SampleRateHz; ++i)
+			frames[i] += timbre_frames[i];
+	}
 
 	// fill the stream.ringbuffer with 2*48,000 samples, which should finish in
 	// outstream->software_latency
@@ -77,9 +88,10 @@ void jungle::audio::timbre::play_on_stream(jungle::audio::Engine::Stream& stream
 	memcpy(buf, &frames[0], fill_count);
 	soundio_ring_buffer_advance_write_ptr(stream.ringbuf, fill_count);
 
-	// wait for how long a beep should be
-	std::this_thread::sleep_for(
-	    std::chrono::duration<float, std::ratio<1, 1>>(stream.latency_s));
+	// wait for how long a timbre should be
+	jungle::tempo::precise_sleep_us(
+	    std::chrono::duration_cast<std::chrono::microseconds>(
+	        std::chrono::duration<float, std::ratio<1, 1>>(stream.latency_s)));
 
 	// then, stuff it with 0s to create a smooth transition to
 	// silence

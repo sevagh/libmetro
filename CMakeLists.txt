@@ -100,9 +100,8 @@ function(jungle_example name)
 	target_link_libraries(example_${name} ${JUNGLE_DEPS})
 endfunction()
 
-jungle_example(metro44_from_scratch)
-jungle_example(metro44_from_scratch_drum_timbre)
-jungle_example(metro44_native)
+jungle_example(metronome_4_4)
+jungle_example(drum_track_4_4)
 
 #------------------------------------------------------------------------------#
 # INSTALL
