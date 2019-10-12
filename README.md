@@ -1,42 +1,50 @@
-Version will be 0.0.1 for a while - very experimental codebase.
+Libjungle is a library for constructing beat and rhythm-related programs - most likely UNIX-compatible - on the C++ command line.
 
-Dev dependencies:
+Modern (c++2a) C++ std components are used liberally (vectors, lists, chrono, atomic, lambdas, threads, etc.).
 
-* stk - https://github.com/thestk/stk
-* libsoundio - https://github.com/andrewrk/libsoundio
-* cppclean - https://github.com/myint/cppclean
-* clang, clang-tools-extra
-* valgrind for leak checks on the gtest tests
+Low-level constructs provided are:
+- `jungle::event::EventFunc, EventCycle` - wraps lambdas and vectors of lambdas representing events that can be dispatched in a timer e.g. "play a beep"
+- `jungle::tempo::Tempo` - wraps std::chrono, a precise (tested for clock accuracy within 5%) time ticker for metronome-style tasks
+- jungle::audio::Engine, Stream - wraps SoundIo cross-platform real time audio functionality to emit sound
+- jungle::audio::timbre::Timbre - wraps Stk to produce vectors of floats representing sounds (beeps, drum taps, etc.)
+ 
+The syntax is partly inspired by Max/MSP metro+cycle objects.
 
-clang-tidy can be automatically run during the compile step:
+End result code hides some implementation complexity (not all of it), but the code should be readable and obvious in the musical functionality it expresses.
 
-```cmake
-find_program(
-  CLANG_TIDY_EXE
-  NAMES "clang-tidy"
-  DOC "Path to clang-tidy executable"
-  )
-if(NOT CLANG_TIDY_EXE)
-  message(STATUS "clang-tidy not found.")
-else()
-  message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
-  set(DO_CLANG_TIDY "${CLANG_TIDY_EXE}" "-checks=*,-clang-analyzer-alpha.*")
-endif()
-set_target_properties(
-        jungle PROPERTIES
-        CXX_CLANG_TIDY "${DO_CLANG_TIDY}"
-)
+E.g. here's a basic monotone click track at 100bpm:
+
+```c++
+auto ticker = jungle::tempo::Tempo(100);
+auto click = jungle::audio::timbre::Pulse(440.0, 100.0);
+
+auto continuous_clicks = jungle::EventCycle({
+    [&]() {
+      jungle::audio::timbre::play_on_stream(stream, {&click});
+    },
+});
+
+ticker.register_event_cycle(continuous_clicks);
+tempo.start();
+
+// default blocking eventloop until Ctrl-C is pressed by the user - you can provide your own
+jungle::audio::eventloop();
 ```
 
-### Learning resources
+Implemented programs include:
 
-These articles gave me some good tips on how I should approach real-time audio programming:
+- A 4/4 metronome (link)
+- A 4/4 drum track (link)
+- A tap-tempo adjustable click track
+- A polyrhyhtmic metronome (3/3 over 4/4, each one pausable) - link
+- A schedulable metronome (to practise songs where the time signature and/or tempo changes midway)
 
-* http://www.rossbencina.com/code/real-time-audio-programming-101-time-waits-for-nothing
-* http://atastypixel.com/blog/four-common-mistakes-in-audio-development/
+### Instructions
 
-I found the stk examples and libsoundio examples a good enough starting point to mold into working code.
-
-### Notes
-
-* my [fork of stk](https://github.com/sevagh/stk) has been compiled with `typedef float StkFloat` (instead of double) to match the floats I use in libjungle (enforced by libsoundio). RAWWAVE_PATH has been set to `./rawwaves/` and the directory has to be copied from stk to libjungle.
+The following tools are used for ensuring code quality:
+- googletest (for unit tests)
+- valgrind for memory leak checks
+- clang-tidy
+- clang-format
+- cppclean
+- ubsan

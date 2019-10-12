@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 	std::cout << "init " << bpm << "bpm tempo ticker" << std::endl;
 
 	auto audio_engine = jungle::audio::Engine();
-	auto stream = audio_engine.new_stream(tempo.period_us);
+	auto stream = audio_engine.new_stream(tempo.get_period_us());
 
 	std::cout << "init audio engine" << std::endl;
 	std::cout << "Generating tones" << std::endl;
@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 	auto snare = jungle::audio::timbre::Drum(38);
 	auto bass = jungle::audio::timbre::Drum(45);
 
-	jungle::EventCycle beat22 = jungle::EventCycle(std::vector<jungle::EventFunc>({
+	jungle::event::EventCycle beat22 = jungle::event::EventCycle(std::vector<jungle::event::EventFunc>({
 	    [&]() {
 		    jungle::audio::timbre::play_on_stream(stream, {&hihat, &snare});
 	    },

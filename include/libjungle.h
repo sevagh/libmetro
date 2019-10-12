@@ -16,41 +16,55 @@ namespace jungle {
 
 const float SampleRateHz = 48000.0;
 
-using EventFunc = std::function<void()>;
+namespace event {
+	using EventFunc = std::function<void()>;
 
-class EventCycle {
-public:
-	std::vector<EventFunc> events;
-	EventCycle(std::vector<EventFunc> events);
-	void dispatch_next_event();
+	class EventCycle {
+	public:
+		std::vector<EventFunc> events;
+		EventCycle(std::vector<EventFunc> events);
+		void dispatch_next_event();
 
-private:
-	size_t index;
-};
+	private:
+		size_t index;
+	};
+}; // namespace event
 
 namespace tempo {
-	// a steady-clock based precise sleep with 1ns resolution
-	void precise_sleep_us(std::chrono::microseconds dur);
+	// a steady-clock based precise sleep with 1ns precision
+	// or as close to 1ns as nanosleep gets us on a GPOS
+	void precise_sleep_us(std::chrono::microseconds dur_us);
+
+	// mini helper functions to convert bpm to period and vice versa
+	std::chrono::microseconds bpm_to_us(int bpm);
+	int us_to_bpm(std::chrono::microseconds us);
 
 	class Tempo {
 	public:
 		int bpm;
-		std::chrono::microseconds period_us;
+
 		Tempo(int bpm);
 		~Tempo();
+
+		std::chrono::microseconds get_period_us();
+		void set_bpm(int new_bpm);
 		void start();
 		void stop();
-		void register_event_cycle(jungle::EventCycle& cycle);
+		void register_event_cycle(jungle::event::EventCycle& cycle);
 
 	private:
-		std::vector<jungle::EventCycle*> event_cycles;
-
+		std::vector<jungle::event::EventCycle*> event_cycles;
+		std::atomic<std::chrono::microseconds> period_us;
 		std::atomic<bool> ticker_on;
 		std::thread ticker_thread;
 	};
 }; // namespace tempo
 
 namespace audio {
+	// chooses an optimal Soundio output stream latency for the
+	// target bpm
+	float pick_best_latency(std::chrono::microseconds ticker_period);
+
 	class Engine {
 	public:
 		Engine();
@@ -64,6 +78,7 @@ namespace audio {
 			float latency_s;
 			struct SoundIoOutStream* outstream;
 			struct SoundIoRingBuffer* ringbuf;
+			void set_latency_s(float new_latency_s);
 			Stream() = delete; // disallow the empty constructor
 			~Stream();
 
@@ -112,18 +127,6 @@ namespace audio {
 		};
 	}; // namespace timbre
 };     // namespace audio
-
-namespace metronome {
-	jungle::EventCycle
-	metronome_common_time(jungle::audio::Engine::Stream& stream);
-
-	static std::map<
-	    std::string,
-	    std::function<jungle::EventCycle(jungle::audio::Engine::Stream&)>>
-	    time_signature_mappings = {
-	        {"4/4", metronome_common_time},
-	};
-}; // namespace metronome
-}; // namespace jungle
+};     // namespace jungle
 
 #endif /* JUNGLE_H */

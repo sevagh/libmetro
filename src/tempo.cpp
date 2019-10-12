@@ -8,22 +8,32 @@
 #include <typeinfo>
 #include <vector>
 
-jungle::EventCycle::EventCycle(std::vector<jungle::EventFunc> events)
+jungle::event::EventCycle::EventCycle(std::vector<jungle::event::EventFunc> events)
     : events(events)
     , index(0){};
 
-void jungle::EventCycle::dispatch_next_event()
+void jungle::event::EventCycle::dispatch_next_event()
 {
 	auto ret = events.at(index);
 	index = (index + 1) % events.size(); // wraparound cycle
 	std::thread(ret).detach();
 }
 
-void jungle::tempo::precise_sleep_us(std::chrono::microseconds dur)
+std::chrono::microseconds jungle::tempo::bpm_to_us(int bpm)
 {
-	std::chrono::microseconds dur_us
-	    = std::chrono::duration_cast<std::chrono::microseconds>(dur);
 
+	return std::chrono::duration_cast<std::chrono::microseconds>(
+	    std::chrono::duration<double, std::micro>(1000000.0 * (60.0 / bpm)));
+}
+
+int jungle::tempo::us_to_bpm(std::chrono::microseconds us)
+{
+
+	return int(1000000.0 * (60.0 / us.count()));
+}
+
+void jungle::tempo::precise_sleep_us(std::chrono::microseconds dur_us)
+{
 	auto start_tick = std::chrono::steady_clock::now();
 	while (std::chrono::duration_cast<std::chrono::microseconds>(
 	           std::chrono::steady_clock::now() - start_tick)
@@ -39,14 +49,20 @@ jungle::tempo::Tempo::Tempo(int bpm)
 		throw std::runtime_error("std::chrono::steady_clock is unsteady on "
 		                         "this platform");
 
-	period_us = std::chrono::duration_cast<std::chrono::microseconds>(
-	    std::chrono::duration<double, std::micro>(1000000.0 * (60.0 / bpm)));
+	period_us = jungle::tempo::bpm_to_us(bpm);
 }
 
-void jungle::tempo::Tempo::register_event_cycle(jungle::EventCycle& cycle)
+void jungle::tempo::Tempo::register_event_cycle(jungle::event::EventCycle& cycle)
 {
 	event_cycles.push_back(&cycle);
 }
+
+std::chrono::microseconds jungle::tempo::Tempo::get_period_us()
+{
+	return period_us;
+}
+
+void jungle::tempo::Tempo::set_bpm(int new_bpm) { bpm = new_bpm; }
 
 void jungle::tempo::Tempo::start()
 {

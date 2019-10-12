@@ -54,6 +54,12 @@ jungle::audio::Engine::Stream::Stream(jungle::audio::Engine* parent_engine,
 		                         + soundio_strerror(err));
 }
 
+void jungle::audio::Engine::Stream::set_latency_s(float new_latency_s)
+{
+	this->latency_s = new_latency_s;
+	this->outstream->software_latency = new_latency_s;
+}
+
 jungle::audio::Engine::Stream::~Stream()
 {
 	soundio_outstream_destroy(outstream);

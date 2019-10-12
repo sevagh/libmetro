@@ -23,12 +23,12 @@ TEST_P(TempoTest, ClockAccuracy)
 
 	double expected_delta
 	    = std::chrono::duration_cast<std::chrono::duration<double>>(
-	          tempo.period_us)
+	          tempo.get_period_us())
 	          .count(); // amount of time we expect to elapse between events
 	tolerance *= expected_delta;
 
-	jungle::EventCycle record_time
-	    = jungle::EventCycle(std::vector<jungle::EventFunc>({
+	jungle::event::EventCycle record_time
+	    = jungle::event::EventCycle(std::vector<jungle::event::EventFunc>({
 	        [&]() {
 		        times.push_back(
 		            std::chrono::duration_cast<std::chrono::microseconds>(

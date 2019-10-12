@@ -57,8 +57,7 @@ set(JUNGLE_SOURCES
     src/tempo.cpp
     src/audio/engine.cpp
     src/audio/timbre.cpp
-    src/audio/stream.cpp
-    src/metronome.cpp)
+    src/audio/stream.cpp)
 
 set(JUNGLE_DEPS
     jungle_static
@@ -95,13 +94,14 @@ endif()
 # BINS
 #------------------------------------------------------------------------------#
 
-function(jungle_example name)
-	add_executable(example_${name} example/${name}.cpp)
-	target_link_libraries(example_${name} ${JUNGLE_DEPS})
+function(jungle_program name)
+	add_executable(program_${name} programs/${name}.cpp)
+	target_link_libraries(program_${name} ${JUNGLE_DEPS})
 endfunction()
 
-jungle_example(metronome_4_4)
-jungle_example(drum_track_4_4)
+jungle_program(metronome_4_4)
+jungle_program(drum_track_4_4)
+jungle_program(tap_tempo)
 
 #------------------------------------------------------------------------------#
 # INSTALL
