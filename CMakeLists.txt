@@ -55,6 +55,7 @@ link_directories(${GTEST_LIBRARY_DIRS})
 
 set(JUNGLE_SOURCES
     src/tempo.cpp
+    src/event.cpp
     src/audio/engine.cpp
     src/audio/timbre.cpp
     src/audio/stream.cpp)

@@ -23,7 +23,7 @@ TEST_P(TempoTest, ClockAccuracy)
 
 	double expected_delta
 	    = std::chrono::duration_cast<std::chrono::duration<double>>(
-	          tempo.get_period_us())
+	          tempo.period_us)
 	          .count(); // amount of time we expect to elapse between events
 	tolerance *= expected_delta;
 

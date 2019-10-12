@@ -8,17 +8,6 @@
 #include <typeinfo>
 #include <vector>
 
-jungle::event::EventCycle::EventCycle(std::vector<jungle::event::EventFunc> events)
-    : events(events)
-    , index(0){};
-
-void jungle::event::EventCycle::dispatch_next_event()
-{
-	auto ret = events.at(index);
-	index = (index + 1) % events.size(); // wraparound cycle
-	std::thread(ret).detach();
-}
-
 std::chrono::microseconds jungle::tempo::bpm_to_us(int bpm)
 {
 
@@ -56,13 +45,6 @@ void jungle::tempo::Tempo::register_event_cycle(jungle::event::EventCycle& cycle
 {
 	event_cycles.push_back(&cycle);
 }
-
-std::chrono::microseconds jungle::tempo::Tempo::get_period_us()
-{
-	return period_us;
-}
-
-void jungle::tempo::Tempo::set_bpm(int new_bpm) { bpm = new_bpm; }
 
 void jungle::tempo::Tempo::start()
 {

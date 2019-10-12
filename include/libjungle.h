@@ -42,19 +42,17 @@ namespace tempo {
 	class Tempo {
 	public:
 		int bpm;
+		std::chrono::microseconds period_us;
 
 		Tempo(int bpm);
 		~Tempo();
 
-		std::chrono::microseconds get_period_us();
-		void set_bpm(int new_bpm);
 		void start();
 		void stop();
 		void register_event_cycle(jungle::event::EventCycle& cycle);
 
 	private:
 		std::vector<jungle::event::EventCycle*> event_cycles;
-		std::atomic<std::chrono::microseconds> period_us;
 		std::atomic<bool> ticker_on;
 		std::thread ticker_thread;
 	};

@@ -34,20 +34,41 @@ int _kbhit() {
     return bytes_waiting;
 }
 
-int main(int argc, char** argv)
+int main()
 {
-	if (argc < 2) {
-		std::cerr << "Usage: " << argv[0] << " bpm" << std::endl;
-		exit(1);
+	std::cout << "press any key repeatedly to set the tempo to your key press rate\nonce your keypresses produce a stable tempo (±5bpm), the bpm will be chosen and the input loop will exit\nctrl-c at any time to abort" << std::endl;
+
+	int user_bpm = 0;
+	int last_user_bpm = 0;
+	int last_hit = 0;
+	auto last_hit_time = std::chrono::steady_clock::now();
+
+	while (true) {
+		int hit = _kbhit();
+		auto hit_time = std::chrono::steady_clock::now();
+
+		if (hit != last_hit) {
+			last_hit = hit;
+			auto hit_delta_us = std::chrono::duration_cast<std::chrono::microseconds>(hit_time - last_hit_time);
+			user_bpm = jungle::tempo::us_to_bpm(hit_delta_us);
+
+			if (std::abs(last_user_bpm - user_bpm) < 5) {
+				std::cout << "stable bpm chosen: " << user_bpm << std::endl;
+				break;
+			}
+
+			std::cout << "bpm: " << user_bpm << std::endl;
+			last_user_bpm = user_bpm;
+			last_hit_time = hit_time;
+		}
+
+		jungle::tempo::precise_sleep_us(std::chrono::microseconds(1));
 	}
 
-	int initial_bpm = std::stoi(argv[1]);
-	auto tempo = jungle::tempo::Tempo(initial_bpm);
-
-	std::cout << "init " << initial_bpm << "bpm tempo ticker - press any key repeatedly to adjust the tempo to your key press rate" << std::endl;
+	auto tempo = jungle::tempo::Tempo(user_bpm);
 
 	auto audio_engine = jungle::audio::Engine();
-	auto stream = audio_engine.new_stream(tempo.get_period_us());
+	auto stream = audio_engine.new_stream(tempo.period_us);
 
 	std::cout << "init audio engine" << std::endl;
 
@@ -60,34 +81,9 @@ int main(int argc, char** argv)
 	});
 
 	tempo.register_event_cycle(beeps);
-
 	tempo.start();
 
-	int last_hit = 0;
-	auto last_hit_time = std::chrono::steady_clock::now();
-
-	while (true) {
-		int hit = _kbhit();
-		auto hit_time = std::chrono::steady_clock::now();
-
-		if (hit != last_hit) {
-			last_hit = hit;
-			auto hit_delta_us = std::chrono::duration_cast<std::chrono::microseconds>(hit_time - last_hit_time);
-			auto user_bpm = jungle::tempo::us_to_bpm(hit_delta_us);
-
-			std::cout << "user input bpm: " << user_bpm << std::endl;
-
-			last_hit_time = hit_time;
-			tempo.set_bpm(user_bpm);
-
-			auto stream_new_latency = jungle::audio::pick_best_latency(hit_delta_us);
-			stream.set_latency_s(stream_new_latency);
-		}
-
-		jungle::tempo::precise_sleep_us(std::chrono::microseconds(1));
-	}
-
-	printf("\nDone.\n");
+	audio_engine.eventloop();
 
 	return 0;
 }
