@@ -23,7 +23,9 @@ int main(int argc, char** argv)
 	auto snare = jungle::audio::timbre::Drum(38);
 	auto bass = jungle::audio::timbre::Drum(45);
 
-	jungle::event::EventCycle beat22 = jungle::event::EventCycle(std::vector<jungle::event::EventFunc>({
+	jungle::event::EventCycle beat22 = jungle::event::EventCycle(std::vector<
+	                                                             jungle::event::
+	                                                                 EventFunc>({
 	    [&]() {
 		    jungle::audio::timbre::play_on_stream(stream, {&hihat, &snare});
 	    },

@@ -56,6 +56,7 @@ link_directories(${GTEST_LIBRARY_DIRS})
 set(JUNGLE_SOURCES
     src/tempo.cpp
     src/event.cpp
+    src/metronome.cpp
     src/audio/engine.cpp
     src/audio/timbre.cpp
     src/audio/stream.cpp)
@@ -100,7 +101,6 @@ function(jungle_program name)
 	target_link_libraries(program_${name} ${JUNGLE_DEPS})
 endfunction()
 
-jungle_program(metronome_4_4)
 jungle_program(drum_track_4_4)
 jungle_program(tap_tempo)
 

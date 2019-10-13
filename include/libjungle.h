@@ -8,7 +8,6 @@
 #include <map>
 #include <memory>
 #include <soundio/soundio.h>
-#include <stk/Stk.h>
 #include <thread>
 #include <vector>
 
@@ -59,10 +58,6 @@ namespace tempo {
 }; // namespace tempo
 
 namespace audio {
-	// chooses an optimal Soundio output stream latency for the
-	// target bpm
-	float pick_best_latency(std::chrono::microseconds ticker_period);
-
 	class Engine {
 	public:
 		Engine();
@@ -97,7 +92,7 @@ namespace audio {
 	namespace timbre {
 		class Timbre {
 		public:
-			virtual stk::StkFrames& get_frames() = 0;
+			virtual std::vector<float>& get_frames() = 0;
 		};
 
 		void play_on_stream(Engine::Stream& stream, std::list<Timbre*> timbres);
@@ -107,10 +102,10 @@ namespace audio {
 			Pulse(float pitch_hz, float volume_pct);
 			Pulse(float pitch_hz)
 			    : Pulse(pitch_hz, 100.0){};
-			stk::StkFrames& get_frames() { return frames; }
+			std::vector<float>& get_frames() { return frames; }
 
 		private:
-			stk::StkFrames frames;
+			std::vector<float> frames;
 		};
 
 		class Drum : public Timbre {
@@ -118,13 +113,25 @@ namespace audio {
 			Drum(int midi_drum_instrument, float volume_pct);
 			Drum(int midi_drum_instrument)
 			    : Drum(midi_drum_instrument, 100.0){};
-			stk::StkFrames& get_frames() { return frames; }
+			std::vector<float>& get_frames() { return frames; }
 
 		private:
-			stk::StkFrames frames;
+			std::vector<float> frames;
 		};
 	}; // namespace timbre
 };     // namespace audio
-};     // namespace jungle
+
+namespace metronome {
+	jungle::event::EventCycle
+	metronome_common_time(jungle::audio::Engine::Stream& stream);
+
+	static std::map<
+	    std::string,
+	    std::function<jungle::event::EventCycle(jungle::audio::Engine::Stream&)>>
+	    time_signature_mappings = {
+	        {"4/4", metronome_common_time},
+	};
+}; // namespace metronome
+}; // namespace jungle
 
 #endif /* JUNGLE_H */

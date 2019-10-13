@@ -37,16 +37,16 @@ jungle::audio::Engine::Engine()
 	assert(sizeof(stk::StkFloat) == 4);
 }
 
+static float pick_best_latency(std::chrono::microseconds ticker_period)
+{
+	return (ticker_period.count() / 2.0) / 1000000.0;
+}
+
 jungle::audio::Engine::Stream
 jungle::audio::Engine::new_stream(std::chrono::microseconds ticker_period)
 {
-	float best_latency_s = jungle::audio::pick_best_latency(ticker_period);
+	float best_latency_s = pick_best_latency(ticker_period);
 	return jungle::audio::Engine::Stream(this, best_latency_s);
-}
-
-float jungle::audio::pick_best_latency(std::chrono::microseconds ticker_period)
-{
-	return (ticker_period.count() / 2.0) / 1000000.0;
 }
 
 jungle::audio::Engine::~Engine()

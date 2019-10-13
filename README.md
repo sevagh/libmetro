@@ -10,25 +10,46 @@ Low-level constructs provided are:
  
 The syntax is partly inspired by Max/MSP metro+cycle objects.
 
-End result code hides some implementation complexity (not all of it), but the code should be readable and obvious in the musical functionality it expresses.
+End result code hides some implementation complexity, but a major goal of this project is that the code should be *obvious* in the musical functionality it expresses even by non-programmers.
 
-E.g. here's a basic monotone click track at 100bpm:
+E.g. here's an annotated basic monotone click track at 100bpm:
 
 ```c++
-auto ticker = jungle::tempo::Tempo(100);
-auto click = jungle::audio::timbre::Pulse(440.0, 100.0);
+#include <libjungle.h>
 
-auto continuous_clicks = jungle::EventCycle({
-    [&]() {
-      jungle::audio::timbre::play_on_stream(stream, {&click});
-    },
-});
+int main() {
+    // create a 100bpm tempo timer
+    auto ticker = jungle::tempo::Tempo(100);
 
-ticker.register_event_cycle(continuous_clicks);
-tempo.start();
+    // create an "audio engine" (really just a thin wrapper around SoundIo structs)
+    // use the period of the timer to pick an optimal output stream latency
+    auto audio_engine = jungle::audio::Engine();
+    auto stream = audio_engine.new_stream(ticker.period_us);
 
-// default blocking eventloop until Ctrl-C is pressed by the user - you can provide your own
-jungle::audio::eventloop();
+    // create a 440Hz sine wave at 100% volume
+    auto click = jungle::audio::timbre::Pulse(440.0, 100.0);
+
+    // create and register a cycle that only plays the above click repeatedly
+    auto continuous_clicks = jungle::EventCycle({
+        [&]() {
+          jungle::audio::timbre::play_on_stream(stream, {&click});
+        },
+    });
+
+    ticker.register_event_cycle(continuous_clicks);
+
+    // start the ticker and block until ctrl-c is pressed
+    // you can provide your own blocking functions
+    ticker.start();
+    jungle::audio::eventloop();
+
+    return 0;
+}
+```
+
+Another good example is that I worked with [my musician friend](https://www.instagram.com/nazguitar/?hl=en) to define "correct" time signature metronomes, to the point where he was dictating what frequency and volume of beats I should use to emphasize up/downbeats:
+
+```c++
 ```
 
 Implemented programs include:

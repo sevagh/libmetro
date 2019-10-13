@@ -1,6 +1,6 @@
 file(GLOB_RECURSE
      ALL_CXX_SOURCE_FILES
-     src/*.cpp example/*.cpp include/*.h test/*.cpp
+     src/*.cpp programs/*.cpp include/*.h test/*.cpp
      )
 
 # Adding clang-format target if executable is found
