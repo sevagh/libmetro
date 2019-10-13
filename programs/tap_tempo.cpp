@@ -76,7 +76,7 @@ int main()
 	auto tempo = jungle::core::tempo::Tempo(user_bpm);
 
 	auto audio_engine = jungle::core::audio::Engine();
-	auto stream = audio_engine.new_stream(tempo.period_us);
+	auto stream = audio_engine.new_outstream(tempo.period_us);
 
 	std::cout << "init audio engine" << std::endl;
 

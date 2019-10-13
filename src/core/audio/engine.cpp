@@ -32,7 +32,7 @@ static float pick_best_latency(std::chrono::microseconds ticker_period)
 }
 
 jungle::core::audio::Engine::OutStream
-jungle::core::audio::Engine::new_stream(std::chrono::microseconds ticker_period)
+jungle::core::audio::Engine::new_outstream(std::chrono::microseconds ticker_period)
 {
 	float best_latency_s = pick_best_latency(ticker_period);
 	return jungle::core::audio::Engine::OutStream(this, best_latency_s);

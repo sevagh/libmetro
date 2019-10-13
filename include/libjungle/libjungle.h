@@ -79,7 +79,7 @@ namespace core {
 				                            // Engines can create OutStreams
 			};
 
-			OutStream new_stream(std::chrono::microseconds ticker_period);
+			OutStream new_outstream(std::chrono::microseconds ticker_period);
 
 		private:
 			struct SoundIo* soundio;
