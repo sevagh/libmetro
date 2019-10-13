@@ -1,24 +1,31 @@
-#include "libjungle.h"
-#include <algorithm>
+#include "libjungle/libjungle.h"
+#include "libjungle/libjungle_synthesis.h"
 #include <cassert>
 #include <cfloat>
 #include <chrono>
-#include <cmath>
 #include <cstring>
-#include <future>
-#include <iostream>
-#include <list>
-#include <memory>
+#include <mutex>
 #include <soundio/soundio.h>
-#include <stdio.h>
 #include <stk/Drummer.h>
 #include <stk/SineWave.h>
-#include <thread>
+#include <stk/Stk.h>
 #include <vector>
 
-jungle::audio::timbre::Pulse::Pulse(float pitch_hz, float volume_pct)
-    : frames(std::vector<float>(2 * jungle::SampleRateHz))
+static std::once_flag stk_init_flag;
+
+static void stk_init()
 {
+	std::call_once(stk_init_flag, []() {
+		stk::Stk::showWarnings(true);
+		stk::Stk::setSampleRate(jungle::core::SampleRateHz);
+	});
+}
+
+jungle::synthesis::timbre::Pulse::Pulse(float pitch_hz, float volume_pct)
+    : frames(std::vector<float>(2 * jungle::core::SampleRateHz))
+{
+	stk_init();
+
 	stk::SineWave sine;
 	sine.setFrequency(pitch_hz);
 
@@ -41,9 +48,12 @@ static float midi2freq(int midi)
 	return 440.0 * pow(2.0, (float(midi) - 69.0) / 12.0);
 }
 
-jungle::audio::timbre::Drum::Drum(int midi_drum_instrument, float volume_pct)
-    : frames(std::vector<float>(2 * jungle::SampleRateHz))
+jungle::synthesis::timbre::Drum::Drum(int midi_drum_instrument,
+                                      float volume_pct)
+    : frames(std::vector<float>(2 * jungle::core::SampleRateHz))
 {
+	stk_init();
+
 	stk::Drummer drummer;
 	drummer.noteOn(midi2freq(midi_drum_instrument), volume_pct / 100.0);
 	for (size_t i = 0; i < frames.size(); ++i)
@@ -52,22 +62,22 @@ jungle::audio::timbre::Drum::Drum(int midi_drum_instrument, float volume_pct)
 	drummer.noteOff(0.0);
 }
 
-void jungle::audio::timbre::play_on_stream(
-    jungle::audio::Engine::Stream& stream,
-    std::list<jungle::audio::timbre::Timbre*> timbres)
+void jungle::synthesis::timbre::play_on_stream(
+    jungle::core::audio::Engine::OutStream& stream,
+    std::list<jungle::synthesis::timbre::Timbre*> timbres)
 {
-	std::vector<float> frames(2 * jungle::SampleRateHz);
+	std::vector<float> frames(2 * jungle::core::SampleRateHz);
 
 	// sum input timbres in case of simultaneous sounds
 	for (auto timbre : timbres) {
 		auto timbre_frames = timbre->get_frames();
-		assert(timbre_frames.size() == 2 * jungle::SampleRateHz);
+		assert(timbre_frames.size() == 2 * jungle::core::SampleRateHz);
 
 		for (size_t i = 0; i < frames.size(); ++i)
 			frames[i] += timbre_frames[i];
 	}
 
-	assert(frames.size() == 2 * jungle::SampleRateHz);
+	assert(frames.size() == 2 * jungle::core::SampleRateHz);
 
 	// fill the stream.ringbuffer with 2*48,000 samples, which should finish in
 	// outstream->software_latency
@@ -81,11 +91,11 @@ void jungle::audio::timbre::play_on_stream(
 	// in case there's stuff in the ringbuffer, we don't want to overflow
 	fill_count -= soundio_ring_buffer_fill_count(stream.ringbuf);
 
-	memcpy(buf, frames.data(), fill_count);
+	std::memcpy(buf, frames.data(), fill_count);
 	soundio_ring_buffer_advance_write_ptr(stream.ringbuf, fill_count);
 
 	// wait for how long a timbre should be
-	jungle::tempo::precise_sleep_us(
+	jungle::core::tempo::precise_sleep_us(
 	    std::chrono::duration_cast<std::chrono::microseconds>(
 	        std::chrono::duration<float, std::ratio<1, 1>>(stream.latency_s)));
 
@@ -93,6 +103,6 @@ void jungle::audio::timbre::play_on_stream(
 	// silence
 	fill_count = soundio_ring_buffer_capacity(stream.ringbuf)
 	             - soundio_ring_buffer_fill_count(stream.ringbuf);
-	memset(buf, 0, fill_count);
+	std::memset(buf, 0, fill_count);
 	soundio_ring_buffer_advance_write_ptr(stream.ringbuf, fill_count);
 }

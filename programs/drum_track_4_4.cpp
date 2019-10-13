@@ -1,4 +1,5 @@
-#include "libjungle.h"
+#include "libjungle/libjungle.h"
+#include "libjungle/libjungle_synthesis.h"
 #include <iostream>
 
 int main(int argc, char** argv)
@@ -9,31 +10,31 @@ int main(int argc, char** argv)
 	}
 
 	int bpm = std::stoi(argv[1]);
-	auto tempo = jungle::tempo::Tempo(bpm);
+	auto tempo = jungle::core::tempo::Tempo(bpm);
 
 	std::cout << "init " << bpm << "bpm tempo ticker" << std::endl;
 
-	auto audio_engine = jungle::audio::Engine();
+	auto audio_engine = jungle::core::audio::Engine();
 	auto stream = audio_engine.new_stream(tempo.period_us);
 
 	std::cout << "init audio engine" << std::endl;
 	std::cout << "Generating tones" << std::endl;
 
-	auto hihat = jungle::audio::timbre::Drum(42);
-	auto snare = jungle::audio::timbre::Drum(38);
-	auto bass = jungle::audio::timbre::Drum(45);
+	auto hihat = jungle::synthesis::timbre::Drum(42);
+	auto snare = jungle::synthesis::timbre::Drum(38);
+	auto bass = jungle::synthesis::timbre::Drum(45);
 
-	jungle::event::EventCycle beat22 = jungle::event::EventCycle(std::vector<
-	                                                             jungle::event::
-	                                                                 EventFunc>({
+	jungle::core::event::EventCycle beat22 = jungle::core::event::EventCycle(std::vector<
+	                                                                         jungle::core::event::
+	                                                                             EventFunc>({
 	    [&]() {
-		    jungle::audio::timbre::play_on_stream(stream, {&hihat, &snare});
+		    jungle::synthesis::timbre::play_on_stream(stream, {&hihat, &snare});
 	    },
-	    [&]() { jungle::audio::timbre::play_on_stream(stream, {&hihat}); },
+	    [&]() { jungle::synthesis::timbre::play_on_stream(stream, {&hihat}); },
 	    [&]() {
-		    jungle::audio::timbre::play_on_stream(stream, {&hihat, &bass});
+		    jungle::synthesis::timbre::play_on_stream(stream, {&hihat, &bass});
 	    },
-	    [&]() { jungle::audio::timbre::play_on_stream(stream, {&hihat}); },
+	    [&]() { jungle::synthesis::timbre::play_on_stream(stream, {&hihat}); },
 	}));
 
 	tempo.register_event_cycle(beat22);

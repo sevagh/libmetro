@@ -54,12 +54,12 @@ include_directories("${PROJECT_SOURCE_DIR}/src" "${PROJECT_SOURCE_DIR}/include" 
 link_directories(${GTEST_LIBRARY_DIRS})
 
 set(JUNGLE_SOURCES
-    src/tempo.cpp
-    src/event.cpp
-    src/metronome.cpp
-    src/audio/engine.cpp
-    src/audio/timbre.cpp
-    src/audio/stream.cpp)
+    src/core/tempo.cpp
+    src/core/event.cpp
+    src/core/audio/engine.cpp
+    src/core/audio/stream.cpp
+    src/synthesis/metronome.cpp
+    src/synthesis/timbre.cpp)
 
 set(JUNGLE_DEPS
     jungle_static
@@ -113,7 +113,7 @@ install(TARGETS jungle jungle_static
     LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
-install(FILES include/libjungle.h DESTINATION include)
+install(FILES include/libjungle.h include/libjungle_synthesis.h DESTINATION include/libjungle)
 
 set(pc_version ${VERSION})
 set(pc_prefix ${CMAKE_INSTALL_PREFIX})
@@ -164,4 +164,30 @@ jungle_gtest(clock_accuracy)
 # CLANG_FORMAT, CPPCLEAN
 #------------------------------------------------------------------------------#
 
-include(cmake/clang-cxx-dev-tools.cmake)
+file(GLOB_RECURSE
+     ALL_CXX_SOURCE_FILES
+     src/*.cpp programs/*.cpp include/*.h test/*.cpp
+     )
+
+# Adding clang-format target if executable is found
+find_program(CLANG_FORMAT "clang-format")
+if(CLANG_FORMAT)
+  add_custom_target(
+    clang-format
+    COMMAND clang-format
+    -i
+    -style=file
+    ${ALL_CXX_SOURCE_FILES}
+    )
+endif()
+
+# Adding cppclean target if executable is found
+find_program(CPP_CLEAN "cppclean")
+if(CPP_CLEAN)
+  add_custom_target(
+    cpp-clean
+    COMMAND cppclean
+    --include-path ../include/
+    ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+endif()

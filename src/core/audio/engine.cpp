@@ -1,16 +1,9 @@
-#include "libjungle.h"
-#include <algorithm>
+#include "libjungle/libjungle.h"
 #include <cassert>
-#include <cfloat>
 #include <chrono>
-#include <cmath>
-#include <memory>
 #include <soundio/soundio.h>
-#include <stdio.h>
-#include <stk/Stk.h>
-#include <vector>
 
-jungle::audio::Engine::Engine()
+jungle::core::audio::Engine::Engine()
 {
 	int err;
 
@@ -31,10 +24,6 @@ jungle::audio::Engine::Engine()
 	device = soundio_get_output_device(soundio, default_out_device_index);
 	if (!device)
 		throw std::runtime_error("out of memory");
-
-	stk::Stk::showWarnings(true);
-	stk::Stk::setSampleRate(jungle::SampleRateHz);
-	assert(sizeof(stk::StkFloat) == 4);
 }
 
 static float pick_best_latency(std::chrono::microseconds ticker_period)
@@ -42,20 +31,20 @@ static float pick_best_latency(std::chrono::microseconds ticker_period)
 	return (ticker_period.count() / 2.0) / 1000000.0;
 }
 
-jungle::audio::Engine::Stream
-jungle::audio::Engine::new_stream(std::chrono::microseconds ticker_period)
+jungle::core::audio::Engine::OutStream
+jungle::core::audio::Engine::new_stream(std::chrono::microseconds ticker_period)
 {
 	float best_latency_s = pick_best_latency(ticker_period);
-	return jungle::audio::Engine::Stream(this, best_latency_s);
+	return jungle::core::audio::Engine::OutStream(this, best_latency_s);
 }
 
-jungle::audio::Engine::~Engine()
+jungle::core::audio::Engine::~Engine()
 {
 	soundio_device_unref(device);
 	soundio_destroy(soundio);
 }
 
-void jungle::audio::Engine::eventloop()
+void jungle::core::audio::Engine::eventloop()
 {
 	for (;;)
 		soundio_wait_events(soundio);

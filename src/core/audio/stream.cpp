@@ -1,22 +1,14 @@
-#include "libjungle.h"
-#include <algorithm>
-#include <cfloat>
-#include <cmath>
+#include "libjungle/libjungle.h"
 #include <cstring>
-#include <future>
-#include <iostream>
-#include <memory>
 #include <soundio/soundio.h>
-#include <stdio.h>
-#include <utility>
-#include <vector>
 
 static void write_callback(struct SoundIoOutStream* outstream,
                            int frame_count_min,
                            int frame_count_max);
 
-jungle::audio::Engine::Stream::Stream(jungle::audio::Engine* parent_engine,
-                                      float latency_s)
+jungle::core::audio::Engine::OutStream::OutStream(
+    jungle::core::audio::Engine* parent_engine,
+    float latency_s)
     : latency_s(latency_s)
     , parent_engine(parent_engine)
 {
@@ -28,7 +20,7 @@ jungle::audio::Engine::Stream::Stream(jungle::audio::Engine* parent_engine,
 	outstream->write_callback = write_callback;
 
 	outstream->software_latency = latency_s;
-	outstream->sample_rate = jungle::SampleRateHz;
+	outstream->sample_rate = jungle::core::SampleRateHz;
 
 	if ((err = soundio_outstream_open(outstream)))
 		throw std::runtime_error(std::string("unable to open device: ")
@@ -46,7 +38,7 @@ jungle::audio::Engine::Stream::Stream(jungle::audio::Engine* parent_engine,
 	outstream->userdata = reinterpret_cast<void*>(ringbuf);
 
 	char* buf = soundio_ring_buffer_write_ptr(ringbuf);
-	memset(buf, 0, ringbuf_capacity);
+	std::memset(buf, 0, ringbuf_capacity);
 	soundio_ring_buffer_advance_write_ptr(ringbuf, ringbuf_capacity);
 
 	if ((err = soundio_outstream_start(outstream)))
@@ -54,7 +46,7 @@ jungle::audio::Engine::Stream::Stream(jungle::audio::Engine* parent_engine,
 		                         + soundio_strerror(err));
 }
 
-jungle::audio::Engine::Stream::~Stream()
+jungle::core::audio::Engine::OutStream::~OutStream()
 {
 	soundio_outstream_destroy(outstream);
 }
@@ -90,7 +82,7 @@ static void write_callback(struct SoundIoOutStream* outstream,
 				return;
 			for (int frame = 0; frame < frame_count; frame += 1) {
 				for (int ch = 0; ch < outstream->layout.channel_count; ch += 1) {
-					memset(areas[ch].ptr, 0, outstream->bytes_per_sample);
+					std::memset(areas[ch].ptr, 0, outstream->bytes_per_sample);
 					areas[ch].ptr += areas[ch].step;
 				}
 			}
@@ -117,7 +109,8 @@ static void write_callback(struct SoundIoOutStream* outstream,
 
 		for (int frame = 0; frame < frame_count; frame += 1) {
 			for (int ch = 0; ch < outstream->layout.channel_count; ch += 1) {
-				memcpy(areas[ch].ptr, read_ptr, outstream->bytes_per_sample);
+				std::memcpy(
+				    areas[ch].ptr, read_ptr, outstream->bytes_per_sample);
 				areas[ch].ptr += areas[ch].step;
 				read_ptr += outstream->bytes_per_sample;
 			}
