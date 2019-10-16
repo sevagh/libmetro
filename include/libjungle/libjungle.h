@@ -15,19 +15,25 @@ namespace core {
 	const float SampleRateHz = 48000.0;
 
 	namespace event {
+		// you can also think of an EventFunc as a quarter note
+		// i.e. play [strong downbeat]
 		using EventFunc = std::function<void()>;
 
+		// you can think of an EventCycle as a measure of
+		// quarter notes i.e. EventFuncs
+		// i.e. play [strong,weak] repeatedly
 		class EventCycle {
 		public:
 			std::vector<EventFunc> events;
 			EventCycle(std::vector<EventFunc> events);
 			void dispatch_next_event();
-			void schedule_meta_event(EventFunc meta_event, int elapsed_cycles);
+			void schedule_meta_event(EventFunc meta, size_t elapsed_cycles);
 
 		private:
-			std::map<int, EventFunc> metas;
-			size_t cycles;
-			size_t index;
+			std::map<size_t, EventFunc> metas;
+			std::vector<EventFunc> next_metas;
+			size_t cycle; // current measure
+			size_t index; // current quarter note
 		};
 	}; // namespace event
 
@@ -74,11 +80,8 @@ namespace core {
 				struct SoundIoRingBuffer* ringbuf;
 				OutStream() = delete; // disallow the empty constructor
 				~OutStream();
-				void toggle_mute();
-				bool is_muted();
 
 			private:
-				bool muted;
 				Engine* parent_engine;
 				OutStream(Engine* parent_engine,
 				          float latency_s); // private constructor - only

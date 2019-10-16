@@ -42,6 +42,11 @@ jungle::synthesis::timbre::Sine::Sine(float pitch_hz, float volume_pct)
 		frames[i] = (volume_pct / 100.0) * (1.0 / max_elem) * frames[i];
 }
 
+jungle::synthesis::timbre::Empty::Empty()
+    : frames(std::vector<float>(2 * jungle::core::SampleRateHz))
+{
+}
+
 // reversing the freq2midi magic in the stk Drummer code
 static float midi2freq(int midi)
 {
@@ -92,10 +97,7 @@ void jungle::synthesis::timbre::play_on_stream(
 	// in case there's stuff in the ringbuffer, we don't want to overflow
 	fill_count -= soundio_ring_buffer_fill_count(stream.ringbuf);
 
-	if (stream.is_muted())
-		std::memset(buf, 0, fill_count);
-	else
-		std::memcpy(buf, frames.data(), fill_count);
+	std::memcpy(buf, frames.data(), fill_count);
 
 	soundio_ring_buffer_advance_write_ptr(stream.ringbuf, fill_count);
 

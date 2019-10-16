@@ -20,6 +20,15 @@ namespace synthesis {
 		void play_on_stream(jungle::core::audio::Engine::OutStream& stream,
 		                    std::list<Timbre*> timbres);
 
+		class Empty : public Timbre {
+		public:
+			Empty();
+			std::vector<float>& get_frames() { return frames; }
+
+		private:
+			std::vector<float> frames;
+		};
+
 		class Sine : public Timbre {
 		public:
 			Sine(float pitch_hz, float volume_pct);

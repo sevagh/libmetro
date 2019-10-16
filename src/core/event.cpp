@@ -5,30 +5,40 @@
 jungle::core::event::EventCycle::EventCycle(
     std::vector<jungle::core::event::EventFunc> events)
     : events(events)
-    , metas(std::map<int, jungle::core::event::EventFunc>{})
-    , cycles(0)
+    , cycle(0)
     , index(0){};
 
 void jungle::core::event::EventCycle::dispatch_next_event()
 {
+	// schedule the meta event at the beginning of the measure
+	// that it was scheduled
+	while (next_metas.size() != 0 && next_metas.back() != 0) {
+		std::thread(next_metas.back()).detach();
+		next_metas.pop_back(); // destroy it after calling it
+	}
+
 	auto ret = events.at(index);
 	index++;
 
-	if (index >= events.size() - 1) {
-		index %= events.size(); // wraparound
-		cycles++;
+	if (index > events.size() - 1) {
+		index %= events.size();
+		cycle++; // new measure
+
+		// schedule meta events
+		// e.g. "mute the metronome every 4th measure
+		for (auto iter = metas.begin(); iter != metas.end(); ++iter) {
+			if (cycle != 0 && cycle % iter->first == 0) {
+				next_metas.push_back(iter->second);
+			}
+		}
 	}
 
-	if (metas.find(cycles) != metas.end()) {
-		metas[cycles]();
-		cycles = 0;
-	}
 	std::thread(ret).detach();
 }
 
 void jungle::core::event::EventCycle::schedule_meta_event(
-    jungle::core::event::EventFunc meta_event,
-    int elapsed_cycles)
+    jungle::core::event::EventFunc meta,
+    size_t elapsed_cycles)
 {
-	metas[elapsed_cycles] = meta_event;
+	metas[elapsed_cycles] = meta;
 }

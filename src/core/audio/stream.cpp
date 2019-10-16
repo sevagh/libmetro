@@ -10,7 +10,6 @@ jungle::core::audio::Engine::OutStream::OutStream(
     jungle::core::audio::Engine* parent_engine,
     float latency_s)
     : latency_s(latency_s)
-    , muted(false)
     , parent_engine(parent_engine)
 {
 	int err;
@@ -51,10 +50,6 @@ jungle::core::audio::Engine::OutStream::~OutStream()
 {
 	soundio_outstream_destroy(outstream);
 }
-
-void jungle::core::audio::Engine::OutStream::toggle_mute() { muted = !muted; }
-
-bool jungle::core::audio::Engine::OutStream::is_muted() { return muted; }
 
 static void write_callback(struct SoundIoOutStream* outstream,
                            int frame_count_min,
