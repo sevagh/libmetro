@@ -80,7 +80,7 @@ int main()
 
 	std::cout << "init audio engine" << std::endl;
 
-	auto beep = jungle::synthesis::timbre::Pulse(440.0, 100.0);
+	auto beep = jungle::synthesis::timbre::Sine(440.0, 100.0);
 
 	auto beeps = jungle::core::event::EventCycle({
 	    [&]() { jungle::synthesis::timbre::play_on_stream(stream, {&beep}); },

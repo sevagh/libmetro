@@ -4,6 +4,7 @@
 #include <atomic>
 #include <chrono>
 #include <functional>
+#include <map>
 #include <soundio/soundio.h>
 #include <thread>
 #include <vector>
@@ -21,8 +22,11 @@ namespace core {
 			std::vector<EventFunc> events;
 			EventCycle(std::vector<EventFunc> events);
 			void dispatch_next_event();
+			void schedule_meta_event(EventFunc meta_event, int elapsed_cycles);
 
 		private:
+			std::map<int, EventFunc> metas;
+			size_t cycles;
 			size_t index;
 		};
 	}; // namespace event
@@ -68,11 +72,13 @@ namespace core {
 				float latency_s;
 				struct SoundIoOutStream* outstream;
 				struct SoundIoRingBuffer* ringbuf;
-				void set_latency_s(float new_latency_s);
 				OutStream() = delete; // disallow the empty constructor
 				~OutStream();
+				void toggle_mute();
+				bool is_muted();
 
 			private:
+				bool muted;
 				Engine* parent_engine;
 				OutStream(Engine* parent_engine,
 				          float latency_s); // private constructor - only

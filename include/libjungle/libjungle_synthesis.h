@@ -20,11 +20,9 @@ namespace synthesis {
 		void play_on_stream(jungle::core::audio::Engine::OutStream& stream,
 		                    std::list<Timbre*> timbres);
 
-		class Pulse : public Timbre {
+		class Sine : public Timbre {
 		public:
-			Pulse(float pitch_hz, float volume_pct);
-			Pulse(float pitch_hz)
-			    : Pulse(pitch_hz, 100.0){};
+			Sine(float pitch_hz, float volume_pct);
 			std::vector<float>& get_frames() { return frames; }
 
 		private:
@@ -34,8 +32,6 @@ namespace synthesis {
 		class Drum : public Timbre {
 		public:
 			Drum(int midi_drum_instrument, float volume_pct);
-			Drum(int midi_drum_instrument)
-			    : Drum(midi_drum_instrument, 100.0){};
 			std::vector<float>& get_frames() { return frames; }
 
 		private:
@@ -47,15 +43,14 @@ namespace synthesis {
 		jungle::core::event::EventCycle
 		metronome_common_time(jungle::core::audio::Engine::OutStream& stream);
 
-		static std::map<std::string,
-		                std::function<jungle::core::event::EventCycle(
-		                    jungle::core::audio::Engine::OutStream&)>>
-		    time_signature_mappings = {
-		        {"4/4", metronome_common_time},
-		};
-	}; // namespace metronome
+		jungle::core::event::EventCycle
+		metronome_waltz_time(jungle::core::audio::Engine::OutStream& stream);
 
-}; // namespace synthesis
-}; // namespace jungle
+		jungle::core::event::EventCycle find_metro_by_time_signature(
+		    std::string ts,
+		    jungle::core::audio::Engine::OutStream& stream);
+	}; // namespace metronome
+};     // namespace synthesis
+};     // namespace jungle
 
 #endif /* JUNGLE_SYNTHESIS_H */

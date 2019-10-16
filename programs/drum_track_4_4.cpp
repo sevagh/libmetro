@@ -20,9 +20,9 @@ int main(int argc, char** argv)
 	std::cout << "init audio engine" << std::endl;
 	std::cout << "Generating tones" << std::endl;
 
-	auto hihat = jungle::synthesis::timbre::Drum(42);
-	auto snare = jungle::synthesis::timbre::Drum(38);
-	auto bass = jungle::synthesis::timbre::Drum(45);
+	auto hihat = jungle::synthesis::timbre::Drum(42, 100);
+	auto snare = jungle::synthesis::timbre::Drum(38, 100);
+	auto bass = jungle::synthesis::timbre::Drum(45, 100);
 
 	jungle::core::event::EventCycle beat22 = jungle::core::event::EventCycle(std::vector<
 	                                                                         jungle::core::event::

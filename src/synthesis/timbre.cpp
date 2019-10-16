@@ -21,7 +21,7 @@ static void stk_init()
 	});
 }
 
-jungle::synthesis::timbre::Pulse::Pulse(float pitch_hz, float volume_pct)
+jungle::synthesis::timbre::Sine::Sine(float pitch_hz, float volume_pct)
     : frames(std::vector<float>(2 * jungle::core::SampleRateHz))
 {
 	stk_init();
@@ -73,8 +73,9 @@ void jungle::synthesis::timbre::play_on_stream(
 		auto timbre_frames = timbre->get_frames();
 		assert(timbre_frames.size() == 2 * jungle::core::SampleRateHz);
 
-		for (size_t i = 0; i < frames.size(); ++i)
+		for (size_t i = 0; i < frames.size(); ++i) {
 			frames[i] += timbre_frames[i];
+		}
 	}
 
 	assert(frames.size() == 2 * jungle::core::SampleRateHz);
@@ -91,7 +92,11 @@ void jungle::synthesis::timbre::play_on_stream(
 	// in case there's stuff in the ringbuffer, we don't want to overflow
 	fill_count -= soundio_ring_buffer_fill_count(stream.ringbuf);
 
-	std::memcpy(buf, frames.data(), fill_count);
+	if (stream.is_muted())
+		std::memset(buf, 0, fill_count);
+	else
+		std::memcpy(buf, frames.data(), fill_count);
+
 	soundio_ring_buffer_advance_write_ptr(stream.ringbuf, fill_count);
 
 	// wait for how long a timbre should be

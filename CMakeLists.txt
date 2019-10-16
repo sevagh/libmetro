@@ -103,6 +103,7 @@ endfunction()
 
 jungle_program(drum_track_4_4)
 jungle_program(tap_tempo)
+jungle_program(switch_metronome)
 
 #------------------------------------------------------------------------------#
 # INSTALL
