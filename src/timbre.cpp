@@ -89,9 +89,9 @@ void jungle::synthesis::timbre::play_on_stream(
 	// outstream->software_latency
 	// http://libsound.io/doc-1.1.0/structSoundIoOutStream.html#a20aac1422d3cc64b679616bb8447f06d
 	char* buf = soundio_ring_buffer_write_ptr(stream.ringbuf);
-	size_t fill_count = stream.outstream->software_latency
-	                    * stream.outstream->sample_rate
-	                    * stream.outstream->bytes_per_frame;
+	size_t fill_count = (*stream.outstream)->software_latency
+	                    * (*stream.outstream)->sample_rate
+	                    * (*stream.outstream)->bytes_per_frame;
 	fill_count = std::min(fill_count, frames.size() * sizeof(float));
 
 	// in case there's stuff in the ringbuffer, we don't want to overflow

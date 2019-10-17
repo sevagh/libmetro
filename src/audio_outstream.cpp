@@ -14,20 +14,22 @@ jungle::core::audio::Engine::OutStream::OutStream(
 {
 	int err;
 
-	outstream = soundio_outstream_create(parent_engine->device);
+	outstream = std::make_shared<struct SoundIoOutStream*>(
+	    soundio_outstream_create(parent_engine->device));
 
-	outstream->format = SoundIoFormatFloat32NE;
-	outstream->write_callback = write_callback;
+	(*outstream)->format = SoundIoFormatFloat32NE;
+	(*outstream)->write_callback = write_callback;
 
-	outstream->software_latency = latency_s;
-	outstream->sample_rate = jungle::core::SampleRateHz;
+	(*outstream)->software_latency = latency_s;
+	(*outstream)->sample_rate = jungle::core::SampleRateHz;
 
-	if ((err = soundio_outstream_open(outstream)))
+	if ((err = soundio_outstream_open((*outstream))))
 		throw std::runtime_error(std::string("unable to open device: ")
 		                         + soundio_strerror(err));
 
-	int ringbuf_capacity = outstream->software_latency * outstream->sample_rate
-	                       * outstream->bytes_per_frame;
+	int ringbuf_capacity = (*outstream)->software_latency
+	                       * (*outstream)->sample_rate
+	                       * (*outstream)->bytes_per_frame;
 	ringbuf
 	    = soundio_ring_buffer_create(parent_engine->soundio, ringbuf_capacity);
 
@@ -35,20 +37,33 @@ jungle::core::audio::Engine::OutStream::OutStream(
 		throw std::runtime_error("unable to create ring buffer: out of "
 		                         "memory");
 
-	outstream->userdata = reinterpret_cast<void*>(ringbuf);
+	(*outstream)->userdata = reinterpret_cast<void*>(ringbuf);
 
 	char* buf = soundio_ring_buffer_write_ptr(ringbuf);
 	std::memset(buf, 0, ringbuf_capacity);
 	soundio_ring_buffer_advance_write_ptr(ringbuf, ringbuf_capacity);
 
-	if ((err = soundio_outstream_start(outstream)))
+	if ((err = soundio_outstream_start(*outstream)))
 		throw std::runtime_error(std::string("unable to start device: ")
 		                         + soundio_strerror(err));
 }
 
 jungle::core::audio::Engine::OutStream::~OutStream()
 {
-	soundio_outstream_destroy(outstream);
+	if (outstream)
+		soundio_outstream_destroy((*outstream));
+}
+
+jungle::core::audio::Engine::OutStream::OutStream(
+    const jungle::core::audio::Engine::OutStream& o)
+    : OutStream(o.parent_engine, o.latency_s){};
+
+jungle::core::audio::Engine::OutStream& jungle::core::audio::Engine::OutStream::
+operator=(const jungle::core::audio::Engine::OutStream& o)
+{
+	*this
+	    = jungle::core::audio::Engine::OutStream(o.parent_engine, o.latency_s);
+	return *this;
 }
 
 static void write_callback(struct SoundIoOutStream* outstream,

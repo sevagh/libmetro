@@ -25,14 +25,19 @@ namespace core {
 		class EventCycle {
 		public:
 			std::vector<EventFunc> events;
-			EventCycle(std::vector<EventFunc> events);
-			void dispatch_next_event();
-			void schedule_meta_event(EventFunc meta, size_t elapsed_cycles);
+
+			EventCycle::EventCycle(std::vector<EventFunc> events)
+			    : events(events)
+			    , index(0){};
+
+			void dispatch_next_event()
+			{
+				auto ret = events.at(index);
+				index = (index + 1) % events.size();
+				std::thread(ret).detach();
+			};
 
 		private:
-			std::map<size_t, EventFunc> metas;
-			std::vector<EventFunc> next_metas;
-			size_t cycle; // current measure
 			size_t index; // current quarter note
 		};
 	}; // namespace event
@@ -76,10 +81,16 @@ namespace core {
 
 			public:
 				float latency_s;
-				struct SoundIoOutStream* outstream;
+
+				// needs to be a shared_ptr for reference counting
+				std::shared_ptr<struct SoundIoOutStream*> outstream;
 				struct SoundIoRingBuffer* ringbuf;
+				OutStream(const OutStream& o); // copy constructor for use in
+				                               // vectors
 				OutStream() = delete; // disallow the empty constructor
 				~OutStream();
+				OutStream& operator=(const OutStream& o); // assignment operator
+				                                          // for use in vectors
 
 			private:
 				Engine* parent_engine;

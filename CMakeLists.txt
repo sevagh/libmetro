@@ -54,12 +54,12 @@ include_directories("${PROJECT_SOURCE_DIR}/src" "${PROJECT_SOURCE_DIR}/include" 
 link_directories(${GTEST_LIBRARY_DIRS})
 
 set(JUNGLE_SOURCES
-    src/core/tempo.cpp
-    src/core/event.cpp
-    src/core/audio/engine.cpp
-    src/core/audio/stream.cpp
-    src/synthesis/metronome.cpp
-    src/synthesis/timbre.cpp)
+    src/tempo.cpp
+    src/event.cpp
+    src/audio_engine.cpp
+    src/audio_outstream.cpp
+    src/metronome.cpp
+    src/timbre.cpp)
 
 set(JUNGLE_DEPS
     jungle_static
