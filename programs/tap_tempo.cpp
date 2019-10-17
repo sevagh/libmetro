@@ -1,5 +1,4 @@
-#include "libjungle/libjungle.h"
-#include "libjungle/libjungle_synthesis.h"
+#include "libmetro.h"
 #include <chrono>
 #include <iostream>
 #include <stdio.h>
@@ -58,7 +57,7 @@ int main()
 			auto hit_delta_us
 			    = std::chrono::duration_cast<std::chrono::microseconds>(
 			        hit_time - last_hit_time);
-			user_bpm = jungle::core::tempo::us_to_bpm(hit_delta_us);
+			user_bpm = 1000000.0 * (60.0 / hit_delta_us.count());
 
 			if (std::abs(last_user_bpm - user_bpm) < 5) {
 				std::cout << "stable bpm chosen: " << user_bpm << std::endl;
@@ -70,23 +69,23 @@ int main()
 			last_hit_time = hit_time;
 		}
 
-		jungle::core::tempo::precise_sleep_us(std::chrono::microseconds(1));
+		metro::precise_sleep_us(std::chrono::microseconds(1));
 	}
 
-	auto tempo = jungle::core::tempo::Tempo(user_bpm);
+	auto tempo = metro::Tempo(user_bpm);
 
-	auto audio_engine = jungle::core::audio::Engine();
+	auto audio_engine = metro::audio::Engine();
 	auto stream = audio_engine.new_outstream(tempo.period_us);
 
 	std::cout << "init audio engine" << std::endl;
 
-	auto beep = jungle::synthesis::timbre::Sine(440.0, 100.0);
+	auto beep = metro::timbre::Sine(440.0, 100.0);
 
-	auto beeps = jungle::core::event::EventCycle({
-	    [&]() { jungle::synthesis::timbre::play_on_stream(stream, {&beep}); },
+	auto beeps = metro::Measure({
+	    [&]() { stream.play_timbres({&beep}); },
 	});
 
-	tempo.register_event_cycle(beeps);
+	tempo.register_measure(beeps);
 	tempo.start();
 
 	audio_engine.eventloop();

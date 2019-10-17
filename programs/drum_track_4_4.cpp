@@ -1,5 +1,4 @@
-#include "libjungle/libjungle.h"
-#include "libjungle/libjungle_synthesis.h"
+#include "libmetro.h"
 #include <iostream>
 
 int main(int argc, char** argv)
@@ -10,34 +9,32 @@ int main(int argc, char** argv)
 	}
 
 	int bpm = std::stoi(argv[1]);
-	auto tempo = jungle::core::tempo::Tempo(bpm);
+	auto tempo = metro::Tempo(bpm);
 
 	std::cout << "init " << bpm << "bpm tempo ticker" << std::endl;
 
-	auto audio_engine = jungle::core::audio::Engine();
+	auto audio_engine = metro::audio::Engine();
 	auto stream = audio_engine.new_outstream(tempo.period_us);
 
 	std::cout << "init audio engine" << std::endl;
 	std::cout << "Generating tones" << std::endl;
 
-	auto hihat = jungle::synthesis::timbre::Drum(42, 100);
-	auto snare = jungle::synthesis::timbre::Drum(38, 100);
-	auto bass = jungle::synthesis::timbre::Drum(45, 100);
+	auto hihat = metro::timbre::Drum(42, 100);
+	auto snare = metro::timbre::Drum(38, 100);
+	auto bass = metro::timbre::Drum(45, 100);
 
-	jungle::core::event::EventCycle beat22 = jungle::core::event::EventCycle(std::vector<
-	                                                                         jungle::core::event::
-	                                                                             EventFunc>({
+	metro::Measure beat22(std::vector<metro::QuarterNote>({
 	    [&]() {
-		    jungle::synthesis::timbre::play_on_stream(stream, {&hihat, &snare});
+		    stream.play_timbres({&hihat, &snare});
 	    },
-	    [&]() { jungle::synthesis::timbre::play_on_stream(stream, {&hihat}); },
+	    [&]() { stream.play_timbres({&hihat}); },
 	    [&]() {
-		    jungle::synthesis::timbre::play_on_stream(stream, {&hihat, &bass});
+		    stream.play_timbres({&hihat, &bass});
 	    },
-	    [&]() { jungle::synthesis::timbre::play_on_stream(stream, {&hihat}); },
+	    [&]() { stream.play_timbres({&hihat}); },
 	}));
 
-	tempo.register_event_cycle(beat22);
+	tempo.register_measure(beat22);
 	tempo.start();
 
 	audio_engine.eventloop();

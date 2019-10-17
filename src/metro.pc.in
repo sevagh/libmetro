@@ -1,8 +1,8 @@
 prefix=@pc_prefix@
 includedir=${prefix}/include
 
-Name: libjungle
-Description: Rhythm and beat toolkit
+Name: libmetro
+Description: Metronome toolkit
 Version: @pc_version@
 Cflags: -I${includedir}
-Libs: -ljungle
+Libs: -lmetro

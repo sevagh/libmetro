@@ -4,7 +4,7 @@
 #------------------------------------------------------------------------------#
 
 cmake_minimum_required(VERSION 3.14)
-project(libjungle)
+project(libmetro)
 set(VERSION 0.0.1)
 
 enable_testing()
@@ -53,23 +53,21 @@ find_package(Stk REQUIRED)
 include_directories("${PROJECT_SOURCE_DIR}/src" "${PROJECT_SOURCE_DIR}/include" ${GTEST_INCLUDE_DIRS} ${SOUNDIO_INCLUDE_DIR} ${STK_INCLUDE_DIR})
 link_directories(${GTEST_LIBRARY_DIRS})
 
-set(JUNGLE_SOURCES
+set(METRO_SOURCES
     src/tempo.cpp
-    src/event.cpp
     src/audio_engine.cpp
     src/audio_outstream.cpp
-    src/metronome.cpp
     src/timbre.cpp)
 
-set(JUNGLE_DEPS
-    jungle_static
+set(METRO_DEPS
+    metro_static
     ${SOUNDIO_LIBRARY}
     ${STK_LIBRARY})
 
-add_library(jungle_static STATIC ${JUNGLE_SOURCES})
-add_library(jungle SHARED ${JUNGLE_SOURCES})
+add_library(metro_static STATIC ${METRO_SOURCES})
+add_library(metro SHARED ${METRO_SOURCES})
 
-target_link_libraries(jungle ${SOUNDIO_LIBRARY} ${STK_LIBRARY})
+target_link_libraries(metro ${SOUNDIO_LIBRARY} ${STK_LIBRARY})
 
 #------------------------------------------------------------------------------#
 # CLANG-TIDY
@@ -88,7 +86,7 @@ else()
 endif()
 #uncomment this
 #set_target_properties(
-#	jungle PROPERTIES
+#	metro PROPERTIES
 #	CXX_CLANG_TIDY "${DO_CLANG_TIDY}"
 #)
 
@@ -96,43 +94,43 @@ endif()
 # BINS
 #------------------------------------------------------------------------------#
 
-function(jungle_program name)
+function(metro_program name)
 	add_executable(program_${name} programs/${name}.cpp)
-	target_link_libraries(program_${name} ${JUNGLE_DEPS})
+	target_link_libraries(program_${name} ${METRO_DEPS})
 endfunction()
 
-jungle_program(drum_track_4_4)
-jungle_program(tap_tempo)
-jungle_program(switch_metronome)
+metro_program(drum_track_4_4)
+metro_program(tap_tempo)
+metro_program(metronome)
 
 #------------------------------------------------------------------------------#
 # INSTALL
 #------------------------------------------------------------------------------#
 
-install(TARGETS jungle jungle_static
+install(TARGETS metro metro_static
     RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
-install(FILES include/libjungle.h include/libjungle_synthesis.h DESTINATION include/libjungle)
+install(FILES include/libmetro.h include/libmetro_synthesis.h DESTINATION include/libmetro)
 
 set(pc_version ${VERSION})
 set(pc_prefix ${CMAKE_INSTALL_PREFIX})
 
-function(jungle_pc name)
+function(metro_pc name)
     configure_file(src/${name}.pc.in ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${name}.pc @ONLY)
     install(FILES ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${name}.pc DESTINATION lib/pkgconfig)
 endfunction()
 
-jungle_pc(jungle)
-jungle_pc(jungle_static)
+metro_pc(metro)
+metro_pc(metro_static)
 
 #------------------------------------------------------------------------------#
 # TESTS
 #------------------------------------------------------------------------------#
 
 if(GTEST_FOUND)
-	set(JUNGLE_TESTS_DEPS ${JUNGLE_DEPS} gtest gtest_main pthread)
+	set(METRO_TESTS_DEPS ${METRO_DEPS} gtest gtest_main pthread)
 endif()
 
 find_program(VALGRIND_EXEC "valgrind")
@@ -143,10 +141,10 @@ else()
     message("VALGRIND: DISABLED - install valgrind to enable")
 endif()
 
-function(jungle_gtest name)
+function(metro_gtest name)
 	if(GTEST_FOUND)
 		add_executable(test_${name} test/${name}.cpp)
-		target_link_libraries(test_${name} ${JUNGLE_TESTS_DEPS})
+		target_link_libraries(test_${name} ${METRO_TESTS_DEPS})
 
 		add_test(test_${name} ${BIN_DIR}/test_${name})
 		set_tests_properties(test_${name} PROPERTIES LABELS "test")
@@ -158,8 +156,8 @@ function(jungle_gtest name)
 	endif()
 endfunction()
 
-jungle_gtest(audio_engine)
-jungle_gtest(clock_accuracy)
+metro_gtest(audio_engine)
+metro_gtest(clock_accuracy)
 
 #------------------------------------------------------------------------------#
 # CLANG_FORMAT, CPPCLEAN

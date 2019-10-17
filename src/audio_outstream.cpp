@@ -1,4 +1,5 @@
-#include "libjungle/libjungle.h"
+#include "libmetro.h"
+#include <cassert>
 #include <cstring>
 #include <soundio/soundio.h>
 
@@ -6,9 +7,8 @@ static void write_callback(struct SoundIoOutStream* outstream,
                            int frame_count_min,
                            int frame_count_max);
 
-jungle::core::audio::Engine::OutStream::OutStream(
-    jungle::core::audio::Engine* parent_engine,
-    float latency_s)
+metro::audio::Engine::OutStream::OutStream(metro::audio::Engine* parent_engine,
+                                           float latency_s)
     : latency_s(latency_s)
     , parent_engine(parent_engine)
 {
@@ -21,7 +21,7 @@ jungle::core::audio::Engine::OutStream::OutStream(
 	(*outstream)->write_callback = write_callback;
 
 	(*outstream)->software_latency = latency_s;
-	(*outstream)->sample_rate = jungle::core::SampleRateHz;
+	(*outstream)->sample_rate = metro::SampleRateHz;
 
 	if ((err = soundio_outstream_open((*outstream))))
 		throw std::runtime_error(std::string("unable to open device: ")
@@ -48,22 +48,62 @@ jungle::core::audio::Engine::OutStream::OutStream(
 		                         + soundio_strerror(err));
 }
 
-jungle::core::audio::Engine::OutStream::~OutStream()
+metro::audio::Engine::OutStream::~OutStream()
 {
 	if (outstream)
 		soundio_outstream_destroy((*outstream));
 }
 
-jungle::core::audio::Engine::OutStream::OutStream(
-    const jungle::core::audio::Engine::OutStream& o)
+metro::audio::Engine::OutStream::OutStream(
+    const metro::audio::Engine::OutStream& o)
     : OutStream(o.parent_engine, o.latency_s){};
 
-jungle::core::audio::Engine::OutStream& jungle::core::audio::Engine::OutStream::
-operator=(const jungle::core::audio::Engine::OutStream& o)
+metro::audio::Engine::OutStream& metro::audio::Engine::OutStream::
+operator=(const metro::audio::Engine::OutStream& o)
 {
-	*this
-	    = jungle::core::audio::Engine::OutStream(o.parent_engine, o.latency_s);
+	*this = metro::audio::Engine::OutStream(o.parent_engine, o.latency_s);
 	return *this;
+}
+
+void metro::audio::Engine::OutStream::play_timbres(
+    std::list<metro::timbre::Timbre*> timbres)
+{
+	std::vector<float> frames(2 * metro::SampleRateHz);
+
+	for (auto timbre : timbres) {
+		auto timbre_frames = timbre->get_frames();
+		assert(timbre_frames.size() == 2 * metro::SampleRateHz);
+		for (size_t i = 0; i < frames.size(); ++i)
+			frames[i] += timbre_frames[i];
+	}
+
+	// fill the stream.ringbuffer with 2*48,000 samples, which should finish in
+	// outstream->software_latency
+	// http://libsound.io/doc-1.1.0/structSoundIoOutStream.html#a20aac1422d3cc64b679616bb8447f06d
+	char* buf = soundio_ring_buffer_write_ptr(ringbuf);
+	size_t fill_count = (*outstream)->software_latency
+	                    * (*outstream)->sample_rate
+	                    * (*outstream)->bytes_per_frame;
+	fill_count = std::min(fill_count, frames.size() * sizeof(float));
+
+	// in case there's stuff in the ringbuffer, we don't want to overflow
+	fill_count -= soundio_ring_buffer_fill_count(ringbuf);
+
+	std::memcpy(buf, frames.data(), fill_count);
+
+	soundio_ring_buffer_advance_write_ptr(ringbuf, fill_count);
+
+	// wait for how long a tick should be
+	metro::precise_sleep_us(
+	    std::chrono::duration_cast<std::chrono::microseconds>(
+	        std::chrono::duration<float, std::ratio<1, 1>>(latency_s)));
+
+	// then, stuff it with 0s to create a smooth transition to
+	// silence
+	fill_count = soundio_ring_buffer_capacity(ringbuf)
+	             - soundio_ring_buffer_fill_count(ringbuf);
+	std::memset(buf, 0, fill_count);
+	soundio_ring_buffer_advance_write_ptr(ringbuf, fill_count);
 }
 
 static void write_callback(struct SoundIoOutStream* outstream,

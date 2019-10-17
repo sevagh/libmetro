@@ -1,7 +1,7 @@
-#include "libjungle/libjungle.h"
+#include "libmetro.h"
 #include <gtest/gtest.h>
 
 TEST(AudioEngine, InitNoMemoryLeaks)
 {
-	auto audio_engine = jungle::core::audio::Engine();
+	auto audio_engine = metro::audio::Engine();
 }
