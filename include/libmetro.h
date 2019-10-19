@@ -105,16 +105,10 @@ namespace audio {
 		public:
 			float latency_s;
 
-			// needs to be a shared_ptr for reference counting
-			std::shared_ptr<struct SoundIoOutStream*> outstream;
 			struct SoundIoRingBuffer* ringbuf;
-			OutStream(const OutStream& o); // copy constructor for use in
-			                               // vectors
-			OutStream() = delete;          // disallow the empty constructor
+			struct SoundIoOutStream* outstream;
+			OutStream() = delete; // disallow the empty constructor
 			~OutStream();
-			OutStream& operator=(const OutStream& o); // assignment operator
-			                                          // for use in vectors
-
 			void play_timbres(std::list<timbre::Timbre*> timbres);
 
 		private:

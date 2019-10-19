@@ -14,22 +14,20 @@ metro::audio::Engine::OutStream::OutStream(metro::audio::Engine* parent_engine,
 {
 	int err;
 
-	outstream = std::make_shared<struct SoundIoOutStream*>(
-	    soundio_outstream_create(parent_engine->device));
+	outstream = soundio_outstream_create(parent_engine->device);
 
-	(*outstream)->format = SoundIoFormatFloat32NE;
-	(*outstream)->write_callback = write_callback;
+	outstream->format = SoundIoFormatFloat32NE;
+	outstream->write_callback = write_callback;
 
-	(*outstream)->software_latency = latency_s;
-	(*outstream)->sample_rate = metro::SampleRateHz;
+	outstream->software_latency = latency_s;
+	outstream->sample_rate = metro::SampleRateHz;
 
-	if ((err = soundio_outstream_open((*outstream))))
+	if ((err = soundio_outstream_open(outstream)))
 		throw std::runtime_error(std::string("unable to open device: ")
 		                         + soundio_strerror(err));
 
-	int ringbuf_capacity = (*outstream)->software_latency
-	                       * (*outstream)->sample_rate
-	                       * (*outstream)->bytes_per_frame;
+	int ringbuf_capacity = outstream->software_latency * outstream->sample_rate
+	                       * outstream->bytes_per_frame;
 	ringbuf
 	    = soundio_ring_buffer_create(parent_engine->soundio, ringbuf_capacity);
 
@@ -37,13 +35,13 @@ metro::audio::Engine::OutStream::OutStream(metro::audio::Engine* parent_engine,
 		throw std::runtime_error("unable to create ring buffer: out of "
 		                         "memory");
 
-	(*outstream)->userdata = reinterpret_cast<void*>(ringbuf);
+	outstream->userdata = reinterpret_cast<void*>(ringbuf);
 
 	char* buf = soundio_ring_buffer_write_ptr(ringbuf);
 	std::memset(buf, 0, ringbuf_capacity);
 	soundio_ring_buffer_advance_write_ptr(ringbuf, ringbuf_capacity);
 
-	if ((err = soundio_outstream_start(*outstream)))
+	if ((err = soundio_outstream_start(outstream)))
 		throw std::runtime_error(std::string("unable to start device: ")
 		                         + soundio_strerror(err));
 }
@@ -51,19 +49,23 @@ metro::audio::Engine::OutStream::OutStream(metro::audio::Engine* parent_engine,
 metro::audio::Engine::OutStream::~OutStream()
 {
 	if (outstream)
-		soundio_outstream_destroy((*outstream));
+		soundio_outstream_destroy(outstream);
 }
 
-metro::audio::Engine::OutStream::OutStream(
-    const metro::audio::Engine::OutStream& o)
-    : OutStream(o.parent_engine, o.latency_s){};
+// metro::audio::Engine::OutStream::OutStream(
+//    const metro::audio::Engine::OutStream& o)
+//{
+//	latency_s = o.latency_s;
+//	outstream = std::move(o.outstream);
+//	ringbuf = std::move(o.ringbuf);
+//}
 
-metro::audio::Engine::OutStream& metro::audio::Engine::OutStream::
-operator=(const metro::audio::Engine::OutStream& o)
-{
-	*this = metro::audio::Engine::OutStream(o.parent_engine, o.latency_s);
-	return *this;
-}
+// metro::audio::Engine::OutStream& metro::audio::Engine::OutStream::
+// operator=(const metro::audio::Engine::OutStream& o)
+//{
+//	*this = metro::audio::Engine::OutStream(o.parent_engine, o.latency_s);
+//	return *this;
+//}
 
 void metro::audio::Engine::OutStream::play_timbres(
     std::list<metro::timbre::Timbre*> timbres)
@@ -81,9 +83,8 @@ void metro::audio::Engine::OutStream::play_timbres(
 	// outstream->software_latency
 	// http://libsound.io/doc-1.1.0/structSoundIoOutStream.html#a20aac1422d3cc64b679616bb8447f06d
 	char* buf = soundio_ring_buffer_write_ptr(ringbuf);
-	size_t fill_count = (*outstream)->software_latency
-	                    * (*outstream)->sample_rate
-	                    * (*outstream)->bytes_per_frame;
+	size_t fill_count = outstream->software_latency * outstream->sample_rate
+	                    * outstream->bytes_per_frame;
 	fill_count = std::min(fill_count, frames.size() * sizeof(float));
 
 	// in case there's stuff in the ringbuffer, we don't want to overflow
