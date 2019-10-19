@@ -103,15 +103,14 @@ namespace audio {
 			friend class Engine;
 
 		public:
-			float latency_s;
-
-			struct SoundIoRingBuffer* ringbuf;
-			struct SoundIoOutStream* outstream;
 			OutStream() = delete; // disallow the empty constructor
 			~OutStream();
 			void play_timbres(std::list<timbre::Timbre*> timbres);
 
 		private:
+			float latency_s;
+			struct SoundIoRingBuffer* ringbuf;
+			struct SoundIoOutStream* outstream;
 			Engine* parent_engine;
 			OutStream(Engine* parent_engine,
 			          float latency_s); // private constructor - only

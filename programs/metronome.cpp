@@ -49,6 +49,12 @@ int main(int argc, char** argv)
 
 	int common_bpm
 	    = std::accumulate(bpms.begin(), bpms.end(), 1, std::lcm<int, int>);
+
+	if (common_bpm > 400) {
+		std::cerr << "The least common multiple of the input bpms is " << common_bpm << " - for practical concerns we can only go as high as 400" << std::endl;
+		exit(1);
+	}
+
 	auto tempo = metro::Tempo(common_bpm);
 
 	auto audio_engine = metro::audio::Engine();
