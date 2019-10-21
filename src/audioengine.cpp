@@ -1,16 +1,58 @@
+#include "audioengine.h"
+#include <iostream>
+#include <soundio/soundio.h>
+#include <string>
+#include <cstring>
+#include <chrono>
 #include "libmetro.h"
 #include <cassert>
-#include <cstring>
-#include <soundio/soundio.h>
+
+metro_private::AudioEngine::AudioEngine()
+{
+	int err;
+
+	soundio = soundio_create();
+	if (!soundio)
+		throw std::runtime_error("out of memory");
+
+	if ((err = soundio_connect(soundio)))
+		throw std::runtime_error(std::string("error connecting: ")
+		                         + soundio_strerror(err));
+
+	soundio_flush_events(soundio);
+
+	int default_out_device_index = soundio_default_output_device_index(soundio);
+	if (default_out_device_index < 0)
+		throw std::runtime_error("no output device found");
+
+	device = soundio_get_output_device(soundio, default_out_device_index);
+	if (!device)
+		throw std::runtime_error("out of memory");
+}
+
+metro_private::AudioEngine::~AudioEngine()
+{
+	soundio_device_unref(device);
+	soundio_destroy(soundio);
+}
+
+static float pick_best_latency(std::chrono::microseconds ticker_period)
+{
+	return (ticker_period.count() / 2.0) / 1000000.0;
+}
+
+metro_private::AudioEngine::OutStream metro_private::AudioEngine::new_outstream(std::chrono::microseconds ticker_period)
+{
+	float best_latency_s = pick_best_latency(ticker_period);
+	return metro_private::AudioEngine::OutStream(this, best_latency_s);
+}
 
 static void write_callback(struct SoundIoOutStream* outstream,
                            int frame_count_min,
                            int frame_count_max);
 
-metro::audio::Engine::OutStream::OutStream(metro::audio::Engine* parent_engine,
-                                           float latency_s)
+metro_private::AudioEngine::OutStream::OutStream(metro_private::AudioEngine* parent_engine, float latency_s)
     : latency_s(latency_s)
-    , parent_engine(parent_engine)
 {
 	int err;
 
@@ -28,8 +70,8 @@ metro::audio::Engine::OutStream::OutStream(metro::audio::Engine* parent_engine,
 
 	int ringbuf_capacity = outstream->software_latency * outstream->sample_rate
 	                       * outstream->bytes_per_frame;
-	ringbuf
-	    = soundio_ring_buffer_create(parent_engine->soundio, ringbuf_capacity);
+	ringbuf = soundio_ring_buffer_create(
+	    parent_engine->soundio, ringbuf_capacity);
 
 	if (!ringbuf)
 		throw std::runtime_error("unable to create ring buffer: out of "
@@ -46,34 +88,29 @@ metro::audio::Engine::OutStream::OutStream(metro::audio::Engine* parent_engine,
 		                         + soundio_strerror(err));
 }
 
-metro::audio::Engine::OutStream::~OutStream()
+metro_private::AudioEngine::OutStream::~OutStream()
 {
-	if (outstream)
-		soundio_outstream_destroy(outstream);
+	soundio_ring_buffer_destroy(ringbuf);
+	soundio_outstream_destroy(outstream);
 }
 
-// metro::audio::Engine::OutStream::OutStream(
-//    const metro::audio::Engine::OutStream& o)
-//{
-//	latency_s = o.latency_s;
-//	outstream = std::move(o.outstream);
-//	ringbuf = std::move(o.ringbuf);
-//}
+void metro_private::AudioEngine::OutStream::add_measure(metro::Measure& measure)
+{
+	measures.push_back(measure);
+	measure_indices.push_back(0);
+}
 
-// metro::audio::Engine::OutStream& metro::audio::Engine::OutStream::
-// operator=(const metro::audio::Engine::OutStream& o)
-//{
-//	*this = metro::audio::Engine::OutStream(o.parent_engine, o.latency_s);
-//	return *this;
-//}
-
-void metro::audio::Engine::OutStream::play_timbres(
-    std::list<metro::timbre::Timbre*> timbres)
+void metro_private::AudioEngine::OutStream::play_next_note()
 {
 	std::vector<float> frames(2 * metro::SampleRateHz);
 
-	for (auto timbre : timbres) {
-		auto timbre_frames = timbre->get_frames();
+	for (size_t i = 0; i < measures.size(); ++i) {
+		auto measure_idx = measure_indices[i];
+		auto timbre = measures[i][measure_idx];
+
+		measure_indices[i] = ++measure_indices[i] % measure_indices.size(); //wraparound
+
+		auto timbre_frames = timbre.get_frames();
 		assert(timbre_frames.size() == 2 * metro::SampleRateHz);
 		for (size_t i = 0; i < frames.size(); ++i)
 			frames[i] += timbre_frames[i];

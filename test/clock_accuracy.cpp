@@ -27,7 +27,7 @@ TEST_P(TempoTest, ClockAccuracy)
 	          .count(); // amount of time we expect to elapse between events
 	tolerance *= expected_delta;
 
-	metro::Measure record_time(std::vector<metro::QuarterNote>({
+	metro::Measure record_time(std::vector<metro::Note>({
 	    [&]() {
 		    times.push_back(
 		        std::chrono::duration_cast<std::chrono::microseconds>(

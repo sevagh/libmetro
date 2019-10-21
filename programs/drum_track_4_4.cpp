@@ -13,8 +13,7 @@ int main(int argc, char** argv)
 
 	std::cout << "init " << bpm << "bpm tempo ticker" << std::endl;
 
-	auto audio_engine = metro::audio::Engine();
-	auto stream = audio_engine.new_outstream(tempo.period_us);
+	auto stream = metro::OutStream(tempo.period_us);
 
 	std::cout << "init audio engine" << std::endl;
 	std::cout << "Generating tones" << std::endl;
@@ -23,19 +22,19 @@ int main(int argc, char** argv)
 	auto snare = metro::timbre::Drum(38, 100);
 	auto bass = metro::timbre::Drum(45, 100);
 
-	metro::Measure beat22(std::vector<metro::QuarterNote>({
-	    [&]() {
+	metro::Measure beat22(std::vector<metro::Note>({
+	    metro::Note([&]() {
 		    stream.play_timbres({&hihat, &snare});
-	    },
-	    [&]() { stream.play_timbres({&hihat}); },
-	    [&]() {
+	    }),
+	    metro::Note([&]() { stream.play_timbres({&hihat}); }),
+	    metro::Note([&]() {
 		    stream.play_timbres({&hihat, &bass});
-	    },
-	    [&]() { stream.play_timbres({&hihat}); },
+	    }),
+	    metro::Note([&]() { stream.play_timbres({&hihat}); }),
 	}));
 
 	tempo.register_measure(beat22);
 	tempo.start();
 
-	audio_engine.eventloop();
+	metro::eventloop();
 }

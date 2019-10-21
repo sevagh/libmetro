@@ -1,8 +1,0 @@
-prefix=@pc_prefix@
-includedir=${prefix}/include
-
-Name: libmetro
-Description: Metronome toolkit
-Version: @pc_version@
-Cflags: -I${includedir}
-Libs: -lmetro

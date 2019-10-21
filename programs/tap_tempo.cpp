@@ -73,22 +73,20 @@ int main()
 	}
 
 	auto tempo = metro::Tempo(user_bpm);
-
-	auto audio_engine = metro::audio::Engine();
-	auto stream = audio_engine.new_outstream(tempo.period_us);
+	auto stream = metro::OutStream(tempo.period_us);
 
 	std::cout << "init audio engine" << std::endl;
 
 	auto beep = metro::timbre::Sine(440.0, 100.0);
 
 	auto beeps = metro::Measure({
-	    [&]() { stream.play_timbres({&beep}); },
+		metro::Note([&]() { stream.play_timbres({&beep}); }),
 	});
 
 	tempo.register_measure(beeps);
 	tempo.start();
 
-	audio_engine.eventloop();
+	metro::eventloop();
 
 	return 0;
 }

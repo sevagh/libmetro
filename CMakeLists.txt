@@ -54,19 +54,15 @@ include_directories("${PROJECT_SOURCE_DIR}/src" "${PROJECT_SOURCE_DIR}/include" 
 link_directories(${GTEST_LIBRARY_DIRS})
 
 set(METRO_SOURCES
-    src/tempo.cpp
-    src/audio_engine.cpp
-    src/audio_outstream.cpp
-    src/timbre.cpp)
+    src/audioengine.cpp
+    src/timing.cpp
+    src/music.cpp)
 
 set(METRO_DEPS
-    metro_static
     ${SOUNDIO_LIBRARY}
     ${STK_LIBRARY})
 
-add_library(metro_static STATIC ${METRO_SOURCES})
 add_library(metro SHARED ${METRO_SOURCES})
-
 target_link_libraries(metro ${SOUNDIO_LIBRARY} ${STK_LIBRARY})
 
 #------------------------------------------------------------------------------#
@@ -99,31 +95,21 @@ function(metro_program name)
 	target_link_libraries(program_${name} ${METRO_DEPS})
 endfunction()
 
-metro_program(drum_track_4_4)
-metro_program(tap_tempo)
-metro_program(metronome)
+#metro_program(drum_track_4_4)
+#metro_program(tap_tempo)
+#metro_program(metronome)
+#metro_program(click_track)
 
 #------------------------------------------------------------------------------#
 # INSTALL
 #------------------------------------------------------------------------------#
 
-install(TARGETS metro metro_static
+install(TARGETS metro
     RUNTIME DESTINATION ${CMAKE_INSTALL_FULL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
 install(FILES include/libmetro.h include/libmetro_synthesis.h DESTINATION include/libmetro)
-
-set(pc_version ${VERSION})
-set(pc_prefix ${CMAKE_INSTALL_PREFIX})
-
-function(metro_pc name)
-    configure_file(src/${name}.pc.in ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${name}.pc @ONLY)
-    install(FILES ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}/${name}.pc DESTINATION lib/pkgconfig)
-endfunction()
-
-metro_pc(metro)
-metro_pc(metro_static)
 
 #------------------------------------------------------------------------------#
 # TESTS
@@ -156,8 +142,8 @@ function(metro_gtest name)
 	endif()
 endfunction()
 
-metro_gtest(audio_engine)
-metro_gtest(clock_accuracy)
+#metro_gtest(clock_accuracy)
+metro_gtest(notes)
 
 #------------------------------------------------------------------------------#
 # CLANG_FORMAT, CPPCLEAN

@@ -51,14 +51,15 @@ int main(int argc, char** argv)
 	    = std::accumulate(bpms.begin(), bpms.end(), 1, std::lcm<int, int>);
 
 	if (common_bpm > 400) {
-		std::cerr << "The least common multiple of the input bpms is " << common_bpm << " - for practical concerns we can only go as high as 400" << std::endl;
+		std::cerr << "The least common multiple of the input bpms is "
+		          << common_bpm
+		          << " - for practical concerns we can only go as high as 400"
+		          << std::endl;
 		exit(1);
 	}
 
 	auto tempo = metro::Tempo(common_bpm);
-
-	auto audio_engine = metro::audio::Engine();
-	auto stream = audio_engine.new_outstream(tempo.period_us);
+	auto stream = metro::OutStream(tempo.period_us);
 
 	std::vector<int> quarter_notes_per_measure(argc - 1);
 
@@ -92,7 +93,7 @@ int main(int argc, char** argv)
 	// assumptions based on soundio's latency are nullified
 	auto empty = metro::timbre::Empty();
 
-	std::vector<metro::QuarterNote> metro_vec(total_quarter_notes);
+	std::vector<metro::Note> metro_vec(total_quarter_notes);
 
 	size_t metro_vec_idx = 0;
 	size_t hop;
@@ -106,36 +107,36 @@ int main(int argc, char** argv)
 			for (size_t j = 0; j < ( size_t )quarter_notes_per_measure[i]; ++j) {
 				if (timesigs[i].compare("4/4") == 0) {
 					if (j == 0)
-						metro_vec[metro_vec_idx++] = [&]() {
+						metro_vec[metro_vec_idx++] = metro::Note([&]() {
 							stream.play_timbres({&strong_downbeat});
-						};
+						});
 					else if (j == hop)
 						metro_vec[metro_vec_idx++]
-						    = [&]() { stream.play_timbres({&strong_beat}); };
+						    = metro::Note([&]() { stream.play_timbres({&strong_beat}); });
 					else if (j == 2 * hop)
 						metro_vec[metro_vec_idx++]
-						    = [&]() { stream.play_timbres({&weak_downbeat}); };
+						    = metro::Note([&]() { stream.play_timbres({&weak_downbeat}); });
 					else if (j == 3 * hop)
 						metro_vec[metro_vec_idx++]
-						    = [&]() { stream.play_timbres({&weak_beat}); };
+						    = metro::Note([&]() { stream.play_timbres({&weak_beat}); });
 					else
 						metro_vec[metro_vec_idx++]
-						    = [&]() { stream.play_timbres({&empty}); };
+						    = metro::Note([&]() { stream.play_timbres({&empty}); });
 				}
 				else if (timesigs[i].compare("3/4") == 0) {
 					if (j == 0)
-						metro_vec[metro_vec_idx++] = [&]() {
+						metro_vec[metro_vec_idx++] = metro::Note([&]() {
 							stream.play_timbres({&strong_downbeat});
-						};
+						});
 					else if (j == hop)
 						metro_vec[metro_vec_idx++]
-						    = [&, i]() { stream.play_timbres({&weak_beat}); };
+						    = metro::Note([&]() { stream.play_timbres({&weak_beat}); });
 					else if (j == 2 * hop)
 						metro_vec[metro_vec_idx++]
-						    = [&, i]() { stream.play_timbres({&weak_beat}); };
+						    = metro::Note([&]() { stream.play_timbres({&weak_beat}); });
 					else
 						metro_vec[metro_vec_idx++]
-						    = [&, i]() { stream.play_timbres({&empty}); };
+						    = metro::Note([&]() { stream.play_timbres({&empty}); });
 				}
 			}
 		}
@@ -146,7 +147,7 @@ int main(int argc, char** argv)
 	tempo.register_measure(final_metro);
 	tempo.start();
 
-	audio_engine.eventloop();
+	metro::eventloop();
 
 	return 0;
 }
