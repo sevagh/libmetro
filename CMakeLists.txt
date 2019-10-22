@@ -59,6 +59,7 @@ set(METRO_SOURCES
     src/music.cpp)
 
 set(METRO_DEPS
+    metro
     ${SOUNDIO_LIBRARY}
     ${STK_LIBRARY})
 

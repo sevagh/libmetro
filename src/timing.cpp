@@ -1,6 +1,6 @@
-#include "libmetro.h"
 #include "timing.h"
 #include "audioengine.h"
+#include "libmetro.h"
 #include <atomic>
 #include <chrono>
 #include <thread>
@@ -17,74 +17,94 @@ void metro::precise_sleep_us(std::chrono::microseconds dur_us)
 metro_private::Tempo::Tempo(int bpm)
     : bpm(bpm)
     , engine(metro_private::AudioEngine())
-    , ticker_on({true})
+    , period_us_2(std::chrono::duration_cast<std::chrono::microseconds>(
+          std::chrono::duration<double, std::micro>(2.0 * 1000000.0
+                                                    * (60.0 / bpm))))
+    , period_us_4(std::chrono::duration_cast<std::chrono::microseconds>(
+          std::chrono::duration<double, std::micro>(1000000.0 * (60.0 / bpm))))
+    , period_us_8(std::chrono::duration_cast<std::chrono::microseconds>(
+          std::chrono::duration<double, std::micro>(1.0 / 2.0 * 1000000.0
+                                                    * (60.0 / bpm))))
+    , period_us_16(std::chrono::duration_cast<std::chrono::microseconds>(
+          std::chrono::duration<double, std::micro>(1.0 / 4.0 * 1000000.0
+                                                    * (60.0 / bpm))))
+    , stream_2(engine.new_outstream(period_us_2))
+    , stream_4(engine.new_outstream(period_us_4))
+    , stream_8(engine.new_outstream(period_us_8))
+    , stream_16(engine.new_outstream(period_us_16))
+    , tickers_on({true})
 {
 	if (!std::chrono::steady_clock::is_steady)
 		throw std::runtime_error("std::chrono::steady_clock is unsteady on "
 		                         "this platform");
-
-	period_us[metro::NoteLength::Half] = std::chrono::duration_cast<std::chrono::microseconds>(
-	    std::chrono::duration<double, std::micro>(2.0 * 1000000.0 * (60.0 / bpm)));
-	period_us[metro::NoteLength::Quarter] = std::chrono::duration_cast<std::chrono::microseconds>(
-	    std::chrono::duration<double, std::micro>(1000000.0 * (60.0 / bpm)));
-	period_us[metro::NoteLength::Eighth] = std::chrono::duration_cast<std::chrono::microseconds>(
-	    std::chrono::duration<double, std::micro>(1.0/2.0 * 1000000.0 * (60.0 / bpm)));
-	period_us[metro::NoteLength::Sixteenth] = std::chrono::duration_cast<std::chrono::microseconds>(
-	    std::chrono::duration<double, std::micro>(1.0/4.0 * 1000000.0 * (60.0 / bpm)));
-
-	streams[metro::NoteLength::Half] = engine.new_outstream(period_us_2);
-	streams[metro::NoteLength::Quarter] = engine.new_outstream(period_us_4);
-	streams[metro::NoteLength::Eighth] = engine.new_outstream(period_us_8);
-	streams[metro::NoteLength::Sixteenth] = engine.new_outstream(period_us_16);
 }
 
-void metro_private::Tempo::add_measure(metro::NoteLength note_length, metro::Measure& measure)
+void metro_private::Tempo::add_measure(metro::NoteLength note_length,
+                                       metro::Measure& measure)
 {
-	streams[note_length].add_measure(measure);
+	switch (note_length) {
+	case metro::NoteLength::Half:
+		stream_2.add_measure(measure);
+		break;
+	case metro::NoteLength::Quarter:
+		stream_4.add_measure(measure);
+		break;
+	case metro::NoteLength::Eighth:
+		stream_8.add_measure(measure);
+		break;
+	case metro::NoteLength::Sixteenth:
+		stream_16.add_measure(measure);
+		break;
+	}
 }
 
 void metro_private::Tempo::start()
 {
-	auto blocking_ticker_half_notes = [&](std::atomic<bool>& on) {
+	auto blocking_ticker_2 = [&](std::atomic<bool>& on) {
 		while (on) {
-			streams[metro::NoteLength::Half].play_next_note();
-			metro::precise_sleep_us(period_us[metro::NoteLength::Half]);
+			stream_2.play_next_note();
+			metro::precise_sleep_us(period_us_2);
 		}
 	};
 
-	auto blocking_ticker_quarter_notes = [&](std::atomic<bool>& on) {
+	auto blocking_ticker_4 = [&](std::atomic<bool>& on) {
 		while (on) {
-			streams[metro::NoteLength::Quarter].play_next_note();
-			metro::precise_sleep_us(period_us[metro::NoteLength::Quarter]);
+			stream_4.play_next_note();
+			metro::precise_sleep_us(period_us_4);
 		}
 	};
 
-	auto blocking_ticker_eighth_notes = [&](std::atomic<bool>& on) {
+	auto blocking_ticker_8 = [&](std::atomic<bool>& on) {
 		while (on) {
-			streams[metro::NoteLength::Eighth].play_next_note();
-			metro::precise_sleep_us(period_us[metro::NoteLength::Eighth]);
+			stream_8.play_next_note();
+			metro::precise_sleep_us(period_us_8);
 		}
 	};
 
-	auto blocking_ticker_sixteenth_notes = [&](std::atomic<bool>& on) {
+	auto blocking_ticker_16 = [&](std::atomic<bool>& on) {
 		while (on) {
-			streams[metro::NoteLength::Sixteenth].play_next_note();
-			metro::precise_sleep_us(period_us[metro::NoteLength::Sixteenth]);
+			stream_16.play_next_note();
+			metro::precise_sleep_us(period_us_16);
 		}
 	};
 
-	ticker_thread[metro::NoteLength::Half] = std::thread(blocking_ticker_half_notes, std::ref(ticker_on));
-	ticker_thread[metro::NoteLength::Quarter] = std::thread(blocking_ticker_quarter_notes, std::ref(ticker_on));
-	ticker_thread[metro::NoteLength::Eighth] = std::thread(blocking_ticker_eighth_notes, std::ref(ticker_on));
-	ticker_thread[metro::NoteLength::Sixteenth] = std::thread(blocking_ticker_sixteenth_notes, std::ref(ticker_on));
+	ticker_thread_2 = std::thread(blocking_ticker_2, std::ref(tickers_on));
+	ticker_thread_4 = std::thread(blocking_ticker_4, std::ref(tickers_on));
+	ticker_thread_8 = std::thread(blocking_ticker_8, std::ref(tickers_on));
+	ticker_thread_16 = std::thread(blocking_ticker_16, std::ref(tickers_on));
 }
 
 void metro_private::Tempo::stop()
 {
-	ticker_on = false;
-	for (size_t i = 0; i < 4; ++i)
-		if (ticker_threads[i].joinable())
-			ticker_threads[i].join();
+	tickers_on = false;
+	if (ticker_thread_2.joinable())
+		ticker_thread_2.join();
+	if (ticker_thread_4.joinable())
+		ticker_thread_4.join();
+	if (ticker_thread_8.joinable())
+		ticker_thread_8.join();
+	if (ticker_thread_16.joinable())
+		ticker_thread_16.join();
 }
 
 metro_private::Tempo::~Tempo() { stop(); }

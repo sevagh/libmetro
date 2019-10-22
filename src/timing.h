@@ -10,7 +10,6 @@
 namespace metro_private {
 class Tempo {
 public:
-	int bpm;
 	Tempo(int bpm);
 	~Tempo();
 
@@ -19,12 +18,26 @@ public:
 	void add_measure(metro::NoteLength note_length, metro::Measure& measure);
 
 private:
-	AudioEngine engine;
-	AudioEngine::OutStream& streams[4];
+	int bpm;
 
-	std::atomic<bool> ticker_on;
-	std::thread ticker_threads[4];
-	std::chrono::microseconds period_us[4];
+	AudioEngine engine;
+
+	std::chrono::microseconds period_us_2;
+	std::chrono::microseconds period_us_4;
+	std::chrono::microseconds period_us_8;
+	std::chrono::microseconds period_us_16;
+
+	AudioEngine::OutStream stream_2;
+	AudioEngine::OutStream stream_4;
+	AudioEngine::OutStream stream_8;
+	AudioEngine::OutStream stream_16;
+
+	std::atomic<bool> tickers_on;
+
+	std::thread ticker_thread_2;
+	std::thread ticker_thread_4;
+	std::thread ticker_thread_8;
+	std::thread ticker_thread_16;
 };
 }; // namespace metro_private
 

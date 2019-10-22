@@ -111,17 +111,17 @@ int main(int argc, char** argv)
 							stream.play_timbres({&strong_downbeat});
 						});
 					else if (j == hop)
-						metro_vec[metro_vec_idx++]
-						    = metro::Note([&]() { stream.play_timbres({&strong_beat}); });
+						metro_vec[metro_vec_idx++] = metro::Note(
+						    [&]() { stream.play_timbres({&strong_beat}); });
 					else if (j == 2 * hop)
-						metro_vec[metro_vec_idx++]
-						    = metro::Note([&]() { stream.play_timbres({&weak_downbeat}); });
+						metro_vec[metro_vec_idx++] = metro::Note(
+						    [&]() { stream.play_timbres({&weak_downbeat}); });
 					else if (j == 3 * hop)
-						metro_vec[metro_vec_idx++]
-						    = metro::Note([&]() { stream.play_timbres({&weak_beat}); });
+						metro_vec[metro_vec_idx++] = metro::Note(
+						    [&]() { stream.play_timbres({&weak_beat}); });
 					else
-						metro_vec[metro_vec_idx++]
-						    = metro::Note([&]() { stream.play_timbres({&empty}); });
+						metro_vec[metro_vec_idx++] = metro::Note(
+						    [&]() { stream.play_timbres({&empty}); });
 				}
 				else if (timesigs[i].compare("3/4") == 0) {
 					if (j == 0)
@@ -129,14 +129,14 @@ int main(int argc, char** argv)
 							stream.play_timbres({&strong_downbeat});
 						});
 					else if (j == hop)
-						metro_vec[metro_vec_idx++]
-						    = metro::Note([&]() { stream.play_timbres({&weak_beat}); });
+						metro_vec[metro_vec_idx++] = metro::Note(
+						    [&]() { stream.play_timbres({&weak_beat}); });
 					else if (j == 2 * hop)
-						metro_vec[metro_vec_idx++]
-						    = metro::Note([&]() { stream.play_timbres({&weak_beat}); });
+						metro_vec[metro_vec_idx++] = metro::Note(
+						    [&]() { stream.play_timbres({&weak_beat}); });
 					else
-						metro_vec[metro_vec_idx++]
-						    = metro::Note([&]() { stream.play_timbres({&empty}); });
+						metro_vec[metro_vec_idx++] = metro::Note(
+						    [&]() { stream.play_timbres({&empty}); });
 				}
 			}
 		}

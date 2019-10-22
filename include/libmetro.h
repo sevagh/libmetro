@@ -2,10 +2,10 @@
 #define LIBMETRO_H
 
 #include <chrono>
-#include <vector>
 #include <experimental/propagate_const>
-#include <memory>
 #include <list>
+#include <memory>
+#include <vector>
 
 namespace metro {
 
@@ -20,15 +20,21 @@ enum Timbre { Sine, Drum };
 class Note {
 public:
 	Note();
-	std::vector<float> frames;
 	Note(Timbre timbre, float frequency, float volume);
+	float& operator[](size_t index);
+	const float& operator[](size_t index) const;
+	std::vector<float>& get_frames();
+
+private:
+	std::vector<float> frames;
 };
 
 class Measure {
 public:
 	Measure(int num_notes);
-	void add_notes(size_t note_index, std::list<Note&> simultaneous_notes);
+	void add_notes(size_t note_index, std::list<Note*> simultaneous_notes);
 	Note& operator[](size_t index);
+	const Note& operator[](size_t index) const;
 
 private:
 	std::vector<Note> notes;
@@ -43,7 +49,7 @@ public:
 	void add_measure(NoteLength note_length, Measure& measure);
 	void loop();
 
-// https://en.cppreference.com/w/cpp/language/pimpl
+	// https://en.cppreference.com/w/cpp/language/pimpl
 private:
 	class impl;
 	std::experimental::propagate_const<std::unique_ptr<impl>> p_impl;

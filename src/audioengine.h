@@ -29,7 +29,7 @@ public:
 		float latency_s;
 		struct SoundIoRingBuffer* ringbuf;
 		struct SoundIoOutStream* outstream;
-		std::vector<metro::Measure&> measures;
+		std::vector<metro::Measure*> measures;
 		std::vector<size_t> measure_indices;
 	};
 

@@ -80,7 +80,7 @@ int main()
 	auto beep = metro::timbre::Sine(440.0, 100.0);
 
 	auto beeps = metro::Measure({
-		metro::Note([&]() { stream.play_timbres({&beep}); }),
+	    metro::Note([&]() { stream.play_timbres({&beep}); }),
 	});
 
 	tempo.register_measure(beeps);

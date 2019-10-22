@@ -1,11 +1,12 @@
 #include "audioengine.h"
+#include "libmetro.h"
+#include <cassert>
+#include <chrono>
+#include <cstring>
+#include <functional>
 #include <iostream>
 #include <soundio/soundio.h>
 #include <string>
-#include <cstring>
-#include <chrono>
-#include "libmetro.h"
-#include <cassert>
 
 metro_private::AudioEngine::AudioEngine()
 {
@@ -41,7 +42,8 @@ static float pick_best_latency(std::chrono::microseconds ticker_period)
 	return (ticker_period.count() / 2.0) / 1000000.0;
 }
 
-metro_private::AudioEngine::OutStream metro_private::AudioEngine::new_outstream(std::chrono::microseconds ticker_period)
+metro_private::AudioEngine::OutStream metro_private::AudioEngine::new_outstream(
+    std::chrono::microseconds ticker_period)
 {
 	float best_latency_s = pick_best_latency(ticker_period);
 	return metro_private::AudioEngine::OutStream(this, best_latency_s);
@@ -51,7 +53,9 @@ static void write_callback(struct SoundIoOutStream* outstream,
                            int frame_count_min,
                            int frame_count_max);
 
-metro_private::AudioEngine::OutStream::OutStream(metro_private::AudioEngine* parent_engine, float latency_s)
+metro_private::AudioEngine::OutStream::OutStream(
+    metro_private::AudioEngine* parent_engine,
+    float latency_s)
     : latency_s(latency_s)
 {
 	int err;
@@ -70,8 +74,8 @@ metro_private::AudioEngine::OutStream::OutStream(metro_private::AudioEngine* par
 
 	int ringbuf_capacity = outstream->software_latency * outstream->sample_rate
 	                       * outstream->bytes_per_frame;
-	ringbuf = soundio_ring_buffer_create(
-	    parent_engine->soundio, ringbuf_capacity);
+	ringbuf
+	    = soundio_ring_buffer_create(parent_engine->soundio, ringbuf_capacity);
 
 	if (!ringbuf)
 		throw std::runtime_error("unable to create ring buffer: out of "
@@ -96,7 +100,7 @@ metro_private::AudioEngine::OutStream::~OutStream()
 
 void metro_private::AudioEngine::OutStream::add_measure(metro::Measure& measure)
 {
-	measures.push_back(measure);
+	measures.push_back(&measure);
 	measure_indices.push_back(0);
 }
 
@@ -106,14 +110,12 @@ void metro_private::AudioEngine::OutStream::play_next_note()
 
 	for (size_t i = 0; i < measures.size(); ++i) {
 		auto measure_idx = measure_indices[i];
-		auto timbre = measures[i][measure_idx];
+		measure_indices[i]
+		    = ++measure_indices[i] % measure_indices.size(); // wraparound
 
-		measure_indices[i] = ++measure_indices[i] % measure_indices.size(); //wraparound
-
-		auto timbre_frames = timbre.get_frames();
-		assert(timbre_frames.size() == 2 * metro::SampleRateHz);
-		for (size_t i = 0; i < frames.size(); ++i)
-			frames[i] += timbre_frames[i];
+		auto note = (*measures[i])[measure_idx];
+		for (size_t j = 0; j < frames.size(); ++j)
+			frames[j] += note[j];
 	}
 
 	// fill the stream.ringbuffer with 2*48,000 samples, which should finish in
