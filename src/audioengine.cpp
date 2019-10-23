@@ -1,5 +1,5 @@
-#include "audioengine.h"
 #include "libmetro.h"
+#include "libmetro_private.h"
 #include <cassert>
 #include <chrono>
 #include <cstring>
@@ -29,6 +29,12 @@ metro_private::AudioEngine::AudioEngine()
 	device = soundio_get_output_device(soundio, default_out_device_index);
 	if (!device)
 		throw std::runtime_error("out of memory");
+}
+
+void metro_private::AudioEngine::eventloop()
+{
+	for (;;)
+		soundio_wait_events(soundio);
 }
 
 metro_private::AudioEngine::~AudioEngine()
@@ -100,7 +106,7 @@ metro_private::AudioEngine::OutStream::~OutStream()
 
 void metro_private::AudioEngine::OutStream::add_measure(metro::Measure& measure)
 {
-	measures.push_back(&measure);
+	measures.push_back(measure);
 	measure_indices.push_back(0);
 }
 
@@ -112,8 +118,7 @@ void metro_private::AudioEngine::OutStream::play_next_note()
 		auto measure_idx = measure_indices[i];
 		measure_indices[i]
 		    = ++measure_indices[i] % measure_indices.size(); // wraparound
-
-		auto note = (*measures[i])[measure_idx];
+		auto note = measures[i][measure_idx];
 		for (size_t j = 0; j < frames.size(); ++j)
 			frames[j] += note[j];
 	}
@@ -124,6 +129,7 @@ void metro_private::AudioEngine::OutStream::play_next_note()
 	char* buf = soundio_ring_buffer_write_ptr(ringbuf);
 	size_t fill_count = outstream->software_latency * outstream->sample_rate
 	                    * outstream->bytes_per_frame;
+
 	fill_count = std::min(fill_count, frames.size() * sizeof(float));
 
 	// in case there's stuff in the ringbuffer, we don't want to overflow

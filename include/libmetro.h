@@ -2,10 +2,13 @@
 #define LIBMETRO_H
 
 #include <chrono>
-#include <experimental/propagate_const>
 #include <list>
-#include <memory>
 #include <vector>
+
+// forward declare the private implementation of Metronome
+namespace metro_private {
+class MetronomePrivate;
+};
 
 namespace metro {
 
@@ -35,6 +38,7 @@ public:
 	void add_notes(size_t note_index, std::list<Note*> simultaneous_notes);
 	Note& operator[](size_t index);
 	const Note& operator[](size_t index) const;
+	std::vector<Note>& get_notes();
 
 private:
 	std::vector<Note> notes;
@@ -45,14 +49,14 @@ enum NoteLength { Half, Quarter, Eighth, Sixteenth };
 class Metronome {
 public:
 	Metronome(int bpm);
+	~Metronome();
 
 	void add_measure(NoteLength note_length, Measure& measure);
 	void loop();
 
 	// https://en.cppreference.com/w/cpp/language/pimpl
 private:
-	class impl;
-	std::experimental::propagate_const<std::unique_ptr<impl>> p_impl;
+	metro_private::MetronomePrivate* p_impl;
 };
 }; // namespace metro
 

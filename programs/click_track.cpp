@@ -14,19 +14,11 @@ int main(int argc, char** argv)
 	std::cout << "init audio engine" << std::endl;
 	std::cout << "Generating tones" << std::endl;
 
-	auto hihat = metro::Note(metro::Timbre::Drum, 42.0, 100.0);
-	auto snare = metro::Note(metro::Timbre::Drum, 38.0, 100.0);
-	auto bass = metro::Note(metro::Timbre::Drum, 45.0, 100.0);
+	auto beep = metro::Note(metro::Timbre::Sine, 440.0, 100.0);
 
-	metro::Measure snares({snare, snare, snare, snare});
-	metro::Measure hihats(4);
-	hihats[0] = hihat;
-	metro::Measure basses(4);
-	basses[2] = bass;
+	metro::Measure click(1);
+	click.add_notes(0, {&beep});
 
-	metronome.add_measure(metro::NoteLength::Quarter, snares);
-	metronome.add_measure(metro::NoteLength::Quarter, hihats);
-	metronome.add_measure(metro::NoteLength::Quarter, basses);
-
+	metronome.add_measure(metro::NoteLength::Quarter, click);
 	metronome.loop();
 }

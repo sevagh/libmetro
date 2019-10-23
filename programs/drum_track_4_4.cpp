@@ -9,32 +9,21 @@ int main(int argc, char** argv)
 	}
 
 	int bpm = std::stoi(argv[1]);
-	auto tempo = metro::Tempo(bpm);
-
-	std::cout << "init " << bpm << "bpm tempo ticker" << std::endl;
-
-	auto stream = metro::OutStream(tempo.period_us);
+	auto metronome = metro::Metronome(bpm);
 
 	std::cout << "init audio engine" << std::endl;
 	std::cout << "Generating tones" << std::endl;
 
-	auto hihat = metro::timbre::Drum(42, 100);
-	auto snare = metro::timbre::Drum(38, 100);
-	auto bass = metro::timbre::Drum(45, 100);
+	auto hihat = metro::Note(metro::Timbre::Drum, 42.0, 100.0);
+	auto snare = metro::Note(metro::Timbre::Drum, 38.0, 100.0);
+	auto bass = metro::Note(metro::Timbre::Drum, 45.0, 100.0);
 
-	metro::Measure beat22(std::vector<metro::Note>({
-	    metro::Note([&]() {
-		    stream.play_timbres({&hihat, &snare});
-	    }),
-	    metro::Note([&]() { stream.play_timbres({&hihat}); }),
-	    metro::Note([&]() {
-		    stream.play_timbres({&hihat, &bass});
-	    }),
-	    metro::Note([&]() { stream.play_timbres({&hihat}); }),
-	}));
+	metro::Measure beat22(4);
+	beat22.add_notes(0, {&snare, &hihat});
+	beat22.add_notes(1, {&snare});
+	beat22.add_notes(2, {&snare, &bass});
+	beat22.add_notes(3, {&snare});
 
-	tempo.register_measure(beat22);
-	tempo.start();
-
-	metro::eventloop();
+	metronome.add_measure(metro::NoteLength::Quarter, beat22);
+	metronome.loop();
 }

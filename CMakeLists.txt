@@ -55,8 +55,7 @@ link_directories(${GTEST_LIBRARY_DIRS})
 
 set(METRO_SOURCES
     src/audioengine.cpp
-    src/timing.cpp
-    src/music.cpp)
+    src/metronome.cpp)
 
 set(METRO_DEPS
     metro
@@ -96,10 +95,10 @@ function(metro_program name)
 	target_link_libraries(program_${name} ${METRO_DEPS})
 endfunction()
 
-#metro_program(drum_track_4_4)
+metro_program(click_track)
+metro_program(drum_track_4_4)
 #metro_program(tap_tempo)
 #metro_program(metronome)
-#metro_program(click_track)
 
 #------------------------------------------------------------------------------#
 # INSTALL
