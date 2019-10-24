@@ -131,6 +131,7 @@ function(metro_gtest name)
 	if(GTEST_FOUND)
 		add_executable(test_${name} test/${name}.cpp)
 		target_link_libraries(test_${name} ${METRO_TESTS_DEPS})
+		target_compile_definitions(test_${name} PUBLIC UNIT_TESTS )
 
 		add_test(test_${name} ${BIN_DIR}/test_${name})
 		set_tests_properties(test_${name} PROPERTIES LABELS "test")
@@ -142,8 +143,15 @@ function(metro_gtest name)
 	endif()
 endfunction()
 
-#metro_gtest(clock_accuracy)
-metro_gtest(notes)
+function(metro_gtest_long name)
+	if(GTEST_FOUND)
+		add_executable(test_long_${name} test/${name}.cpp)
+		target_link_libraries(test_long_${name} ${METRO_TESTS_DEPS})
+	endif()
+endfunction()
+
+#metro_gtest_long(clock_accuracy)
+metro_gtest(unit)
 
 #------------------------------------------------------------------------------#
 # CLANG_FORMAT, CPPCLEAN

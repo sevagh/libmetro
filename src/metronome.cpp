@@ -173,7 +173,7 @@ void metro_private::MetronomePrivate::start()
 {
 	auto blocking_ticker_2 = [&](std::atomic<bool>& on) {
 		while (on) {
-			stream_2.play_next_note();
+			// stream_2.play_next_note();
 			metro::precise_sleep_us(period_us_2);
 		}
 	};
@@ -187,14 +187,14 @@ void metro_private::MetronomePrivate::start()
 
 	auto blocking_ticker_8 = [&](std::atomic<bool>& on) {
 		while (on) {
-			stream_8.play_next_note();
+			// stream_8.play_next_note();
 			metro::precise_sleep_us(period_us_8);
 		}
 	};
 
 	auto blocking_ticker_16 = [&](std::atomic<bool>& on) {
 		while (on) {
-			stream_16.play_next_note();
+			// stream_16.play_next_note();
 			metro::precise_sleep_us(period_us_16);
 		}
 	};

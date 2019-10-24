@@ -7,6 +7,10 @@
 #include <thread>
 #include <atomic>
 
+#ifdef UNIT_TESTS
+#include <gtest/gtest_prod.h>
+#endif /* UNIT_TESTS */
+
 namespace metro_private {
 class AudioEngine {
 friend class OutStream;
@@ -26,20 +30,27 @@ public:
 
 		void add_measure(metro::Measure& measure);
 		void play_next_note();
-
 	private:
-		OutStream(AudioEngine* parent_engine, float latency_s); // private constructor - only engines can build streams
-
+#ifdef UNIT_TESTS
+		FRIEND_TEST(SoundIoUnitTest, OutStreamCorrectLatency);
+		FRIEND_TEST(SoundIoUnitTest, OutStreamCorrectSampleRate);
+#endif /* UNIT_TESTS */
 		float latency_s;
 		struct SoundIoRingBuffer* ringbuf;
 		struct SoundIoOutStream* outstream;
 		std::vector<metro::Measure> measures;
 		std::vector<size_t> measure_indices;
+
+		OutStream(AudioEngine* parent_engine, float latency_s); // private constructor - only engines can build streams
 	};
 
 	OutStream new_outstream(std::chrono::microseconds ticker_period);
 
 private:
+#ifdef UNIT_TESTS
+	FRIEND_TEST(SoundIoUnitTest, AudioEngineOutputDevice);
+	FRIEND_TEST(SoundIoUnitTest, AudioEngineOutputDualChannel);
+#endif /* UNIT_TESTS */
 	struct SoundIo* soundio;
 	struct SoundIoDevice* device;
 };
@@ -54,8 +65,11 @@ public:
 	void add_measure(metro::NoteLength note_length, metro::Measure& measure);
 
 private:
+#ifdef UNIT_TESTS
+	//FRIEND_TEST(SoundIoUnitTest, AudioEngineOutputDevice);
+	//FRIEND_TEST(SoundIoUnitTest, AudioEngineOutputDualChannel);
+#endif /* UNIT_TESTS */
 	int bpm;
-
 	AudioEngine engine;
 
 	std::chrono::microseconds period_us_2;
