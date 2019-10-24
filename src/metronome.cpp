@@ -85,6 +85,10 @@ metro::Note::Note(metro::Timbre timbre, float frequency, float volume)
 	};
 }
 
+size_t metro::Note::size() { return frames.size(); }
+
+size_t metro::Measure::size() { return notes.size(); }
+
 metro::Measure::Measure(int num_notes)
     : notes(num_notes)
 {
@@ -112,7 +116,7 @@ void metro::Measure::add_notes(size_t note_index,
                                std::list<metro::Note*> simultaneous_notes)
 {
 	for (auto note : simultaneous_notes)
-		for (size_t i = 0; i < notes[note_index].get_frames().size(); ++i)
+		for (size_t i = 0; i < notes[note_index].size(); ++i)
 			notes[note_index][i] += (*note)[i];
 }
 
@@ -172,29 +176,33 @@ void metro_private::MetronomePrivate::add_measure(metro::NoteLength note_length,
 void metro_private::MetronomePrivate::start()
 {
 	auto blocking_ticker_2 = [&](std::atomic<bool>& on) {
+		stream_2.start();
 		while (on) {
-			// stream_2.play_next_note();
+			std::thread([this]() { stream_2.play_next_note(); }).detach();
 			metro::precise_sleep_us(period_us_2);
 		}
 	};
 
 	auto blocking_ticker_4 = [&](std::atomic<bool>& on) {
+		stream_4.start();
 		while (on) {
-			stream_4.play_next_note();
+			std::thread([this]() { stream_4.play_next_note(); }).detach();
 			metro::precise_sleep_us(period_us_4);
 		}
 	};
 
 	auto blocking_ticker_8 = [&](std::atomic<bool>& on) {
+		stream_8.start();
 		while (on) {
-			// stream_8.play_next_note();
+			std::thread([this]() { stream_8.play_next_note(); }).detach();
 			metro::precise_sleep_us(period_us_8);
 		}
 	};
 
 	auto blocking_ticker_16 = [&](std::atomic<bool>& on) {
+		stream_16.start();
 		while (on) {
-			// stream_16.play_next_note();
+			std::thread([this]() { stream_16.play_next_note(); }).detach();
 			metro::precise_sleep_us(period_us_16);
 		}
 	};

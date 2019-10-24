@@ -63,6 +63,7 @@ metro_private::AudioEngine::OutStream::OutStream(
     metro_private::AudioEngine* parent_engine,
     float latency_s)
     : latency_s(latency_s)
+    , parent_engine(parent_engine)
 {
 	int err;
 
@@ -80,6 +81,7 @@ metro_private::AudioEngine::OutStream::OutStream(
 
 	int ringbuf_capacity = outstream->software_latency * outstream->sample_rate
 	                       * outstream->bytes_per_frame;
+
 	ringbuf
 	    = soundio_ring_buffer_create(parent_engine->soundio, ringbuf_capacity);
 
@@ -92,10 +94,6 @@ metro_private::AudioEngine::OutStream::OutStream(
 	char* buf = soundio_ring_buffer_write_ptr(ringbuf);
 	std::memset(buf, 0, ringbuf_capacity);
 	soundio_ring_buffer_advance_write_ptr(ringbuf, ringbuf_capacity);
-
-	if ((err = soundio_outstream_start(outstream)))
-		throw std::runtime_error(std::string("unable to start device: ")
-		                         + soundio_strerror(err));
 }
 
 metro_private::AudioEngine::OutStream::~OutStream()
@@ -110,15 +108,23 @@ void metro_private::AudioEngine::OutStream::add_measure(metro::Measure& measure)
 	measure_indices.push_back(0);
 }
 
+void metro_private::AudioEngine::OutStream::start()
+{
+	int err;
+	if ((err = soundio_outstream_start(outstream)))
+		throw std::runtime_error(std::string("unable to start device: ")
+		                         + soundio_strerror(err));
+}
+
 void metro_private::AudioEngine::OutStream::play_next_note()
 {
 	std::vector<float> frames(2 * metro::SampleRateHz);
 
 	for (size_t i = 0; i < measures.size(); ++i) {
-		auto measure_idx = measure_indices[i];
 		measure_indices[i]
-		    = ++measure_indices[i] % measure_indices.size(); // wraparound
-		auto note = measures[i][measure_idx];
+		    = ++measure_indices[i] % measures[i].size(); // wraparound
+
+		auto note = measures[i][measure_indices[i]];
 		for (size_t j = 0; j < frames.size(); ++j)
 			frames[j] += note[j];
 	}
@@ -129,14 +135,11 @@ void metro_private::AudioEngine::OutStream::play_next_note()
 	char* buf = soundio_ring_buffer_write_ptr(ringbuf);
 	size_t fill_count = outstream->software_latency * outstream->sample_rate
 	                    * outstream->bytes_per_frame;
-
 	fill_count = std::min(fill_count, frames.size() * sizeof(float));
 
 	// in case there's stuff in the ringbuffer, we don't want to overflow
 	fill_count -= soundio_ring_buffer_fill_count(ringbuf);
-
 	std::memcpy(buf, frames.data(), fill_count);
-
 	soundio_ring_buffer_advance_write_ptr(ringbuf, fill_count);
 
 	// wait for how long a tick should be

@@ -19,10 +19,10 @@ int main(int argc, char** argv)
 	auto bass = metro::Note(metro::Timbre::Drum, 45.0, 100.0);
 
 	metro::Measure beat22(4);
-	beat22.add_notes(0, {&snare, &hihat});
-	beat22.add_notes(1, {&snare});
-	beat22.add_notes(2, {&snare, &bass});
-	beat22.add_notes(3, {&snare});
+	beat22.add_notes(0, {&hihat, &snare});
+	beat22.add_notes(1, {&hihat});
+	beat22.add_notes(2, {&hihat, &bass});
+	beat22.add_notes(3, {&hihat});
 
 	metronome.add_measure(metro::NoteLength::Quarter, beat22);
 	metronome.loop();

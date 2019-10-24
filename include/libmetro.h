@@ -27,6 +27,7 @@ public:
 	float& operator[](size_t index);
 	const float& operator[](size_t index) const;
 	std::vector<float>& get_frames();
+	size_t size();
 
 private:
 	std::vector<float> frames;
@@ -39,6 +40,7 @@ public:
 	Note& operator[](size_t index);
 	const Note& operator[](size_t index) const;
 	std::vector<Note>& get_notes();
+	size_t size();
 
 private:
 	std::vector<Note> notes;

@@ -159,7 +159,7 @@ metro_gtest(unit)
 
 file(GLOB_RECURSE
      ALL_CXX_SOURCE_FILES
-     src/*.cpp programs/*.cpp include/*.h test/*.cpp
+     src/*.cpp src/*.h programs/*.cpp include/*.h test/*.cpp
      )
 
 # Adding clang-format target if executable is found

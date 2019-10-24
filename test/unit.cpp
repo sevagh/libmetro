@@ -100,7 +100,8 @@ TEST(NoteUnitTest, IndexOperatorsSpotCheck)
 namespace metro_private {
 class SoundIoUnitTest : public ::testing::Test {
 protected:
-	std::chrono::microseconds period_us = std::chrono::microseconds(5000);
+	std::chrono::microseconds period_us
+	    = std::chrono::microseconds(600000); // 600,000 us ~= 100bpm
 	metro_private::AudioEngine engine;
 	metro_private::AudioEngine::OutStream stream
 	    = engine.new_outstream(period_us);
@@ -108,26 +109,33 @@ protected:
 
 TEST_F(SoundIoUnitTest, AudioEngineOutputDevice)
 {
-	// audio output device
 	EXPECT_EQ(engine.device->aim, SoundIoDeviceAimOutput);
 }
 
 TEST_F(SoundIoUnitTest, AudioEngineOutputDualChannel)
 {
-	// audio output device
 	EXPECT_EQ(engine.device->current_layout.channel_count, 2);
 }
 
 TEST_F(SoundIoUnitTest, OutStreamCorrectLatency)
 {
 	float expected_latency = (period_us.count() / 2.0) / 1000000.0;
-	// appropriate software latency for ticker period
 	EXPECT_NEAR(stream.outstream->software_latency, expected_latency, 0.01);
 }
 
 TEST_F(SoundIoUnitTest, OutStreamCorrectSampleRate)
 {
-	// appropriate sample rate
 	EXPECT_NEAR(stream.outstream->sample_rate, metro::SampleRateHz, 0.01);
+}
+
+TEST_F(SoundIoUnitTest, OutStreamCorrectRingbufferCapacity)
+{
+	int desired_ringbuf_cap = stream.outstream->bytes_per_sample
+	                          * stream.outstream->sample_rate
+	                          * stream.outstream->software_latency;
+	int nearest_ringbuf_cap = 118784;
+	int real_ringbuf_cap = soundio_ring_buffer_capacity(stream.ringbuf);
+	EXPECT_TRUE(nearest_ringbuf_cap >= desired_ringbuf_cap);
+	EXPECT_EQ(real_ringbuf_cap, nearest_ringbuf_cap);
 }
 }; // namespace metro_private

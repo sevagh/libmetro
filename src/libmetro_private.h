@@ -2,10 +2,10 @@
 #define LIBMETRO_PRIVATE_H
 
 #include "libmetro.h"
-#include <soundio/soundio.h>
-#include <chrono>
-#include <thread>
 #include <atomic>
+#include <chrono>
+#include <soundio/soundio.h>
+#include <thread>
 
 #ifdef UNIT_TESTS
 #include <gtest/gtest_prod.h>
@@ -13,11 +13,13 @@
 
 namespace metro_private {
 class AudioEngine {
-friend class OutStream;
+	friend class OutStream;
 
 public:
 	AudioEngine();
 	~AudioEngine();
+	AudioEngine(const AudioEngine& other) = delete;      // disable copy
+	AudioEngine& operator=(const AudioEngine&) = delete; // disable move
 
 	void eventloop();
 
@@ -27,21 +29,30 @@ public:
 	public:
 		OutStream() = delete; // disallow the empty constructor
 		~OutStream();
+		OutStream(const OutStream& other) = delete;      // disable copy
+		OutStream& operator=(const OutStream&) = delete; // disable move
 
 		void add_measure(metro::Measure& measure);
 		void play_next_note();
+		void start();
+
 	private:
 #ifdef UNIT_TESTS
 		FRIEND_TEST(SoundIoUnitTest, OutStreamCorrectLatency);
 		FRIEND_TEST(SoundIoUnitTest, OutStreamCorrectSampleRate);
+		FRIEND_TEST(SoundIoUnitTest, OutStreamCorrectRingbufferCapacity);
 #endif /* UNIT_TESTS */
 		float latency_s;
+		AudioEngine* parent_engine;
+
 		struct SoundIoRingBuffer* ringbuf;
 		struct SoundIoOutStream* outstream;
 		std::vector<metro::Measure> measures;
 		std::vector<size_t> measure_indices;
 
-		OutStream(AudioEngine* parent_engine, float latency_s); // private constructor - only engines can build streams
+		OutStream(AudioEngine* parent_engine,
+		          float latency_s); // private constructor - only engines can
+		                            // build streams
 	};
 
 	OutStream new_outstream(std::chrono::microseconds ticker_period);
@@ -66,8 +77,8 @@ public:
 
 private:
 #ifdef UNIT_TESTS
-	//FRIEND_TEST(SoundIoUnitTest, AudioEngineOutputDevice);
-	//FRIEND_TEST(SoundIoUnitTest, AudioEngineOutputDualChannel);
+	// FRIEND_TEST(SoundIoUnitTest, AudioEngineOutputDevice);
+	// FRIEND_TEST(SoundIoUnitTest, AudioEngineOutputDualChannel);
 #endif /* UNIT_TESTS */
 	int bpm;
 	AudioEngine engine;
