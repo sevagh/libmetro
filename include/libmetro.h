@@ -25,6 +25,7 @@ public:
 	Note();
 	Note(Timbre timbre, float frequency, float volume);
 	float& operator[](size_t index);
+	Note operator+(const Note& other);
 	const float& operator[](size_t index) const;
 	std::vector<float>& get_frames();
 	size_t size();
@@ -36,7 +37,6 @@ private:
 class Measure {
 public:
 	Measure(int num_notes);
-	void add_notes(size_t note_index, std::list<Note*> simultaneous_notes);
 	Note& operator[](size_t index);
 	const Note& operator[](size_t index) const;
 	std::vector<Note>& get_notes();
@@ -56,9 +56,9 @@ public:
 	void add_measure(NoteLength note_length, Measure& measure);
 	void loop();
 
-	// https://en.cppreference.com/w/cpp/language/pimpl
 private:
-	metro_private::MetronomePrivate* p_impl;
+	metro_private::MetronomePrivate*
+	    p_impl; // https://en.cppreference.com/w/cpp/language/pimpl
 };
 }; // namespace metro
 

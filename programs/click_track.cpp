@@ -9,16 +9,20 @@ int main(int argc, char** argv)
 	}
 
 	int bpm = std::stoi(argv[1]);
-	auto metronome = metro::Metronome(bpm);
 
-	std::cout << "init audio engine" << std::endl;
-	std::cout << "Generating tones" << std::endl;
+	try {
+		auto metronome = metro::Metronome(bpm);
+		auto beep = metro::Note(metro::Timbre::Sine, 440.0, 100.0);
 
-	auto beep = metro::Note(metro::Timbre::Sine, 440.0, 100.0);
+		metro::Measure click(1);
+		click[0] = beep;
 
-	metro::Measure click(1);
-	click.add_notes(0, {&beep});
-
-	metronome.add_measure(metro::NoteLength::Quarter, click);
-	metronome.loop();
+		metronome.add_measure(metro::NoteLength::Quarter, click);
+		metronome.loop();
+	}
+	catch (...) {
+		std::cerr << "exception" << std::endl;
+		return 1;
+	}
+	return 0;
 }

@@ -48,6 +48,24 @@ static float midi2freq(int midi)
 	return 440.0 * pow(2.0, (float(midi) - 69.0) / 12.0);
 }
 
+static void normalize(std::vector<float>& vec, float ratio)
+{
+	// normalize to 1.0 * volume_pct since libsoundio expects floats
+	// between -1.0 and 1.0
+	stk::StkFloat max_elem = -DBL_MAX;
+	for (size_t i = 0; i < vec.size(); ++i)
+		max_elem = std::max(vec[i], max_elem);
+
+	stk::StkFloat min_elem = DBL_MAX;
+	for (size_t i = 0; i < vec.size(); ++i)
+		min_elem = std::min(vec[i], min_elem);
+
+	max_elem = std::max(std::abs(min_elem), max_elem);
+
+	for (size_t i = 0; i < vec.size(); ++i)
+		vec[i] = (ratio / max_elem) * vec[i];
+}
+
 metro::Note::Note()
     : frames(std::vector<float>(2 * metro::SampleRateHz)){}; // empty note
 
@@ -64,14 +82,7 @@ metro::Note::Note(metro::Timbre timbre, float frequency, float volume)
 		for (size_t i = 0; i < frames.size(); ++i)
 			frames[i] = sine.tick();
 
-		// normalize to 1.0 * volume_pct since libsoundio expects floats
-		// between -1.0 and 1.0
-		stk::StkFloat max_elem = -DBL_MAX;
-		for (size_t i = 0; i < frames.size(); ++i)
-			max_elem = std::max(frames[i], max_elem);
-
-		for (size_t i = 0; i < frames.size(); ++i)
-			frames[i] = (volume / 100.0) * (1.0 / max_elem) * frames[i];
+		normalize(frames, volume / 100.0);
 	} break;
 	case Drum: {
 		stk::Drummer drummer;
@@ -80,8 +91,7 @@ metro::Note::Note(metro::Timbre timbre, float frequency, float volume)
 			frames[i] = drummer.tick();
 
 		drummer.noteOff(0.0);
-		break;
-	}
+	} break;
 	};
 }
 
@@ -105,20 +115,21 @@ const metro::Note& metro::Measure::operator[](size_t index) const
 
 float& metro::Note::operator[](size_t index) { return frames[index]; }
 
+metro::Note metro::Note::operator+(const metro::Note& other)
+{
+	metro::Note ret;
+	for (size_t i = 0; i < ret.size(); ++i)
+		ret[i] = (*this)[i] + other[i];
+	normalize(ret.frames, 1.0);
+	return ret;
+}
+
 const float& metro::Note::operator[](size_t index) const
 {
 	return frames[index];
 }
 
 std::vector<float>& metro::Note::get_frames() { return frames; }
-
-void metro::Measure::add_notes(size_t note_index,
-                               std::list<metro::Note*> simultaneous_notes)
-{
-	for (auto note : simultaneous_notes)
-		for (size_t i = 0; i < notes[note_index].size(); ++i)
-			notes[note_index][i] += (*note)[i];
-}
 
 void metro::precise_sleep_us(std::chrono::microseconds dur_us)
 {
@@ -207,10 +218,18 @@ void metro_private::MetronomePrivate::start()
 		}
 	};
 
-	ticker_thread_2 = std::thread(blocking_ticker_2, std::ref(tickers_on));
-	ticker_thread_4 = std::thread(blocking_ticker_4, std::ref(tickers_on));
-	ticker_thread_8 = std::thread(blocking_ticker_8, std::ref(tickers_on));
-	ticker_thread_16 = std::thread(blocking_ticker_16, std::ref(tickers_on));
+	if (stream_2.has_measures())
+		ticker_thread_2 = std::thread(blocking_ticker_2, std::ref(tickers_on));
+
+	if (stream_4.has_measures())
+		ticker_thread_4 = std::thread(blocking_ticker_4, std::ref(tickers_on));
+
+	if (stream_8.has_measures())
+		ticker_thread_8 = std::thread(blocking_ticker_8, std::ref(tickers_on));
+
+	if (stream_16.has_measures())
+		ticker_thread_16
+		    = std::thread(blocking_ticker_16, std::ref(tickers_on));
 
 	engine.eventloop();
 }

@@ -35,6 +35,7 @@ public:
 		void add_measure(metro::Measure& measure);
 		void play_next_note();
 		void start();
+		bool has_measures();
 
 	private:
 #ifdef UNIT_TESTS

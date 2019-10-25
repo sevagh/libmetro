@@ -72,21 +72,18 @@ int main()
 		metro::precise_sleep_us(std::chrono::microseconds(1));
 	}
 
-	auto tempo = metro::Tempo(user_bpm);
-	auto stream = metro::OutStream(tempo.period_us);
+	try {
+		auto metronome = metro::Metronome(user_bpm);
+		auto click = metro::Note(metro::Timbre::Sine, 440.0, 100.0);
+		auto click_track = metro::Measure(1);
+		click_track[0] = click;
 
-	std::cout << "init audio engine" << std::endl;
-
-	auto beep = metro::timbre::Sine(440.0, 100.0);
-
-	auto beeps = metro::Measure({
-	    metro::Note([&]() { stream.play_timbres({&beep}); }),
-	});
-
-	tempo.register_measure(beeps);
-	tempo.start();
-
-	metro::eventloop();
-
+		metronome.add_measure(metro::NoteLength::Quarter, click_track);
+		metronome.loop();
+	}
+	catch (...) {
+		std::cerr << "exception" << std::endl;
+		return 1;
+	}
 	return 0;
 }

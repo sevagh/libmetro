@@ -116,6 +116,11 @@ void metro_private::AudioEngine::OutStream::start()
 		                         + soundio_strerror(err));
 }
 
+bool metro_private::AudioEngine::OutStream::has_measures()
+{
+	return measures.size() != 0;
+}
+
 void metro_private::AudioEngine::OutStream::play_next_note()
 {
 	std::vector<float> frames(2 * metro::SampleRateHz);

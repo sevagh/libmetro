@@ -97,7 +97,7 @@ endfunction()
 
 metro_program(click_track)
 metro_program(drum_track_4_4)
-#metro_program(tap_tempo)
+metro_program(tap_tempo)
 #metro_program(metronome)
 
 #------------------------------------------------------------------------------#

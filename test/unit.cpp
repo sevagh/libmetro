@@ -97,6 +97,68 @@ TEST(NoteUnitTest, IndexOperatorsSpotCheck)
 	EXPECT_EQ(note2[311], 1234.0);
 }
 
+TEST(NoteUnitTest, AdditionOperatorNormalizes)
+{
+	auto note1 = metro::Note(metro::Timbre::Drum, 38.0, 100.0);
+	auto note2 = metro::Note(metro::Timbre::Sine, 440.0, 50.0);
+
+	auto note3 = note1 + note2;
+
+	auto note1_frames = note1.get_frames();
+	auto note2_frames = note2.get_frames();
+	auto note3_frames = note3.get_frames();
+
+	auto note1_min = *std::min_element(
+	    note1_frames.begin(), note1_frames.begin() + note1_frames.size());
+	auto note1_max = *std::max_element(
+	    note1_frames.begin(), note1_frames.begin() + note1_frames.size());
+
+	auto note2_min = *std::min_element(
+	    note2_frames.begin(), note2_frames.begin() + note2_frames.size());
+	auto note2_max = *std::max_element(
+	    note2_frames.begin(), note2_frames.begin() + note2_frames.size());
+
+	auto note3_min = *std::min_element(
+	    note3_frames.begin(), note3_frames.begin() + note3_frames.size());
+	auto note3_max = *std::max_element(
+	    note3_frames.begin(), note3_frames.begin() + note3_frames.size());
+
+	EXPECT_TRUE(note1_min >= -1.0);
+	EXPECT_TRUE(note1_max <= 1.0);
+
+	EXPECT_TRUE(note2_min >= -1.0);
+	EXPECT_TRUE(note2_max <= 1.0);
+
+	EXPECT_TRUE(note3_min >= -1.0);
+	EXPECT_TRUE(note3_max <= 1.0);
+}
+
+TEST(MeasureTest, MeasureSize)
+{
+	auto measure = metro::Measure(1);
+	EXPECT_EQ(measure.size(), 1);
+	EXPECT_EQ(measure.get_notes().size(), 1);
+}
+
+TEST(MeasureTest, MeasureDefaultNotesAreEmpty)
+{
+	auto measure = metro::Measure(1);
+	for (size_t i = 0; i < measure[0].size(); ++i)
+		EXPECT_EQ(measure[0][i], 0.0);
+}
+
+TEST(MeasureTest, MeasureIndexOperator)
+{
+	auto measure = metro::Measure(1);
+	auto note1 = measure[0];
+	auto note2 = metro::Note(metro::Timbre::Sine, 440.0, 100.0);
+	auto note3 = note1 + note2;
+	measure[0] = note1 + note2;
+
+	for (size_t i = 0; i < note3.size(); ++i)
+		EXPECT_EQ(measure[0][i], note3[i]);
+}
+
 namespace metro_private {
 class SoundIoUnitTest : public ::testing::Test {
 protected:
