@@ -44,26 +44,27 @@ else()
 endif()
 
 find_package(SoundIo REQUIRED)
-find_package(Stk REQUIRED)
 
 #------------------------------------------------------------------------------#
 # LIBS
 #------------------------------------------------------------------------------#
 
-include_directories("${PROJECT_SOURCE_DIR}/src" "${PROJECT_SOURCE_DIR}/include" ${GTEST_INCLUDE_DIRS} ${SOUNDIO_INCLUDE_DIR} ${STK_INCLUDE_DIR})
+include_directories("${PROJECT_SOURCE_DIR}/src" "${PROJECT_SOURCE_DIR}/include" ${GTEST_INCLUDE_DIRS} ${SOUNDIO_INCLUDE_DIR})
 link_directories(${GTEST_LIBRARY_DIRS})
 
 set(METRO_SOURCES
     src/audioengine.cpp
-    src/metronome.cpp)
+    src/outstream.cpp
+    src/metronome.cpp
+    src/measure.cpp
+    src/note.cpp)
 
 set(METRO_DEPS
     metro
-    ${SOUNDIO_LIBRARY}
-    ${STK_LIBRARY})
+    ${SOUNDIO_LIBRARY})
 
 add_library(metro SHARED ${METRO_SOURCES})
-target_link_libraries(metro ${SOUNDIO_LIBRARY} ${STK_LIBRARY})
+target_link_libraries(metro ${SOUNDIO_LIBRARY})
 
 #------------------------------------------------------------------------------#
 # CLANG-TIDY
@@ -96,10 +97,7 @@ function(metro_program name)
 endfunction()
 
 metro_program(click_track)
-metro_program(drum_track_4_4)
 metro_program(tap_tempo)
-metro_program(gradual_tempo)
-#metro_program(metronome)
 
 #------------------------------------------------------------------------------#
 # INSTALL

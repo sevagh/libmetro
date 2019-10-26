@@ -2,7 +2,6 @@
 #define LIBMETRO_H
 
 #include <chrono>
-#include <list>
 #include <vector>
 
 // forward declare the private implementation of Metronome
@@ -18,7 +17,7 @@ void precise_sleep_us(std::chrono::microseconds dur_us);
 
 const float SampleRateHz = 48000.0;
 
-enum Timbre { Sine, Drum };
+enum Timbre { Sine, Square, Sawtooth, Triangle };
 
 class Note {
 public:
@@ -41,8 +40,11 @@ public:
 	const Note& operator[](size_t index) const;
 	std::vector<Note>& get_notes();
 	size_t size();
+	void toggle_mute(bool mute);
+	bool is_muted();
 
 private:
+	bool muted;
 	std::vector<Note> notes;
 };
 
@@ -54,9 +56,8 @@ public:
 	~Metronome();
 
 	void add_measure(NoteLength note_length, Measure& measure);
-	void start(); // for manual loop control
+	void start();          // for manual loop control
 	void start_and_loop(); // start + loop
-	void change_tempo(int new_bpm);
 
 private:
 	metro_private::MetronomePrivate*

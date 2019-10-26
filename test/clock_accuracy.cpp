@@ -1,5 +1,7 @@
+#include "audioengine.h"
 #include "libmetro.h"
-#include "libmetro_private.h"
+#include "metronome.h"
+#include "outstream.h"
 #include <chrono>
 #include <cmath>
 #include <gtest/gtest.h>
@@ -24,7 +26,7 @@ TEST_P(BpmTimerTestClockAccuracy, ClockAccuracy)
 	                                    // MetronomePrivate object, in
 	                                    // src/metronome.cpp
 
-	double tolerance = 5.0; //%
+	double tolerance = 2.0; //%
 
 	std::cout << "Testing if ticks are accurate within " << tolerance
 	          << "% for " << bpm << " bpm ticker, 20 ticks" << std::endl;
