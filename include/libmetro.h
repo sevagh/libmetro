@@ -17,7 +17,7 @@ void precise_sleep_us(std::chrono::microseconds dur_us);
 
 const float SampleRateHz = 48000.0;
 
-enum Timbre { Sine, Square, Sawtooth, Triangle };
+enum Timbre { Sine, Drum };
 
 class Note {
 public:
@@ -47,21 +47,24 @@ private:
 class Measure {
 public:
 	Measure(int num_notes)
-	    : muted(false)
-	    , notes(num_notes){};
+	    : notes(num_notes){};
 	Note& operator[](size_t index) { return notes[index]; };
 	const Note& operator[](size_t index) const { return notes[index]; };
 	std::vector<Note>& get_notes() { return notes; };
 	size_t size() { return notes.size(); };
-	void toggle_mute(bool mute) { muted = mute; };
-	bool is_muted() { return muted; };
 
 private:
-	bool muted;
 	std::vector<Note> notes;
 };
 
-enum NoteLength { Half, Quarter, Eighth, Sixteenth };
+enum NoteLength {
+	Half,
+	Quarter,
+	QuarterTriplet,
+	Eighth,
+	EighthTriplet,
+	Sixteenth
+};
 
 class Metronome {
 public:

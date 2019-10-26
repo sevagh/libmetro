@@ -3,8 +3,9 @@
 #include "libmetro.h"
 #include <chrono>
 #include <cstring>
-//#include <functional>
+#include <functional>
 #include <iostream>
+#include <numeric>
 #include <soundio/soundio.h>
 #include <string>
 
@@ -68,6 +69,7 @@ void metro_private::OutStream::add_measure(metro::Measure& measure)
 void metro_private::OutStream::start()
 {
 	int err;
+	compute_notes();
 	if ((err = soundio_outstream_start(outstream)))
 		throw std::runtime_error(std::string("unable to start device: ")
 		                         + soundio_strerror(err));
@@ -75,22 +77,36 @@ void metro_private::OutStream::start()
 
 bool metro_private::OutStream::has_measures() { return measures.size() != 0; }
 
+void metro_private::OutStream::compute_notes()
+{
+	std::vector<size_t> sizes;
+	sizes.reserve(measures.size());
+	for (auto measure : measures)
+		sizes.push_back(measure.size());
+
+	size_t common_size = std::accumulate(
+	    sizes.begin(), sizes.end(), 1, std::lcm<size_t, size_t>);
+
+	for (size_t h = 0; h < common_size; ++h) {
+		metro::Note total_note;
+
+		for (size_t i = 0; i < measures.size(); ++i) {
+			auto note = measures[i][measure_indices[i]];
+			for (size_t j = 0; j < total_note.size(); ++j)
+				total_note[j] += note[j];
+
+			measure_indices[i]
+			    = ++measure_indices[i] % measures[i].size(); // wraparound
+		}
+
+		notes.push_back(total_note);
+	}
+	note_index = 0;
+}
+
 void metro_private::OutStream::play_next_note()
 {
-	std::vector<float> frames(2 * metro::SampleRateHz);
-
-	for (size_t i = 0; i < measures.size(); ++i) {
-		// fill zeroes for a muted measure
-		if (measures[i].is_muted())
-			continue;
-
-		auto note = measures[i][measure_indices[i]];
-		for (size_t j = 0; j < frames.size(); ++j)
-			frames[j] += note[j];
-
-		measure_indices[i]
-		    = ++measure_indices[i] % measures[i].size(); // wraparound
-	}
+	auto frames = notes[note_index++ % notes.size()].get_frames();
 
 	// fill the stream.ringbuffer with 2*48,000 samples, which should finish in
 	// outstream->software_latency

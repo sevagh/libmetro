@@ -40,10 +40,14 @@ private:
 	std::vector<metro::Measure> measures;
 	std::vector<size_t> measure_indices;
 
+	std::vector<metro::Note> notes;
+	size_t note_index;
+
 	OutStream(AudioEngine* parent_engine,
 	          std::chrono::microseconds ticker_period); // private constructor
 	                                                    // - only engines can
 	                                                    // build streams
+	void compute_notes();
 };
 }; // namespace metro_private
 

@@ -42,24 +42,40 @@ void metro::precise_sleep_us(std::chrono::microseconds dur_us)
 		std::this_thread::sleep_for(std::chrono::nanoseconds(1));
 }
 
+static std::chrono::microseconds bpm2period(metro::NoteLength ratio, int bpm)
+{
+	switch (ratio) {
+	case metro::NoteLength::Half:
+		return std::chrono::duration_cast<std::chrono::microseconds>(
+		    std::chrono::duration<double, std::micro>(2.0 * 1000000.0
+		                                              * (60.0 / bpm)));
+	case metro::NoteLength::Quarter:
+		return std::chrono::duration_cast<std::chrono::microseconds>(
+		    std::chrono::duration<double, std::micro>(1000000.0 * (60.0 / bpm)));
+	case metro::NoteLength::QuarterTriplet:
+		return std::chrono::duration_cast<std::chrono::microseconds>(
+		    std::chrono::duration<double, std::micro>(2.0 / 3.0 * 1000000.0
+		                                              * (60.0 / bpm)));
+	case metro::NoteLength::Eighth:
+		return std::chrono::duration_cast<std::chrono::microseconds>(
+		    std::chrono::duration<double, std::micro>(1.0 / 2.0 * 1000000.0
+		                                              * (60.0 / bpm)));
+	case metro::NoteLength::EighthTriplet:
+		return std::chrono::duration_cast<std::chrono::microseconds>(
+		    std::chrono::duration<double, std::micro>(1.0 / 3.0 * 1000000.0
+		                                              * (60.0 / bpm)));
+	case metro::NoteLength::Sixteenth:
+		return std::chrono::duration_cast<std::chrono::microseconds>(
+		    std::chrono::duration<double, std::micro>(1.0 / 4.0 * 1000000.0
+		                                              * (60.0 / bpm)));
+	default:
+		return std::chrono::microseconds(0);
+	}
+}
+
 metro_private::MetronomePrivate::MetronomePrivate(int bpm)
     : bpm(bpm)
     , engine(metro_private::AudioEngine())
-    , period_us_2(std::chrono::duration_cast<std::chrono::microseconds>(
-          std::chrono::duration<double, std::micro>(2.0 * 1000000.0
-                                                    * (60.0 / bpm))))
-    , period_us_4(std::chrono::duration_cast<std::chrono::microseconds>(
-          std::chrono::duration<double, std::micro>(1000000.0 * (60.0 / bpm))))
-    , period_us_8(std::chrono::duration_cast<std::chrono::microseconds>(
-          std::chrono::duration<double, std::micro>(1.0 / 2.0 * 1000000.0
-                                                    * (60.0 / bpm))))
-    , period_us_16(std::chrono::duration_cast<std::chrono::microseconds>(
-          std::chrono::duration<double, std::micro>(1.0 / 4.0 * 1000000.0
-                                                    * (60.0 / bpm))))
-    , stream_2(engine.new_outstream(period_us_2))
-    , stream_4(engine.new_outstream(period_us_4))
-    , stream_8(engine.new_outstream(period_us_8))
-    , stream_16(engine.new_outstream(period_us_16))
     , tickers_on({true})
 {
 	if (!std::chrono::steady_clock::is_steady)
@@ -70,68 +86,42 @@ metro_private::MetronomePrivate::MetronomePrivate(int bpm)
 void metro_private::MetronomePrivate::add_measure(metro::NoteLength note_length,
                                                   metro::Measure& measure)
 {
-	switch (note_length) {
-	case metro::NoteLength::Half:
-		stream_2.add_measure(measure);
-		break;
-	case metro::NoteLength::Quarter:
-		stream_4.add_measure(measure);
-		break;
-	case metro::NoteLength::Eighth:
-		stream_8.add_measure(measure);
-		break;
-	case metro::NoteLength::Sixteenth:
-		stream_16.add_measure(measure);
-		break;
+
+	std::map<metro::NoteLength, NoteTicker>::iterator it
+	    = tickers.find(note_length);
+	if (it != tickers.end()) {
+		auto ticker = it->second;
+		ticker.stream->add_measure(measure);
+	}
+	else {
+		NoteTicker ticker;
+
+		ticker.note_length = note_length;
+		ticker.period_us = bpm2period(note_length, bpm);
+		ticker.stream = engine.new_outstream(ticker.period_us);
+		ticker.stream->add_measure(measure);
+		ticker.ticker_thread = nullptr;
+		tickers[note_length] = ticker;
 	}
 }
 
 void metro_private::MetronomePrivate::start()
 {
-	auto blocking_ticker_2 = [&](std::atomic<bool>& on) {
-		stream_2.start();
-		while (on) {
-			std::thread([this]() { stream_2.play_next_note(); }).detach();
-			metro::precise_sleep_us(period_us_2);
+
+	for (auto& [key, ticker] : tickers) {
+		auto blocking_ticker = [&](std::atomic<bool>& on) {
+			ticker.stream->start();
+			while (on) {
+				std::thread([&]() { ticker.stream->play_next_note(); }).detach();
+				metro::precise_sleep_us(ticker.period_us);
+			}
+		};
+
+		if (ticker.stream->has_measures()) {
+			ticker.ticker_thread
+			    = new std::thread(blocking_ticker, std::ref(tickers_on));
 		}
-	};
-
-	auto blocking_ticker_4 = [&](std::atomic<bool>& on) {
-		stream_4.start();
-		while (on) {
-			std::thread([this]() { stream_4.play_next_note(); }).detach();
-			metro::precise_sleep_us(period_us_4);
-		}
-	};
-
-	auto blocking_ticker_8 = [&](std::atomic<bool>& on) {
-		stream_8.start();
-		while (on) {
-			std::thread([this]() { stream_8.play_next_note(); }).detach();
-			metro::precise_sleep_us(period_us_8);
-		}
-	};
-
-	auto blocking_ticker_16 = [&](std::atomic<bool>& on) {
-		stream_16.start();
-		while (on) {
-			std::thread([this]() { stream_16.play_next_note(); }).detach();
-			metro::precise_sleep_us(period_us_16);
-		}
-	};
-
-	if (stream_2.has_measures())
-		ticker_thread_2 = std::thread(blocking_ticker_2, std::ref(tickers_on));
-
-	if (stream_4.has_measures())
-		ticker_thread_4 = std::thread(blocking_ticker_4, std::ref(tickers_on));
-
-	if (stream_8.has_measures())
-		ticker_thread_8 = std::thread(blocking_ticker_8, std::ref(tickers_on));
-
-	if (stream_16.has_measures())
-		ticker_thread_16
-		    = std::thread(blocking_ticker_16, std::ref(tickers_on));
+	}
 }
 
 void metro_private::MetronomePrivate::loop() { engine.eventloop(); }
@@ -139,14 +129,17 @@ void metro_private::MetronomePrivate::loop() { engine.eventloop(); }
 void metro_private::MetronomePrivate::stop()
 {
 	tickers_on = false;
-	if (ticker_thread_2.joinable())
-		ticker_thread_2.join();
-	if (ticker_thread_4.joinable())
-		ticker_thread_4.join();
-	if (ticker_thread_8.joinable())
-		ticker_thread_8.join();
-	if (ticker_thread_16.joinable())
-		ticker_thread_16.join();
+	for (auto& [key, ticker] : tickers) {
+		if (ticker.ticker_thread->joinable())
+			ticker.ticker_thread->join();
+	}
 }
 
-metro_private::MetronomePrivate::~MetronomePrivate() { stop(); }
+metro_private::MetronomePrivate::~MetronomePrivate()
+{
+	stop();
+	for (auto& [key, ticker] : tickers) {
+		delete ticker.stream;
+		delete ticker.ticker_thread;
+	}
+}

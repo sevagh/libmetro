@@ -12,13 +12,10 @@ int main(int argc, char** argv)
 
 	try {
 		auto metronome = metro::Metronome(bpm);
-		// auto beep = metro::Note(metro::Timbre::Sine, 440.0, 100.0);
-		// auto beep = metro::Note(metro::Timbre::Square, 440.0, 100.0);
-		// auto beep = metro::Note(metro::Timbre::Sawtooth, 440.0, 100.0);
-		auto beep = metro::Note(metro::Timbre::Triangle, 440.0, 100.0);
+		auto beep1 = metro::Note(metro::Timbre::Sine, 440.0, 100.0);
 
 		metro::Measure click(1);
-		click[0] = beep;
+		click[0] = beep1;
 
 		metronome.add_measure(metro::NoteLength::Quarter, click);
 		metronome.start_and_loop();

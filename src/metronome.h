@@ -6,6 +6,7 @@
 #include "outstream.h"
 #include <atomic>
 #include <chrono>
+#include <map>
 #include <soundio/soundio.h>
 #include <thread>
 
@@ -33,22 +34,15 @@ private:
 	int bpm;
 	AudioEngine engine;
 
-	std::chrono::microseconds period_us_2;
-	std::chrono::microseconds period_us_4;
-	std::chrono::microseconds period_us_8;
-	std::chrono::microseconds period_us_16;
+	struct NoteTicker {
+		metro::NoteLength note_length;
+		std::chrono::microseconds period_us;
+		OutStream* stream;
+		std::thread* ticker_thread;
+	};
 
-	OutStream stream_2;
-	OutStream stream_4;
-	OutStream stream_8;
-	OutStream stream_16;
-
+	std::map<metro::NoteLength, NoteTicker> tickers;
 	std::atomic<bool> tickers_on;
-
-	std::thread ticker_thread_2;
-	std::thread ticker_thread_4;
-	std::thread ticker_thread_8;
-	std::thread ticker_thread_16;
 };
 }; // namespace metro_private
 
