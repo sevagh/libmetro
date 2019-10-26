@@ -51,8 +51,7 @@ static float pick_best_latency(std::chrono::microseconds ticker_period)
 metro_private::AudioEngine::OutStream metro_private::AudioEngine::new_outstream(
     std::chrono::microseconds ticker_period)
 {
-	float best_latency_s = pick_best_latency(ticker_period);
-	return metro_private::AudioEngine::OutStream(this, best_latency_s);
+	return metro_private::AudioEngine::OutStream(this, ticker_period);
 }
 
 static void write_callback(struct SoundIoOutStream* outstream,
@@ -61,8 +60,8 @@ static void write_callback(struct SoundIoOutStream* outstream,
 
 metro_private::AudioEngine::OutStream::OutStream(
     metro_private::AudioEngine* parent_engine,
-    float latency_s)
-    : latency_s(latency_s)
+    std::chrono::microseconds ticker_period)
+    : latency_s(pick_best_latency(ticker_period))
     , parent_engine(parent_engine)
 {
 	int err;
@@ -119,6 +118,12 @@ void metro_private::AudioEngine::OutStream::start()
 bool metro_private::AudioEngine::OutStream::has_measures()
 {
 	return measures.size() != 0;
+}
+
+void metro_private::AudioEngine::OutStream::change_latency(std::chrono::microseconds new_ticker_period)
+{
+	latency_s = pick_best_latency(new_ticker_period);
+	outstream->software_latency = latency_s;
 }
 
 void metro_private::AudioEngine::OutStream::play_next_note()

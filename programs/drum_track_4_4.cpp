@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 		beat44[3] = hihat;
 
 		metronome.add_measure(metro::NoteLength::Quarter, beat44);
-		metronome.loop();
+		metronome.start_and_loop();
 	}
 	catch (...) {
 		std::cerr << "exception" << std::endl;

@@ -36,6 +36,7 @@ public:
 		void play_next_note();
 		void start();
 		bool has_measures();
+		void change_latency(std::chrono::microseconds new_ticker_period);
 
 	private:
 #ifdef UNIT_TESTS
@@ -52,7 +53,7 @@ public:
 		std::vector<size_t> measure_indices;
 
 		OutStream(AudioEngine* parent_engine,
-		          float latency_s); // private constructor - only engines can
+		          std::chrono::microseconds ticker_period); // private constructor - only engines can
 		                            // build streams
 	};
 
@@ -73,8 +74,10 @@ public:
 	~MetronomePrivate();
 
 	void start();
+	void loop();
 	void stop();
 	void add_measure(metro::NoteLength note_length, metro::Measure& measure);
+	void change_bpm(int new_bpm);
 
 private:
 #ifdef UNIT_TESTS
@@ -100,6 +103,8 @@ private:
 	std::thread ticker_thread_4;
 	std::thread ticker_thread_8;
 	std::thread ticker_thread_16;
+
+	void recompute_periods();
 };
 }; // namespace metro_private
 

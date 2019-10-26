@@ -54,7 +54,9 @@ public:
 	~Metronome();
 
 	void add_measure(NoteLength note_length, Measure& measure);
-	void loop();
+	void start(); // for manual loop control
+	void start_and_loop(); // start + loop
+	void change_tempo(int new_bpm);
 
 private:
 	metro_private::MetronomePrivate*

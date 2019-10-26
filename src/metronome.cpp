@@ -24,7 +24,14 @@ void metro::Metronome::add_measure(metro::NoteLength note_length,
 	p_impl->add_measure(note_length, measure);
 }
 
-void metro::Metronome::loop() { p_impl->start(); }
+void metro::Metronome::change_tempo(int new_bpm)
+{
+	p_impl->change_bpm(new_bpm);
+}
+
+void metro::Metronome::start_and_loop() { p_impl->start(); p_impl->loop(); }
+
+void metro::Metronome::start() { p_impl->start(); }
 
 metro::Metronome::~Metronome()
 {
@@ -140,6 +147,32 @@ void metro::precise_sleep_us(std::chrono::microseconds dur_us)
 		std::this_thread::sleep_for(std::chrono::nanoseconds(1));
 }
 
+void metro_private::MetronomePrivate::recompute_periods()
+{
+    period_us_2 = std::chrono::duration_cast<std::chrono::microseconds>(
+          std::chrono::duration<double, std::micro>(2.0 * 1000000.0
+                                                    * (60.0 / bpm)));
+    period_us_4 = std::chrono::duration_cast<std::chrono::microseconds>(
+          std::chrono::duration<double, std::micro>(1000000.0 * (60.0 / bpm)));
+    period_us_8 = std::chrono::duration_cast<std::chrono::microseconds>(
+          std::chrono::duration<double, std::micro>(1.0 / 2.0 * 1000000.0
+                                                    * (60.0 / bpm)));
+    period_us_16 = std::chrono::duration_cast<std::chrono::microseconds>(
+          std::chrono::duration<double, std::micro>(1.0 / 4.0 * 1000000.0
+                                                    * (60.0 / bpm)));
+
+    stream_2.change_latency(period_us_2);
+    stream_4.change_latency(period_us_4);
+    stream_8.change_latency(period_us_8);
+    stream_16.change_latency(period_us_16);
+}
+
+void metro_private::MetronomePrivate::change_bpm(int new_bpm)
+{
+	bpm = new_bpm;
+	recompute_periods();
+}
+
 metro_private::MetronomePrivate::MetronomePrivate(int bpm)
     : bpm(bpm)
     , engine(metro_private::AudioEngine())
@@ -230,7 +263,10 @@ void metro_private::MetronomePrivate::start()
 	if (stream_16.has_measures())
 		ticker_thread_16
 		    = std::thread(blocking_ticker_16, std::ref(tickers_on));
+}
 
+void metro_private::MetronomePrivate::loop()
+{
 	engine.eventloop();
 }
 

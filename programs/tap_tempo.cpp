@@ -79,7 +79,7 @@ int main()
 		click_track[0] = click;
 
 		metronome.add_measure(metro::NoteLength::Quarter, click_track);
-		metronome.loop();
+		metronome.start_and_loop();
 	}
 	catch (...) {
 		std::cerr << "exception" << std::endl;

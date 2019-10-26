@@ -1,5 +1,6 @@
 #include "libmetro.h"
 #include <iostream>
+#include <chrono>
 
 int main(int argc, char** argv)
 {
@@ -18,7 +19,13 @@ int main(int argc, char** argv)
 		click[0] = beep;
 
 		metronome.add_measure(metro::NoteLength::Quarter, click);
-		metronome.start_and_loop();
+		metronome.start();
+
+		while (true) {
+			metro::precise_sleep_us(std::chrono::microseconds(5000000));
+			bpm += 5;
+			metronome.change_tempo(bpm);
+		}
 	}
 	catch (...) {
 		std::cerr << "exception" << std::endl;

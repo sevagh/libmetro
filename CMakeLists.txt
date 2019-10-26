@@ -98,6 +98,7 @@ endfunction()
 metro_program(click_track)
 metro_program(drum_track_4_4)
 metro_program(tap_tempo)
+metro_program(gradual_tempo)
 #metro_program(metronome)
 
 #------------------------------------------------------------------------------#
@@ -150,7 +151,7 @@ function(metro_gtest_long name)
 	endif()
 endfunction()
 
-#metro_gtest_long(clock_accuracy)
+metro_gtest_long(clock_accuracy)
 metro_gtest(unit)
 
 #------------------------------------------------------------------------------#
