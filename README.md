@@ -1,4 +1,4 @@
-Libmetro is a C++ library for developing interesting metronome variants. This will be presented as my final project in [MUMT-306](https://www.music.mcgill.ca/~gary/306/). Note that the files in `src/` are very granular for clarity and easier grading. It may be beneficial to compile times to keep source code in less, larger cpp files.
+Libmetro is a C++ library for developing interesting metronome variants. This will be presented as my final project in [MUMT-306](https://www.music.mcgill.ca/~gary/306/).
 
 ### Goal
 

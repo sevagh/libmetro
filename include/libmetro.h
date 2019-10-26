@@ -21,13 +21,24 @@ enum Timbre { Sine, Square, Sawtooth, Triangle };
 
 class Note {
 public:
-	Note();
+	Note()
+	    : frames(std::vector<float>(2 * SampleRateHz)){};
+
+	// defined in src/timbregen.cpp
 	Note(Timbre timbre, float frequency, float volume);
-	float& operator[](size_t index);
-	Note operator+(const Note& other);
-	const float& operator[](size_t index) const;
-	std::vector<float>& get_frames();
-	size_t size();
+
+	float& operator[](size_t index) { return frames[index]; };
+	const float& operator[](size_t index) const { return frames[index]; };
+	std::vector<float>& get_frames() { return frames; };
+	size_t size() { return frames.size(); };
+
+	Note operator+(const Note& other)
+	{
+		metro::Note ret;
+		for (size_t i = 0; i < ret.size(); ++i)
+			ret[i] = (*this)[i] + other[i];
+		return ret;
+	}
 
 private:
 	std::vector<float> frames;
@@ -35,13 +46,15 @@ private:
 
 class Measure {
 public:
-	Measure(int num_notes);
-	Note& operator[](size_t index);
-	const Note& operator[](size_t index) const;
-	std::vector<Note>& get_notes();
-	size_t size();
-	void toggle_mute(bool mute);
-	bool is_muted();
+	Measure(int num_notes)
+	    : muted(false)
+	    , notes(num_notes){};
+	Note& operator[](size_t index) { return notes[index]; };
+	const Note& operator[](size_t index) const { return notes[index]; };
+	std::vector<Note>& get_notes() { return notes; };
+	size_t size() { return notes.size(); };
+	void toggle_mute(bool mute) { muted = mute; };
+	bool is_muted() { return muted; };
 
 private:
 	bool muted;

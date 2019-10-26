@@ -1,14 +1,11 @@
-#include "libmetro.h"
 #include "timbregen.h"
+#include "libmetro.h"
 #include <cfloat>
 #include <cmath>
 #include <vector>
 
 // generate sine waves with the following timbres
 // enum Timbre { Sine, Square, Sawtooth, Triangle };
-
-metro::Note::Note()
-    : frames(std::vector<float>(2 * metro::SampleRateHz)){}; // empty note
 
 metro::Note::Note(metro::Timbre timbre, float frequency, float volume)
     : frames(std::vector<float>(2 * metro::SampleRateHz))
@@ -17,25 +14,6 @@ metro::Note::Note(metro::Timbre timbre, float frequency, float volume)
 	for (size_t t = 0; t < frames.size(); ++t)
 		frames[t] = gen.next_sample(t);
 }
-
-size_t metro::Note::size() { return frames.size(); }
-
-float& metro::Note::operator[](size_t index) { return frames[index]; }
-
-metro::Note metro::Note::operator+(const metro::Note& other)
-{
-	metro::Note ret;
-	for (size_t i = 0; i < ret.size(); ++i)
-		ret[i] = (*this)[i] + other[i];
-	return ret;
-}
-
-const float& metro::Note::operator[](size_t index) const
-{
-	return frames[index];
-}
-
-std::vector<float>& metro::Note::get_frames() { return frames; }
 
 metro_private::TimbreGen::TimbreGen(metro::Timbre timbre,
                                     float level,

@@ -56,8 +56,7 @@ set(METRO_SOURCES
     src/audioengine.cpp
     src/outstream.cpp
     src/metronome.cpp
-    src/measure.cpp
-    src/note.cpp)
+    src/timbregen.cpp)
 
 set(METRO_DEPS
     metro
