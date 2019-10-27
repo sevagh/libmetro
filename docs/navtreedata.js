@@ -25,9 +25,10 @@ var NAVTREE =
 [
   [ "libmetro", "index.html", [
     [ "Overview", "index.html#intro_sec", null ],
-    [ "1. Getting started", "md__home_sevagh_repos_libmetro_doxygen_1_gettingstarted.html", null ],
-    [ "2. Complex examples", "md__home_sevagh_repos_libmetro_doxygen_2_complexexamples.html", null ],
-    [ "3. MUMT-306 project report", "md__home_sevagh_repos_libmetro_doxygen_3_mumt306.html", null ],
+    [ "Getting started", "md__home_sevagh_repos_libmetro_doxygen_1_gettingstarted.html", null ],
+    [ "Complete examples", "md__home_sevagh_repos_libmetro_doxygen_2_completeexamples.html", null ],
+    [ "Demos from real songs", "md__home_sevagh_repos_libmetro_doxygen_3_musicdemos.html", null ],
+    [ "MUMT-306 project report", "md__home_sevagh_repos_libmetro_doxygen_4_mumt306.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -46,14 +47,18 @@ var NAVTREE =
       ] ]
     ] ],
     [ "Files", "files.html", [
-      [ "File List", "files.html", "files_dup" ]
+      [ "File List", "files.html", "files_dup" ],
+      [ "File Members", "globals.html", [
+        [ "All", "globals.html", null ],
+        [ "Functions", "globals_func.html", null ]
+      ] ]
     ] ]
   ] ]
 ];
 
 var NAVTREEINDEX =
 [
-"annotated.html"
+"accented__44_8cpp.html"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

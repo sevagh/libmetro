@@ -67,6 +67,10 @@ static std::chrono::microseconds bpm2period(metro::Measure::NoteLength ratio,
 		return std::chrono::duration_cast<std::chrono::microseconds>(
 		    std::chrono::duration<double, std::micro>(1.0 / 4.0 * 1000000.0
 		                                              * (60.0 / bpm)));
+	case metro::Measure::NoteLength::SixteenthTriplet:
+		return std::chrono::duration_cast<std::chrono::microseconds>(
+		    std::chrono::duration<double, std::micro>(1.0 / 6.0 * 1000000.0
+		                                              * (60.0 / bpm)));
 	default:
 		return std::chrono::microseconds(0);
 	}

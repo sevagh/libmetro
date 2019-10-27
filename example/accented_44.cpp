@@ -1,6 +1,11 @@
 #include "libmetro.h"
 #include <iostream>
 
+//! accented_44 is a simple example of a 4/4 beat
+/*!
+ * The only argument is the quarter note bpm. There are accents on the first
+ * and third beats.
+ */
 int main(int argc, char** argv)
 {
 	if (argc < 2) {

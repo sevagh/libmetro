@@ -53,7 +53,7 @@ public:
 	/*! Timbre enum */
 	enum Timbre {
 		Sine, /*!< generate a sine wave sound. Uses stk/SineWave.h */
-		Drum  /*!< generate a drum sound. Uses stk/Drummer.h */
+		Drum, /*!< generate a drum sound. Uses stk/Drummer.h */
 	};
 
 	//! Empty Note constructor.
@@ -68,8 +68,9 @@ public:
 	/*!
 	 * @param[in] timbre: Sine or Drum.
 	 * @param[in] frequency: for Sine, frequency represents the frequency. For
-	 * Drum, frequency represents the General MIDI percussion note i.e.
-	 * https://en.wikipedia.org/wiki/General_MIDI#Percussion
+	 * Drum, frequency represents the frequency to General MIDI percussion
+	 * note number.
+	 *
 	 * @param[in] volume: loudness in percent, i.e. 100% is max volume
 	 */
 	Note(Timbre timbre, float frequency, float volume);
@@ -112,12 +113,13 @@ class Measure {
 public:
 	/*! NoteLength enum */
 	enum NoteLength {
-		Half,           /*!< 1/2 * bpm of quarter note */
-		Quarter,        /*!< bpm of quarter note */
-		QuarterTriplet, /*!< 3/2 * bpm of quarter note */
-		Eighth,         /*!< 2 * bpm of quarter note */
-		EighthTriplet,  /*!< 3 * bpm of quarter note */
-		Sixteenth       /*!< 4 * bpm of quarter note */
+		Half,             /*!< 1/2 * bpm of quarter note */
+		Quarter,          /*!< bpm of quarter note */
+		QuarterTriplet,   /*!< 3/2 * bpm of quarter note */
+		Eighth,           /*!< 2 * bpm of quarter note */
+		EighthTriplet,    /*!< 3 * bpm of quarter note */
+		Sixteenth,        /*!< 4 * bpm of quarter note */
+		SixteenthTriplet, /*!< 6 * bpm of quarter note */
 	};
 
 	//! Measure constructor.

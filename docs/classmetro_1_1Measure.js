@@ -6,7 +6,8 @@ var classmetro_1_1Measure =
       [ "QuarterTriplet", "classmetro_1_1Measure.html#ad3589434c3fffb9343dee90d30db0117ab528cb2e70ef6f6b4b42c4ce60d0a023", null ],
       [ "Eighth", "classmetro_1_1Measure.html#ad3589434c3fffb9343dee90d30db0117afae833c87b9144670aef36d5931ef549", null ],
       [ "EighthTriplet", "classmetro_1_1Measure.html#ad3589434c3fffb9343dee90d30db0117a15f1646868d0a4b4ba131d8a4b319018", null ],
-      [ "Sixteenth", "classmetro_1_1Measure.html#ad3589434c3fffb9343dee90d30db0117a4513636cdb77b968be35e965d1b0c554", null ]
+      [ "Sixteenth", "classmetro_1_1Measure.html#ad3589434c3fffb9343dee90d30db0117a4513636cdb77b968be35e965d1b0c554", null ],
+      [ "SixteenthTriplet", "classmetro_1_1Measure.html#ad3589434c3fffb9343dee90d30db0117adcb8b3abb591c9ce78e2ebab5b2b9591", null ]
     ] ],
     [ "Measure", "classmetro_1_1Measure.html#ac3798661271bc6abd49cf3ec0b725b0a", null ],
     [ "get_notes", "classmetro_1_1Measure.html#a54b103c89dd56b4ac71a978bab21aab7", null ],

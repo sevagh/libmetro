@@ -1,12 +1,12 @@
-### 1. Getting started
+### Getting started
 
 The goal of libmetro is to simplify the development of specialized metronomes, e.g. simple, odd, compound, additive, and polyrhythmic click/drum tracks for practicing. Many of the examples and programs are adapted from the excellent [Bounce Metronome](https://bouncemetronome.com/audio/downloadable-audio-clips/audio-clips-time-signatures-additive-rhythms-and-polyrhythm) website.
 
 The provided classes are Metronome, Note, and Measure. The bpm of the metronome should **always be given as the bpm of the quarter note**.
 
-A Note is a convenience wrapper around a vector of floats representing a single sound - choices of timbre include `Timbre::{Sine, Drum}`. In the case of Drum, the frequency is the [general MIDI drum note](https://en.wikipedia.org/wiki/General_MIDI#Percussion), e.g. 56.0 for cowbell.
+A Note is a convenience wrapper around a vector of floats representing a single sound - choices of timbre include `Timbre::{Sine, Drum}`.
 
-A Measure is a convenience wrapper around a vector of Notes representing a measure. Measures are added to a metronome with their note length, represented with the enum `NoteLength::{Half, Quarter, QuarterTriplet, Eighth, EighthTriplet, Sixteenth}`.
+A Measure is a convenience wrapper around a vector of Notes representing a measure. Measures are added to a metronome with their note length, represented with the enum `NoteLength::{Half, Quarter, QuarterTriplet, Eighth, EighthTriplet, Sixteenth, SixteenthTriplet}`.
 
 ### Basic usage
 
@@ -49,21 +49,20 @@ int bpm = 100;
 auto metronome = metro::Metronome(bpm);
 
 auto poly1 = metro::Measure(2);
-poly1[0] = metro::Note(metro::Note::Timbre::Drum, 54.0, 100.0)
-                   + metro::Note(metro::Note::Timbre::Drum, 56.0, 100.0);
-poly2[1] = metro::Note(metro::Note::Timbre::Drum, 56.0, 50.0);
+poly1[0] = metro::Note(metro::Note::Timbre::Drum, 185.0, 100.0)
+           + metro::Note(metro::Note::Timbre::Drum, 207.65, 100.0);
+poly1[1] = metro::Note(metro::Note::Timbre::Drum, 207.65, 50.0);
 
 metronome.add_measure(metro::Measure::NoteLength::Quarter, poly1);
 
 auto poly2 = metro::Measure(3);
-poly2[0] = metro::Note(metro::Note::Timbre::Drum, 38.0, 100.0)
-                     + metro::Note(metro::Note::Timbre::Drum, 42.0, 100.0);
-poly2[1] = metro::Note(metro::Note::Timbre::Drum, 38.0, 50.0);
-poly2[2] = metro::Note(metro::Note::Timbre::Drum, 38.0, 50.0);
+poly2[0] = metro::Note(metro::Note::Timbre::Drum, 73.42, 100.0)
+           + metro::Note(metro::Note::Timbre::Drum, 92.50, 100.0);
+poly2[1] = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);
+poly2[2] = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);
 
 metronome.add_measure(
-    metro::Measure::NoteLength::QuarterTriplet, poly2); // note the QuarterTriplet note length
-
+    metro::Measure::NoteLength::QuarterTriplet, poly2);
 metronome.start_and_loop();
 ```
 

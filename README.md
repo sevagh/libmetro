@@ -1,6 +1,22 @@
-Libmetro is a C++ library for developing interesting metronome variants. https://sevagh.github.io/libmetro
+Libmetro is a C++ library for developing interesting metronome variants.
 
 Open a GitHub issue for any questions you may have.
+
+### Project structure
+
+A description of the project, API docs, and various sample clips are available at: https://sevagh.github.io/libmetro
+
+The libmetro sources are:
+
+* [include](./include) - the single header file, `libmetro.h`, that you'll need to use libmetro
+* [src](./src) - the source code of libmetro, split into private header files for modular design and readability
+* [test](./test) - various unit tests
+
+Programs built with libmetro are:
+
+* [example](./example) - very basic examples, the gentlest introduction to libmetro
+* [demo](./demo) - demo programs implementing specific time signatures from real songs and live music
+* [programs](./programs) - more complex programs that implement a variety of simple, odd, compound and polyrhythmic time signatures
 
 ### Developer guide
 

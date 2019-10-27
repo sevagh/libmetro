@@ -109,6 +109,15 @@ function(metro_program name)
 	target_link_libraries(program_${name} ${METRO_DEPS})
 endfunction()
 
+metro_program(simple_and_odd)
+metro_program(compound)
+metro_program(polyrhythm)
+
+function(metro_demo name)
+	add_executable(demo_${name} demo/${name}.cpp)
+	target_link_libraries(demo_${name} ${METRO_DEPS})
+endfunction()
+
 #------------------------------------------------------------------------------#
 # INSTALL
 #------------------------------------------------------------------------------#

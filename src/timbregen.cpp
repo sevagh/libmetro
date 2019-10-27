@@ -17,12 +17,6 @@ static void stk_init()
 	});
 }
 
-// reversing the freq2midi magic in the stk Drummer code
-static float midi2freq(int midi)
-{
-	return 440.0 * pow(2.0, (float(midi) - 69.0) / 12.0);
-}
-
 static void normalize(metro::Note* note, float ratio)
 {
 	// normalize to 1.0 * volume_pct since libsoundio expects floats
@@ -58,7 +52,7 @@ metro::Note::Note(metro::Note::Timbre timbre, float frequency, float volume)
 	} break;
 	case Drum: {
 		stk::Drummer drummer;
-		drummer.noteOn(midi2freq(frequency), volume / 100.0);
+		drummer.noteOn(frequency, volume / 100.0);
 		for (size_t i = 0; i < frames.size(); ++i)
 			frames[i] = drummer.tick();
 

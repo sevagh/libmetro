@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['2_2e_20complex_20examples',['2. Complex examples',['../md__home_sevagh_repos_libmetro_doxygen_2_complexexamples.html',1,'']]]
+  ['demos_20from_20real_20songs',['Demos from real songs',['../md__home_sevagh_repos_libmetro_doxygen_3_musicdemos.html',1,'']]]
 ];
