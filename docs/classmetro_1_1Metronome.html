@@ -92,22 +92,127 @@ $(document).ready(function(){initNavTree('classmetro_1_1Metronome.html','');});
 <div class="title">metro::Metronome Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><a class="el" href="classmetro_1_1Metronome.html" title="Metronome class.">Metronome</a> class.  
+ <a href="classmetro_1_1Metronome.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="libmetro_8h_source.html">libmetro.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:af0fcd002afd6c5a87e6a7aaf1ab6ae5f"><td class="memItemLeft" align="right" valign="top"><a id="af0fcd002afd6c5a87e6a7aaf1ab6ae5f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Metronome</b> (int bpm)</td></tr>
+<tr class="memitem:af0fcd002afd6c5a87e6a7aaf1ab6ae5f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmetro_1_1Metronome.html#af0fcd002afd6c5a87e6a7aaf1ab6ae5f">Metronome</a> (int bpm)</td></tr>
+<tr class="memdesc:af0fcd002afd6c5a87e6a7aaf1ab6ae5f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classmetro_1_1Metronome.html" title="Metronome class.">Metronome</a> constructor.  <a href="#af0fcd002afd6c5a87e6a7aaf1ab6ae5f">More...</a><br /></td></tr>
 <tr class="separator:af0fcd002afd6c5a87e6a7aaf1ab6ae5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7fc9a9ef8680e055e989047f2b16caaa"><td class="memItemLeft" align="right" valign="top"><a id="a7fc9a9ef8680e055e989047f2b16caaa"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>add_measure</b> (NoteLength note_length, <a class="el" href="classmetro_1_1Measure.html">Measure</a> &amp;measure)</td></tr>
-<tr class="separator:a7fc9a9ef8680e055e989047f2b16caaa"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a829a3c747fa9a61cb10575b5a2631132"><td class="memItemLeft" align="right" valign="top"><a id="a829a3c747fa9a61cb10575b5a2631132"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>start</b> ()</td></tr>
+<tr class="memitem:ad3d0b024b844b30853c3dd8404019cdb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmetro_1_1Metronome.html#ad3d0b024b844b30853c3dd8404019cdb">add_measure</a> (<a class="el" href="classmetro_1_1Measure.html#ad3589434c3fffb9343dee90d30db0117">Measure::NoteLength</a> note_length, <a class="el" href="classmetro_1_1Measure.html">Measure</a> &amp;measure)</td></tr>
+<tr class="memdesc:ad3d0b024b844b30853c3dd8404019cdb"><td class="mdescLeft">&#160;</td><td class="mdescRight">add a measure  <a href="#ad3d0b024b844b30853c3dd8404019cdb">More...</a><br /></td></tr>
+<tr class="separator:ad3d0b024b844b30853c3dd8404019cdb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a829a3c747fa9a61cb10575b5a2631132"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmetro_1_1Metronome.html#a829a3c747fa9a61cb10575b5a2631132">start</a> ()</td></tr>
+<tr class="memdesc:a829a3c747fa9a61cb10575b5a2631132"><td class="mdescLeft">&#160;</td><td class="mdescRight">start the loop  <a href="#a829a3c747fa9a61cb10575b5a2631132">More...</a><br /></td></tr>
 <tr class="separator:a829a3c747fa9a61cb10575b5a2631132"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82621d4d5af78e8e75748434e75dea1c"><td class="memItemLeft" align="right" valign="top"><a id="a82621d4d5af78e8e75748434e75dea1c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>start_and_loop</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmetro_1_1Metronome.html#a82621d4d5af78e8e75748434e75dea1c">start_and_loop</a> ()</td></tr>
+<tr class="memdesc:a82621d4d5af78e8e75748434e75dea1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">start the loop and block <br /></td></tr>
 <tr class="separator:a82621d4d5af78e8e75748434e75dea1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p><a class="el" href="classmetro_1_1Metronome.html" title="Metronome class.">Metronome</a> class. </p>
+<p><a class="el" href="classmetro_1_1Metronome.html" title="Metronome class.">Metronome</a> is the main ticker of libmetro.</p>
+<p>The flow of libmetro goes something like:</p>
+<ol type="1">
+<li>Create a metronome with the desired quarter note bpm</li>
+<li>Create measures with notes</li>
+<li>Add the measures to the metronome with the given <a class="el" href="classmetro_1_1Measure.html#ad3589434c3fffb9343dee90d30db0117">metro::Measure::NoteLength</a></li>
+<li>Start and loop the metronome object</li>
+</ol>
+<p>The metronome will take care of emitting the notes on your output device and cycling through the measures at every tick appropriately. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="af0fcd002afd6c5a87e6a7aaf1ab6ae5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af0fcd002afd6c5a87e6a7aaf1ab6ae5f">&#9670;&nbsp;</a></span>Metronome()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">metro::Metronome::Metronome </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>bpm</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classmetro_1_1Metronome.html" title="Metronome class.">Metronome</a> constructor. </p>
+<p>Create a metronome with the given quarter note bpm.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">bpm</td><td>bpm of the quarter note </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ad3d0b024b844b30853c3dd8404019cdb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad3d0b024b844b30853c3dd8404019cdb">&#9670;&nbsp;</a></span>add_measure()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void metro::Metronome::add_measure </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classmetro_1_1Measure.html#ad3589434c3fffb9343dee90d30db0117">Measure::NoteLength</a>&#160;</td>
+          <td class="paramname"><em>note_length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classmetro_1_1Measure.html">Measure</a> &amp;&#160;</td>
+          <td class="paramname"><em>measure</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>add a measure </p>
+<p>Add a measure to the metronome which will be cycled through at a tempo set by param <a class="el" href="classmetro_1_1Measure.html#ad3589434c3fffb9343dee90d30db0117">metro::Measure::NoteLength</a>, relative to the quarter note bpm.</p>
+<p>The goal is to be able to overlay different note durations e.g. (half, eighth), each with a separate outstream with a different software_latency due to different timing requirements.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">note_length</td><td>note length of the measure </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">measure</td><td>measure </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a829a3c747fa9a61cb10575b5a2631132"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a829a3c747fa9a61cb10575b5a2631132">&#9670;&nbsp;</a></span>start()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void metro::Metronome::start </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>start the loop </p>
+<p>This method requires the user to block afterwards or else the code will exit. Useful if you want your own custom blocking logic e.g. waiting for user key presses. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>/home/sevagh/repos/libmetro/include/<a class="el" href="libmetro_8h_source.html">libmetro.h</a></li>
 </ul>
@@ -116,7 +221,7 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>start_and_loop</b> ()
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="navelem"><b>metro</b></li><li class="navelem"><a class="el" href="classmetro_1_1Metronome.html">Metronome</a></li>
+    <li class="navelem"><a class="el" href="namespacemetro.html">metro</a></li><li class="navelem"><a class="el" href="classmetro_1_1Metronome.html">Metronome</a></li>
     <li class="footer">Generated by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.15 </li>

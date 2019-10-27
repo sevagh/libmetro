@@ -18,9 +18,9 @@ Here's a simple example of an accented 4/4 beat with sine waves:
 int bpm = 100;
 auto metronome = metro::Metronome(bpm);
 
-auto downbeat = metro::Note(metro::Timbre::Sine, 540.0, 100.0);
-auto weakbeat = metro::Note(metro::Timbre::Sine, 350.0, 50.0);
-auto mediumbeat = metro::Note(metro::Timbre::Sine, 440.0, 65.0);
+auto downbeat = metro::Note(metro::Note::Timbre::Sine, 540.0, 100.0);
+auto weakbeat = metro::Note(metro::Note::Timbre::Sine, 350.0, 50.0);
+auto mediumbeat = metro::Note(metro::Note::Timbre::Sine, 440.0, 65.0);
 
 metro::Measure accented_44(4);
 accented_44[0] = downbeat;
@@ -28,7 +28,7 @@ accented_44[1] = weakbeat;
 accented_44[2] = mediumbeat;
 accented_44[3] = weakbeat;
 
-metronome.add_measure(metro::NoteLength::Quarter, accented_44);
+metronome.add_measure(metro::Measure::NoteLength::Quarter, accented_44);
 metronome.start_and_loop();
 ```
 
@@ -49,20 +49,20 @@ int bpm = 100;
 auto metronome = metro::Metronome(bpm);
 
 auto poly1 = metro::Measure(2);
-poly1[0] = metro::Note(metro::Timbre::Drum, 54.0, 100.0)
-                   + metro::Note(metro::Timbre::Drum, 56.0, 100.0);
-poly2[1] = metro::Note(metro::Timbre::Drum, 56.0, 50.0);
+poly1[0] = metro::Note(metro::Note::Timbre::Drum, 54.0, 100.0)
+                   + metro::Note(metro::Note::Timbre::Drum, 56.0, 100.0);
+poly2[1] = metro::Note(metro::Note::Timbre::Drum, 56.0, 50.0);
 
-metronome.add_measure(metro::NoteLength::Quarter, poly1);
+metronome.add_measure(metro::Measure::NoteLength::Quarter, poly1);
 
 auto poly2 = metro::Measure(3);
-poly2[0] = metro::Note(metro::Timbre::Drum, 38.0, 100.0)
-                     + metro::Note(metro::Timbre::Drum, 42.0, 100.0);
-poly2[1] = metro::Note(metro::Timbre::Drum, 38.0, 50.0);
-poly2[2] = metro::Note(metro::Timbre::Drum, 38.0, 50.0);
+poly2[0] = metro::Note(metro::Note::Timbre::Drum, 38.0, 100.0)
+                     + metro::Note(metro::Note::Timbre::Drum, 42.0, 100.0);
+poly2[1] = metro::Note(metro::Note::Timbre::Drum, 38.0, 50.0);
+poly2[2] = metro::Note(metro::Note::Timbre::Drum, 38.0, 50.0);
 
 metronome.add_measure(
-    metro::NoteLength::QuarterTriplet, poly2); // note the QuarterTriplet note length
+    metro::Measure::NoteLength::QuarterTriplet, poly2); // note the QuarterTriplet note length
 
 metronome.start_and_loop();
 ```

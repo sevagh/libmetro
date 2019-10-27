@@ -51,7 +51,7 @@ TEST_P(BpmTimerTestClockAccuracy, ClockAccuracy)
 			}
 		}).detach();
 
-		metro::precise_sleep_us(period_us);
+		metro_private::precise_sleep_us(period_us);
 	}
 }
 
@@ -70,8 +70,8 @@ TEST_P(BpmTimerTestListen, ListenTestNaiveSleepVsPreciseSleep)
 	auto outstream1 = engine.new_outstream(period_us);
 	auto outstream2 = engine.new_outstream(period_us);
 
-	auto beep1 = metro::Note(metro::Timbre::Sine, 440.0, 100.0);
-	auto beep2 = metro::Note(metro::Timbre::Sine, 261.63, 100.0);
+	auto beep1 = metro::Note(metro::Note::Timbre::Sine, 440.0, 100.0);
+	auto beep2 = metro::Note(metro::Note::Timbre::Sine, 261.63, 100.0);
 
 	auto measure1 = metro::Measure(3);
 	measure1[0] = beep1;
@@ -94,7 +94,7 @@ TEST_P(BpmTimerTestListen, ListenTestNaiveSleepVsPreciseSleep)
 		outstream1->start();
 		for (size_t i = 0; i < 100; ++i) {
 			std::thread([&]() { outstream1->play_next_note(); }).detach();
-			metro::precise_sleep_us(period_us);
+			metro_private::precise_sleep_us(period_us);
 		}
 	}).detach();
 

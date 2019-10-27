@@ -1,5 +1,6 @@
 #include "outstream.h"
 #include "audioengine.h"
+#include "metronome.h"
 #include <chrono>
 #include <cstring>
 #include <functional>
@@ -121,7 +122,7 @@ void metro_private::OutStream::play_next_note()
 	soundio_ring_buffer_advance_write_ptr(ringbuf, fill_count);
 
 	// wait for how long a tick should be
-	metro::precise_sleep_us(
+	metro_private::precise_sleep_us(
 	    std::chrono::duration_cast<std::chrono::microseconds>(
 	        std::chrono::duration<float, std::ratio<1, 1>>(latency_s)));
 

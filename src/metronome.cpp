@@ -11,7 +11,7 @@ metro::Metronome::Metronome(int bpm)
 	p_impl = new metro_private::MetronomePrivate(bpm);
 }
 
-void metro::Metronome::add_measure(metro::NoteLength note_length,
+void metro::Metronome::add_measure(metro::Measure::NoteLength note_length,
                                    metro::Measure& measure)
 {
 	p_impl->add_measure(note_length, measure);
@@ -31,7 +31,7 @@ metro::Metronome::~Metronome()
 	delete p_impl;
 }
 
-void metro::precise_sleep_us(std::chrono::microseconds dur_us)
+void metro_private::precise_sleep_us(std::chrono::microseconds dur_us)
 {
 	auto start_tick = std::chrono::steady_clock::now();
 	while (std::chrono::duration_cast<std::chrono::microseconds>(
@@ -40,29 +40,30 @@ void metro::precise_sleep_us(std::chrono::microseconds dur_us)
 		std::this_thread::sleep_for(std::chrono::nanoseconds(1));
 }
 
-static std::chrono::microseconds bpm2period(metro::NoteLength ratio, int bpm)
+static std::chrono::microseconds bpm2period(metro::Measure::NoteLength ratio,
+                                            int bpm)
 {
 	switch (ratio) {
-	case metro::NoteLength::Half:
+	case metro::Measure::NoteLength::Half:
 		return std::chrono::duration_cast<std::chrono::microseconds>(
 		    std::chrono::duration<double, std::micro>(2.0 * 1000000.0
 		                                              * (60.0 / bpm)));
-	case metro::NoteLength::Quarter:
+	case metro::Measure::NoteLength::Quarter:
 		return std::chrono::duration_cast<std::chrono::microseconds>(
 		    std::chrono::duration<double, std::micro>(1000000.0 * (60.0 / bpm)));
-	case metro::NoteLength::QuarterTriplet:
+	case metro::Measure::NoteLength::QuarterTriplet:
 		return std::chrono::duration_cast<std::chrono::microseconds>(
 		    std::chrono::duration<double, std::micro>(2.0 / 3.0 * 1000000.0
 		                                              * (60.0 / bpm)));
-	case metro::NoteLength::Eighth:
+	case metro::Measure::NoteLength::Eighth:
 		return std::chrono::duration_cast<std::chrono::microseconds>(
 		    std::chrono::duration<double, std::micro>(1.0 / 2.0 * 1000000.0
 		                                              * (60.0 / bpm)));
-	case metro::NoteLength::EighthTriplet:
+	case metro::Measure::NoteLength::EighthTriplet:
 		return std::chrono::duration_cast<std::chrono::microseconds>(
 		    std::chrono::duration<double, std::micro>(1.0 / 3.0 * 1000000.0
 		                                              * (60.0 / bpm)));
-	case metro::NoteLength::Sixteenth:
+	case metro::Measure::NoteLength::Sixteenth:
 		return std::chrono::duration_cast<std::chrono::microseconds>(
 		    std::chrono::duration<double, std::micro>(1.0 / 4.0 * 1000000.0
 		                                              * (60.0 / bpm)));
@@ -81,11 +82,12 @@ metro_private::MetronomePrivate::MetronomePrivate(int bpm)
 		                         "this platform");
 }
 
-void metro_private::MetronomePrivate::add_measure(metro::NoteLength note_length,
-                                                  metro::Measure& measure)
+void metro_private::MetronomePrivate::add_measure(
+    metro::Measure::NoteLength note_length,
+    metro::Measure& measure)
 {
 
-	std::map<metro::NoteLength, NoteTicker>::iterator it
+	std::map<metro::Measure::NoteLength, NoteTicker>::iterator it
 	    = tickers.find(note_length);
 	if (it != tickers.end()) {
 		auto ticker = it->second;
@@ -111,7 +113,7 @@ void metro_private::MetronomePrivate::start()
 			ticker.stream->start();
 			while (on) {
 				std::thread([&]() { ticker.stream->play_next_note(); }).detach();
-				metro::precise_sleep_us(ticker.period_us);
+				metro_private::precise_sleep_us(ticker.period_us);
 			}
 		};
 

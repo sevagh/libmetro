@@ -7,8 +7,6 @@
 #include <mutex>
 #include <vector>
 
-// generate sine waves with the following timbres
-// enum Timbre { Sine, Drum };
 static std::once_flag stk_init_flag;
 
 static void stk_init()
@@ -43,7 +41,7 @@ static void normalize(metro::Note* note, float ratio)
 		(*note)[i] = (ratio / max_elem) * (*note)[i];
 }
 
-metro::Note::Note(metro::Timbre timbre, float frequency, float volume)
+metro::Note::Note(metro::Note::Timbre timbre, float frequency, float volume)
     : frames(std::vector<float>(2 * metro::SampleRateHz))
 {
 	stk_init();

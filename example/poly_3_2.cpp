@@ -14,20 +14,20 @@ int main(int argc, char** argv)
 		auto metronome = metro::Metronome(bpm);
 
 		auto poly1 = metro::Measure(2);
-		poly1[0] = metro::Note(metro::Timbre::Drum, 54.0, 100.0)
-		                   + metro::Note(metro::Timbre::Drum, 56.0, 100.0);
-		poly1[1] = metro::Note(metro::Timbre::Drum, 56.0, 50.0);
+		poly1[0] = metro::Note(metro::Note::Timbre::Drum, 54.0, 100.0)
+		           + metro::Note(metro::Note::Timbre::Drum, 56.0, 100.0);
+		poly1[1] = metro::Note(metro::Note::Timbre::Drum, 56.0, 50.0);
 
-		metronome.add_measure(metro::NoteLength::Quarter, poly1);
+		metronome.add_measure(metro::Measure::NoteLength::Quarter, poly1);
 
 		auto poly2 = metro::Measure(3);
-		poly2[0] = metro::Note(metro::Timbre::Drum, 38.0, 100.0)
-		                     + metro::Note(metro::Timbre::Drum, 42.0, 100.0);
-		poly2[1] = metro::Note(metro::Timbre::Drum, 38.0, 50.0);
-		poly2[2] = metro::Note(metro::Timbre::Drum, 38.0, 50.0);
+		poly2[0] = metro::Note(metro::Note::Timbre::Drum, 38.0, 100.0)
+		           + metro::Note(metro::Note::Timbre::Drum, 42.0, 100.0);
+		poly2[1] = metro::Note(metro::Note::Timbre::Drum, 38.0, 50.0);
+		poly2[2] = metro::Note(metro::Note::Timbre::Drum, 38.0, 50.0);
 
 		metronome.add_measure(
-		    metro::NoteLength::QuarterTriplet, poly2);
+		    metro::Measure::NoteLength::QuarterTriplet, poly2);
 		metronome.start_and_loop();
 	}
 	catch (...) {

@@ -28,8 +28,8 @@ TEST(NoteUnitTest, EmptyNotes)
 
 TEST(NoteUnitTest, SineTimbreVolumeAndAmplitudes)
 {
-	auto note1 = metro::Note(metro::Timbre::Sine, 440.0, 100.0);
-	auto note2 = metro::Note(metro::Timbre::Sine, 440.0, 50.0);
+	auto note1 = metro::Note(metro::Note::Timbre::Sine, 440.0, 100.0);
+	auto note2 = metro::Note(metro::Note::Timbre::Sine, 440.0, 50.0);
 
 	EXPECT_EQ(note1.get_frames().size(), 2 * metro::SampleRateHz);
 	EXPECT_EQ(note2.get_frames().size(), 2 * metro::SampleRateHz);
@@ -57,8 +57,8 @@ TEST(NoteUnitTest, SineTimbreVolumeAndAmplitudes)
 
 TEST(NoteUnitTest, DrumTimbreVolumeAndAmplitudes)
 {
-	auto note1 = metro::Note(metro::Timbre::Drum, 38.0, 100.0);
-	auto note2 = metro::Note(metro::Timbre::Drum, 42.0, 50.0);
+	auto note1 = metro::Note(metro::Note::Timbre::Drum, 38.0, 100.0);
+	auto note2 = metro::Note(metro::Note::Timbre::Drum, 42.0, 50.0);
 
 	EXPECT_EQ(note1.get_frames().size(), 2 * metro::SampleRateHz);
 	EXPECT_EQ(note2.get_frames().size(), 2 * metro::SampleRateHz);
@@ -84,8 +84,8 @@ TEST(NoteUnitTest, DrumTimbreVolumeAndAmplitudes)
 
 TEST(NoteUnitTest, IndexOperatorsSpotCheck)
 {
-	auto note1 = metro::Note(metro::Timbre::Drum, 38.0, 100.0);
-	auto note2 = metro::Note(metro::Timbre::Sine, 440.0, 50.0);
+	auto note1 = metro::Note(metro::Note::Timbre::Drum, 38.0, 100.0);
+	auto note2 = metro::Note(metro::Note::Timbre::Sine, 440.0, 50.0);
 	metro::Note note3;
 
 	EXPECT_EQ(note1[36], note1.get_frames()[36]);
@@ -101,8 +101,8 @@ TEST(NoteUnitTest, IndexOperatorsSpotCheck)
 
 TEST(NoteUnitTest, AdditionOperator)
 {
-	auto note1 = metro::Note(metro::Timbre::Drum, 38.0, 100.0);
-	auto note2 = metro::Note(metro::Timbre::Sine, 440.0, 50.0);
+	auto note1 = metro::Note(metro::Note::Timbre::Drum, 38.0, 100.0);
+	auto note2 = metro::Note(metro::Note::Timbre::Sine, 440.0, 50.0);
 
 	auto note3 = note1 + note2;
 
@@ -128,7 +128,7 @@ TEST(MeasureTest, MeasureIndexOperator)
 {
 	auto measure = metro::Measure(1);
 	auto note1 = measure[0];
-	auto note2 = metro::Note(metro::Timbre::Sine, 440.0, 100.0);
+	auto note2 = metro::Note(metro::Note::Timbre::Sine, 440.0, 100.0);
 	auto note3 = note1 + note2;
 	measure[0] = note1 + note2;
 
@@ -193,8 +193,8 @@ TEST(MetronomePrivateUnitTest, AddMismatchedMeasuresLCMSize)
 {
 	auto metronome = metro_private::MetronomePrivate(100);
 
-	auto note1 = metro::Note(metro::Timbre::Sine, 120.0, 100.0);
-	auto note2 = metro::Note(metro::Timbre::Sine, 220.0, 100.0);
+	auto note1 = metro::Note(metro::Note::Timbre::Sine, 120.0, 100.0);
+	auto note2 = metro::Note(metro::Note::Timbre::Sine, 220.0, 100.0);
 	auto measure1 = metro::Measure(5);
 	measure1[0] = note1;
 	auto measure2 = metro::Measure(3);
@@ -202,63 +202,72 @@ TEST(MetronomePrivateUnitTest, AddMismatchedMeasuresLCMSize)
 
 	// the lcm of 5 and 3 is 15, i.e. the pre-computed "total encompassing
 	// measure" will look something like [1/3+1/5, 2/3+2/5, 3/3+3/5, 1/3+4/5, ...
-	metronome.add_measure(metro::NoteLength::Quarter, measure1);
-	metronome.add_measure(metro::NoteLength::Quarter, measure2);
+	metronome.add_measure(metro::Measure::NoteLength::Quarter, measure1);
+	metronome.add_measure(metro::Measure::NoteLength::Quarter, measure2);
 
-	metronome.tickers[metro::NoteLength::Quarter].stream->compute_notes();
+	metronome.tickers[metro::Measure::NoteLength::Quarter]
+	    .stream->compute_notes();
+	EXPECT_EQ(metronome.tickers[metro::Measure::NoteLength::Quarter]
+	              .stream->notes.size(),
+	          15);
 	EXPECT_EQ(
-	    metronome.tickers[metro::NoteLength::Quarter].stream->notes.size(), 15);
-	EXPECT_EQ(
-	    metronome.tickers[metro::NoteLength::Quarter].stream->note_index, 0);
+	    metronome.tickers[metro::Measure::NoteLength::Quarter].stream->note_index,
+	    0);
 
 	for (size_t i = 0; i < 15; ++i) {
 		// spot check some overlapping notes
 		if (i == 0) {
 			for (size_t j = 0; j < note1.size(); ++j)
-				EXPECT_EQ(metronome.tickers[metro::NoteLength::Quarter]
-				              .stream->notes[i][j],
-				          note1[j]);
+				EXPECT_EQ(
+				    metronome.tickers[metro::Measure::NoteLength::Quarter]
+				        .stream->notes[i][j],
+				    note1[j]);
 		}
 		if (i == 5) {
 			for (size_t j = 0; j < note1.size(); ++j)
-				EXPECT_EQ(metronome.tickers[metro::NoteLength::Quarter]
-				              .stream->notes[i][j],
-				          note1[j] + note2[j]);
+				EXPECT_EQ(
+				    metronome.tickers[metro::Measure::NoteLength::Quarter]
+				        .stream->notes[i][j],
+				    note1[j] + note2[j]);
 		}
 	}
 
-	EXPECT_EQ(metronome.tickers.count(metro::NoteLength::Half), 0);
-	EXPECT_EQ(metronome.tickers.count(metro::NoteLength::Quarter), 1);
-	EXPECT_EQ(metronome.tickers.count(metro::NoteLength::QuarterTriplet), 0);
-	EXPECT_EQ(metronome.tickers.count(metro::NoteLength::Eighth), 0);
-	EXPECT_EQ(metronome.tickers.count(metro::NoteLength::EighthTriplet), 0);
-	EXPECT_EQ(metronome.tickers.count(metro::NoteLength::Sixteenth), 0);
+	EXPECT_EQ(metronome.tickers.count(metro::Measure::NoteLength::Half), 0);
+	EXPECT_EQ(metronome.tickers.count(metro::Measure::NoteLength::Quarter), 1);
+	EXPECT_EQ(
+	    metronome.tickers.count(metro::Measure::NoteLength::QuarterTriplet), 0);
+	EXPECT_EQ(metronome.tickers.count(metro::Measure::NoteLength::Eighth), 0);
+	EXPECT_EQ(
+	    metronome.tickers.count(metro::Measure::NoteLength::EighthTriplet), 0);
+	EXPECT_EQ(
+	    metronome.tickers.count(metro::Measure::NoteLength::Sixteenth), 0);
 }
 
 TEST(MetronomePrivateUnitTest, AddDifferentNoteLengthMeasures)
 {
 	auto metronome = metro_private::MetronomePrivate(100);
 
-	auto note1 = metro::Note(metro::Timbre::Sine, 120.0, 100.0);
+	auto note1 = metro::Note(metro::Note::Timbre::Sine, 120.0, 100.0);
 	auto measure1 = metro::Measure(5);
 	measure1[0] = note1;
 
-	auto note2 = metro::Note(metro::Timbre::Sine, 220.0, 100.0);
+	auto note2 = metro::Note(metro::Note::Timbre::Sine, 220.0, 100.0);
 	auto measure2 = metro::Measure(5);
 	measure2[0] = note2;
 
-	metronome.add_measure(metro::NoteLength::Quarter, measure1);
-	metronome.add_measure(metro::NoteLength::Half, measure1);
-	metronome.add_measure(metro::NoteLength::Half, measure2);
+	metronome.add_measure(metro::Measure::NoteLength::Quarter, measure1);
+	metronome.add_measure(metro::Measure::NoteLength::Half, measure1);
+	metronome.add_measure(metro::Measure::NoteLength::Half, measure2);
 
-	EXPECT_EQ(metronome.tickers.count(metro::NoteLength::Half), 1);
-	EXPECT_EQ(metronome.tickers.count(metro::NoteLength::Quarter), 1);
+	EXPECT_EQ(metronome.tickers.count(metro::Measure::NoteLength::Half), 1);
+	EXPECT_EQ(metronome.tickers.count(metro::Measure::NoteLength::Quarter), 1);
 
-	EXPECT_EQ(
-	    metronome.tickers[metro::NoteLength::Half].stream->measures.size(), 2);
-	EXPECT_EQ(
-	    metronome.tickers[metro::NoteLength::Quarter].stream->measures.size(),
-	    1);
+	EXPECT_EQ(metronome.tickers[metro::Measure::NoteLength::Half]
+	              .stream->measures.size(),
+	          2);
+	EXPECT_EQ(metronome.tickers[metro::Measure::NoteLength::Quarter]
+	              .stream->measures.size(),
+	          1);
 }
 
 void underflow_callback(struct SoundIoOutStream* outstream)
@@ -285,11 +294,13 @@ TEST(MetronomePrivateUnitTest, DISABLED_TestStreamsDontUnderflowOrError)
 	auto metronome = metro_private::MetronomePrivate(100);
 
 	auto measure = metro::Measure(1);
-	metronome.add_measure(metro::NoteLength::Quarter, measure);
+	metronome.add_measure(metro::Measure::NoteLength::Quarter, measure);
 
-	metronome.tickers[metro::NoteLength::Quarter].stream->outstream->underflow_callback
+	metronome.tickers[metro::Measure::NoteLength::Quarter]
+	    .stream->outstream->underflow_callback
 	    = underflow_callback;
-	metronome.tickers[metro::NoteLength::Quarter].stream->outstream->error_callback
+	metronome.tickers[metro::Measure::NoteLength::Quarter]
+	    .stream->outstream->error_callback
 	    = error_callback;
 
 	metronome.start();

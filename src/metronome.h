@@ -15,6 +15,10 @@
 
 namespace metro_private {
 
+// a steady-clock based precise sleep with 1ns precision
+// or as close to 1ns as nanosleep gets us on a GPOS
+void precise_sleep_us(std::chrono::microseconds dur_us);
+
 class OutStream;
 
 class MetronomePrivate {
@@ -25,7 +29,8 @@ public:
 	void start();
 	void loop();
 	void stop();
-	void add_measure(metro::NoteLength note_length, metro::Measure& measure);
+	void add_measure(metro::Measure::NoteLength note_length,
+	                 metro::Measure& measure);
 
 private:
 #ifdef UNIT_TESTS
@@ -39,13 +44,13 @@ private:
 	AudioEngine engine;
 
 	struct NoteTicker {
-		metro::NoteLength note_length;
+		metro::Measure::NoteLength note_length;
 		std::chrono::microseconds period_us;
 		OutStream* stream;
 		std::thread* ticker_thread;
 	};
 
-	std::map<metro::NoteLength, NoteTicker> tickers;
+	std::map<metro::Measure::NoteLength, NoteTicker> tickers;
 	std::atomic<bool> tickers_on;
 };
 }; // namespace metro_private

@@ -13,9 +13,9 @@ int main(int argc, char** argv)
 	try {
 		auto metronome = metro::Metronome(bpm);
 
-		auto downbeat = metro::Note(metro::Timbre::Sine, 540.0, 100.0);
-		auto weakbeat = metro::Note(metro::Timbre::Sine, 350.0, 50.0);
-		auto mediumbeat = metro::Note(metro::Timbre::Sine, 440.0, 65.0);
+		auto downbeat = metro::Note(metro::Note::Timbre::Sine, 540.0, 100.0);
+		auto weakbeat = metro::Note(metro::Note::Timbre::Sine, 350.0, 50.0);
+		auto mediumbeat = metro::Note(metro::Note::Timbre::Sine, 440.0, 65.0);
 
 		metro::Measure accented_44(4);
 		accented_44[0] = downbeat;
@@ -23,7 +23,7 @@ int main(int argc, char** argv)
 		accented_44[2] = mediumbeat;
 		accented_44[3] = weakbeat;
 
-		metronome.add_measure(metro::NoteLength::Quarter, accented_44);
+		metronome.add_measure(metro::Measure::NoteLength::Quarter, accented_44);
 		metronome.start_and_loop();
 	}
 	catch (...) {
