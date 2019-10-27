@@ -53,8 +53,12 @@ clang-analyze: clean
 clang-format: _pre
 	ninja -C build clang-format
 
-docgen: _pre
+doxygen: _pre
 	ninja -C build doc-doxygen
 
+docdev:
+	@echo "docs: http://localhost:8080/"
+	@-twistd -no web --path=./docs &>/dev/null
+
 .PHONY:
-	clean _pre build build-ubsan build-clang-tidy test install clang-analyze cpp-clean clang-format docgen
+	clean _pre build build-ubsan build-clang-tidy test install clang-analyze cpp-clean clang-format doxygen docdev

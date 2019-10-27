@@ -4,6 +4,17 @@
 #include <chrono>
 #include <vector>
 
+/** \mainpage
+ *
+ * \section intro_sec Overview
+ *
+ * libmetro is a C++ library for developing interesting metronome variants.
+ *
+ * libmetro is MIT licensed and hosted at https://github.com/sevagh/libmetro
+ *
+ * Documentation: libmetro.h
+ */
+
 // forward declare the private implementation of Metronome
 namespace metro_private {
 class MetronomePrivate;

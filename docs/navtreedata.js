@@ -21,11 +21,27 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 @licend  The above is the entire license notice
 for the JavaScript code in this file
 */
-var menudata={children:[
-{text:"Main Page",url:"index.html"},
-{text:"Related Pages",url:"pages.html"},
-{text:"Classes",url:"annotated.html",children:[
-{text:"Class List",url:"annotated.html"},
-{text:"Class Index",url:"classes.html"}]},
-{text:"Files",url:"files.html",children:[
-{text:"File List",url:"files.html"}]}]}
+var NAVTREE =
+[
+  [ "libmetro", "index.html", [
+    [ "Overview", "index.html#intro_sec", null ],
+    [ "1. Getting started", "md__home_sevagh_repos_libmetro_doxygen_1_gettingstarted.html", null ],
+    [ "2. Complex examples", "md__home_sevagh_repos_libmetro_doxygen_2_complexexamples.html", null ],
+    [ "3. MUMT-306 project report", "md__home_sevagh_repos_libmetro_doxygen_3_mumt306.html", null ],
+    [ "Classes", "annotated.html", [
+      [ "Class List", "annotated.html", "annotated_dup" ],
+      [ "Class Index", "classes.html", null ]
+    ] ],
+    [ "Files", "files.html", [
+      [ "File List", "files.html", "files_dup" ]
+    ] ]
+  ] ]
+];
+
+var NAVTREEINDEX =
+[
+".html"
+];
+
+var SYNCONMSG = 'click to disable panel synchronisation';
+var SYNCOFFMSG = 'click to enable panel synchronisation';
