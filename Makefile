@@ -53,5 +53,8 @@ clang-analyze: clean
 clang-format: _pre
 	ninja -C build clang-format
 
+docgen: _pre
+	ninja -C build doc-doxygen
+
 .PHONY:
-	clean _pre build build-ubsan build-clang-tidy test install clang-analyze cpp-clean clang-format
+	clean _pre build build-ubsan build-clang-tidy test install clang-analyze cpp-clean clang-format docgen
