@@ -2,6 +2,12 @@ Libmetro is a C++ library for developing interesting metronome variants.
 
 Open a GitHub issue for any questions you may have.
 
+### In a nutshell
+
+A traditional African polyrhythm recreated in [67 lines of C++](./demo/butour_ngale.cpp):
+
+https://sevagh.github.io/libmetro/md__home_sevagh_repos_libmetro_doxygen_3_musicdemos.html
+
 ### Project structure
 
 A description of the project, API docs, and various sample clips are available at: https://sevagh.github.io/libmetro
