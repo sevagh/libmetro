@@ -2,45 +2,45 @@
 
 There are [programs included in libmetro](https://github.com/sevagh/libmetro/tree/master/programs) where I attempt to implement a variety of useful metronomes inspired by the [Bounce Metronome](https://bouncemetronome.com/) collection.
 
-**N.B.** I was unaware of the existence of Bounce Metronome when I started libmetro. All of my code is written from scratch, with no influence from Bounce Metronome (which is closed-source anyway). However, it's an excellent resource of complex rhythms, and I drew inspiration from the Bounce Metronome sample audio clips to implement libmetro's various demos.
+All clips were recorded using `parecord` on my Linux (Fedora 30) laptop.
 
 ### simple and odd time signatures
 
-3/4
+3/4, 120bpm
 
 \htmlonly
 <audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
+  <source src="./static/34.wav"
           type="audio/wav">
   </source>
 </audio>
 \endhtmlonly
 
-2/8
+2/8, 120bpm
 
 \htmlonly
 <audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
+  <source src="./static/28.wav"
           type="audio/wav">
   </source>
 </audio>
 \endhtmlonly
 
-5/4
+5/4, 170bpm
 
 \htmlonly
 <audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
+  <source src="./static/54.wav"
           type="audio/wav">
   </source>
 </audio>
 \endhtmlonly
 
-11/8
+11/8, 200bpm
 
 \htmlonly
 <audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
+  <source src="./static/118.wav"
           type="audio/wav">
   </source>
 </audio>
@@ -49,41 +49,31 @@ There are [programs included in libmetro](https://github.com/sevagh/libmetro/tre
 
 ### compound time signatures
 
-6/8
+6/8, 100bpm
 
 \htmlonly
 <audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
+  <source src="./static/68.wav"
           type="audio/wav">
   </source>
 </audio>
 \endhtmlonly
 
-9/4
+9/4, 120bpm
 
 \htmlonly
 <audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
+  <source src="./static/94.wav"
           type="audio/wav">
   </source>
 </audio>
 \endhtmlonly
 
-12/2
+15/16, 150bpm
 
 \htmlonly
 <audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
-          type="audio/wav">
-  </source>
-</audio>
-\endhtmlonly
-
-15/16
-
-\htmlonly
-<audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
+  <source src="./static/1516.wav"
           type="audio/wav">
   </source>
 </audio>
@@ -91,51 +81,51 @@ There are [programs included in libmetro](https://github.com/sevagh/libmetro/tre
 
 ### polyrhythms and polymeter
 
-3:2
+3:2, 150bpm
 
 \htmlonly
 <audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
+  <source src="./static/poly32.wav"
           type="audio/wav">
   </source>
 </audio>
 \endhtmlonly
 
-4:3
+4:3, 150bpm
 
 \htmlonly
 <audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
+  <source src="./static/poly43.wav"
           type="audio/wav">
   </source>
 </audio>
 \endhtmlonly
 
-5:3
+5:3, 150bpm
 
 \htmlonly
 <audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
+  <source src="./static/poly53.wav"
           type="audio/wav">
   </source>
 </audio>
 \endhtmlonly
 
-7:3
+7:3, 150bpm
 
 \htmlonly
 <audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
+  <source src="./static/poly73.wav"
           type="audio/wav">
   </source>
 </audio>
 \endhtmlonly
 
-7:5
+7:5, 150bpm
 
 \htmlonly
 <audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
+  <source src="./static/poly75.wav"
           type="audio/wav">
   </source>
 </audio>
