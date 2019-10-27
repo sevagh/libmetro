@@ -2,13 +2,19 @@ Libmetro is a C++ library for developing interesting metronome variants.
 
 **link to github-pages for complete API docs and real demos are coming soon**
 
-The goal of libmetro is to make the development of specialized metronomes, e.g. simple, odd, compound, additive, and polyrhythmic click/drum tracks for practicing. Many of the examples and programs are adapted from the excellent [Bounce Metronome](https://bouncemetronome.com/audio/downloadable-audio-clips/audio-clips-time-signatures-additive-rhythms-and-polyrhythm) website.
+Feel free to open a GitHub issue for any questions you may have.
 
-The provided classes are Metronome, Note, and Measure. The bpm of the metronome should **always be given as the bpm of the quarter note**. There is a global const `SampleRateHz = 48000`, provided to allow the user to align their sample rates accordingly. This was a design choice for simplicity.
+### Synopsis
+
+The goal of libmetro is to simplify the development of specialized metronomes, e.g. simple, odd, compound, additive, and polyrhythmic click/drum tracks for practicing. Many of the examples and programs are adapted from the excellent [Bounce Metronome](https://bouncemetronome.com/audio/downloadable-audio-clips/audio-clips-time-signatures-additive-rhythms-and-polyrhythm) website.
+
+The provided classes are Metronome, Note, and Measure. The bpm of the metronome should **always be given as the bpm of the quarter note**.
 
 A Note is a convenience wrapper around a vector of floats representing a single sound - choices of timbre include `Timbre::{Sine, Drum}`. In the case of Drum, the frequency is the [general MIDI drum note](https://en.wikipedia.org/wiki/General_MIDI#Percussion), e.g. 56.0 for cowbell.
 
-A Measure is a convenience wrapper around a vector of Notes representing a measure. Measures are added to a metronome with their note length, represented with the enum NoteLength::{Half, Quarter, QuarterTriplet, Eighth, EighthTriplet, Sixteenth}. Of course, other values are possible - I only added a minimal subset at the start.
+A Measure is a convenience wrapper around a vector of Notes representing a measure. Measures are added to a metronome with their note length, represented with the enum `NoteLength::{Half, Quarter, QuarterTriplet, Eighth, EighthTriplet, Sixteenth}`.
+
+### Basic usage
 
 Here's a simple example of an accented 4/4 beat with sine waves:
 
@@ -34,7 +40,7 @@ metronome.start_and_loop();
 
 Listen: [accented 4/4, 100bpm](./.github/accented_4_4_demo.wav)
 
-Here's a more complex example of a 3:2 polyrhythm/cross-rhythm. The 3/8 is played with snares (+ hihat for the downbeat), and the 2/4 is played with cowbell (+ tambourine for the downbeat):
+Here's a more complex example of a 3:2 polyrhythm/cross-rhythm. The triples are played with snares (+ hihat for the downbeat), and the duples are played with cowbell (+ tambourine for the downbeat):
 
 ```c++
 #include "libmetro.h"
@@ -42,37 +48,71 @@ Here's a more complex example of a 3:2 polyrhythm/cross-rhythm. The 3/8 is playe
 int bpm = 100;
 auto metronome = metro::Metronome(bpm);
 
-auto two_over_four = metro::Measure(2);
-two_over_four[0] = metro::Note(metro::Timbre::Drum, 54.0, 100.0)
+auto poly1 = metro::Measure(2);
+poly1[0] = metro::Note(metro::Timbre::Drum, 54.0, 100.0)
                    + metro::Note(metro::Timbre::Drum, 56.0, 100.0);
-two_over_four[1] = metro::Note(metro::Timbre::Drum, 56.0, 50.0);
+poly2[1] = metro::Note(metro::Timbre::Drum, 56.0, 50.0);
 
-metronome.add_measure(metro::NoteLength::Quarter, two_over_four); // regular quarter notes
+metronome.add_measure(metro::NoteLength::Quarter, poly1);
 
-auto three_over_four = metro::Measure(3);
-three_over_four[0] = metro::Note(metro::Timbre::Drum, 38.0, 100.0)
+auto poly2 = metro::Measure(3);
+poly2[0] = metro::Note(metro::Timbre::Drum, 38.0, 100.0)
                      + metro::Note(metro::Timbre::Drum, 42.0, 100.0);
-three_over_four[1] = metro::Note(metro::Timbre::Drum, 38.0, 50.0);
-three_over_four[2] = metro::Note(metro::Timbre::Drum, 38.0, 50.0);
+poly2[1] = metro::Note(metro::Timbre::Drum, 38.0, 50.0);
+poly2[2] = metro::Note(metro::Timbre::Drum, 38.0, 50.0);
 
 metronome.add_measure(
-    metro::NoteLength::QuarterTriplet, three_over_four); // note the QuarterTriplet note length
+    metro::NoteLength::QuarterTriplet, poly2); // note the QuarterTriplet note length
 
 metronome.start_and_loop();
 ```
 
 Listen: [3:2 polyrhythm, 100bpm](./.github/poly_3_2_demo.wav)
 
-### Dev guide
+### Developer guide
 
-*wip*
+Libmetro is built using cmake + Ninja (Ninja is a faster alternative to make). The provided top-level Makefile is for convenient access to the cmake targets. Libmetro builds and compiles using both clang and gcc, and targets the C++2a/C++20 standards (thus requiring modern clang and gcc).
 
-Modern (c++2a) std components are used liberally throughout the codebase (vectors, lists, chrono, atomic, lambdas, threads, mutexes, call_once, etc.).
+The following `dnf` command installs all the dependencies on Fedora 30:
 
-The following tools are used for ensuring code quality:
-- googletest (for unit tests)
-- valgrind for memory leak checks
-- clang-tidy
-- clang-format
-- cppclean
-- ubsan
+```
+$ dnf install make \
+                cmake \
+                clang \
+                gcc \
+                clang-tools-extra \
+                clang-analyzer \
+                libubsan \
+                ninja-build \
+                valgrind \
+                gtest-devel \
+                doxygen
+```
+
+Additionally, you need to clone, build, and install the following projects:
+
+* https://github.com/andrewrk/libsoundio - MIT license
+* https://github.com/thestk/stk - MIT-compatible license
+* https://github.com/jarro2783/cxxopts - MIT license
+
+Make targets (that are mostly self-explanatory):
+
+```
+$ make
+libmetro targets:
+        clean
+        build
+        build-ubsan     (needs a clean)
+        build-clang-tidy        (needs a clean)
+        test
+        install
+        cpp-clean
+        clang-analyze
+        clang-format
+```
+
+The basics are build, test, and install. The tests ensure that the libsoundio defaults are cooperating on your system (initializing an output device with stereo output, etc.).
+
+cpp-clean, build-ubsan, build-clang-tidy, and clang-analyze are different static analyzers and undefined behavior detection/correction tools. They're not mandatory (and in fact libmetro doesn't pass cleanly for most of them), but they provide important suggestions for making the code better.
+
+clang-format is a code formatter tool and should be run before submitting a PR.
