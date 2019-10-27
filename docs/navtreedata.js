@@ -27,7 +27,7 @@ var NAVTREE =
     [ "Overview", "index.html#intro_sec", null ],
     [ "Getting started", "md__home_sevagh_repos_libmetro_doxygen_1_gettingstarted.html", null ],
     [ "Complete examples", "md__home_sevagh_repos_libmetro_doxygen_2_completeexamples.html", null ],
-    [ "Demos from real songs", "md__home_sevagh_repos_libmetro_doxygen_3_musicdemos.html", null ],
+    [ "Additive demo", "md__home_sevagh_repos_libmetro_doxygen_3_additive.html", null ],
     [ "MUMT-306 project report", "md__home_sevagh_repos_libmetro_doxygen_4_mumt306.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],

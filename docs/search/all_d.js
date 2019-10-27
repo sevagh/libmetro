@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['operator_2b',['operator+',['../classmetro_1_1Note.html#ae11a8f59cf152f737234ccbce0fca9e3',1,'metro::Note']]],
-  ['operator_5b_5d',['operator[]',['../classmetro_1_1Note.html#a757af438166e24fe16e80a8a09d3cc3a',1,'metro::Note::operator[](size_t index)'],['../classmetro_1_1Note.html#af947fd8a25889b82dee37373b27d418f',1,'metro::Note::operator[](size_t index) const'],['../classmetro_1_1Measure.html#a5f5c329bbda3fa8db3f773c0e521e681',1,'metro::Measure::operator[](size_t index)'],['../classmetro_1_1Measure.html#ae3bc83f7653fdf9aa342f69a2721639d',1,'metro::Measure::operator[](size_t index) const']]]
+  ['note',['Note',['../classmetro_1_1Note.html',1,'metro::Note'],['../classmetro_1_1Note.html#a63607ed4bc314076db55296b0a237aa0',1,'metro::Note::Note()'],['../classmetro_1_1Note.html#abee528c29d868d8b70b85f9707820eb8',1,'metro::Note::Note(Timbre timbre, float frequency, float volume)']]],
+  ['notelength',['NoteLength',['../classmetro_1_1Measure.html#ad3589434c3fffb9343dee90d30db0117',1,'metro::Measure']]]
 ];

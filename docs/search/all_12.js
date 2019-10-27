@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['_7emetronome',['~Metronome',['../classmetro_1_1Metronome.html#a98e533716b5331cc85f674d57b88ba40',1,'metro::Metronome']]]
+  ['timbre',['Timbre',['../classmetro_1_1Note.html#ac56a7a9dd84fe603c1650e154cb9e939',1,'metro::Note']]]
 ];

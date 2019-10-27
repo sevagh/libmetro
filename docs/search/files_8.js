@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['simple_5fand_5fodd_2ecpp',['simple_and_odd.cpp',['../simple__and__odd_8cpp.html',1,'']]]
+  ['poly_5f3_5f2_2ecpp',['poly_3_2.cpp',['../poly__3__2_8cpp.html',1,'']]],
+  ['polyrhythm_2ecpp',['polyrhythm.cpp',['../polyrhythm_8cpp.html',1,'']]]
 ];

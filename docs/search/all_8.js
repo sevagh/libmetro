@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['get_5fframes',['get_frames',['../classmetro_1_1Note.html#a805875ea408b485a3b9b131893d0b031',1,'metro::Note']]],
-  ['get_5fnotes',['get_notes',['../classmetro_1_1Measure.html#a54b103c89dd56b4ac71a978bab21aab7',1,'metro::Measure']]],
-  ['getting_20started',['Getting started',['../md__home_sevagh_repos_libmetro_doxygen_1_gettingstarted.html',1,'']]]
+  ['eighth',['Eighth',['../classmetro_1_1Measure.html#ad3589434c3fffb9343dee90d30db0117afae833c87b9144670aef36d5931ef549',1,'metro::Measure']]],
+  ['eighthtriplet',['EighthTriplet',['../classmetro_1_1Measure.html#ad3589434c3fffb9343dee90d30db0117a15f1646868d0a4b4ba131d8a4b319018',1,'metro::Measure']]]
 ];

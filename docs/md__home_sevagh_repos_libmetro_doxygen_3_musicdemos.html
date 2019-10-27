@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>libmetro: Demos from real songs</title>
+<title>libmetro: Additive demo</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -86,10 +86,28 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
 
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">Demos from real songs </div>  </div>
+<div class="title">Additive demo </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"></div></div><!-- PageDoc -->
+<div class="textblock"><p>Here's an example of additive rhythms and polyrhythms from a traditional African song:</p>
+<p> 
+<iframe width="764" height="430" src="https://www.youtube.com/embed/haGWi5lTibI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</p>
+<p>This is my interpretation of the rhythm of the measure from 1:16-1:35, using the code in <a class="el" href="butour__ngale_8cpp.html">butour_ngale.cpp</a>. It's a summing of several meters:</p>
+<ol type="1">
+<li>6/8 is the stable drum beat, represented with 48 notes of EighthTriplets (8 x 6/8 manual repetitions)</li>
+<li>The double-clapping is represented with SixteenthTriplets (96 notes, the first 48 are blank, 48-72 contain the double claps)</li>
+<li>The syncopated single claps are represented with SixteenthTriplets (96 notes, the first 72 are blank, 72-96 contain the syncopated single claps)</li>
+</ol>
+<p>butour_ngale.wav:</p>
+<p> 
+<audio controls="1">
+  <source src="./static/butour_ngale.wav"
+          type="audio/wav">
+  </source>
+</audio>
+ </p>
+</div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

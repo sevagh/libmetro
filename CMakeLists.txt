@@ -118,6 +118,8 @@ function(metro_demo name)
 	target_link_libraries(demo_${name} ${METRO_DEPS})
 endfunction()
 
+metro_demo(butour_ngale)
+
 #------------------------------------------------------------------------------#
 # INSTALL
 #------------------------------------------------------------------------------#
@@ -192,7 +194,7 @@ endif()
 
 file(GLOB_RECURSE
      ALL_CXX_SOURCE_FILES
-     src/*.cpp src/*.h programs/*.cpp include/*.h test/*.cpp example/*.cpp
+     src/*.cpp src/*.h programs/*.cpp include/*.h test/*.cpp example/*.cpp demo/*.cpp
      )
 
 # Adding clang-format target if executable is found
