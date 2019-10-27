@@ -32,11 +32,14 @@ public:
 	std::vector<float>& get_frames() { return frames; };
 	size_t size() { return frames.size(); };
 
+	void normalize(float ratio);
+
 	Note operator+(const Note& other)
 	{
 		metro::Note ret;
 		for (size_t i = 0; i < ret.size(); ++i)
 			ret[i] = (*this)[i] + other[i];
+		ret.normalize(1.0);
 		return ret;
 	}
 

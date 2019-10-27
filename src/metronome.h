@@ -28,8 +28,11 @@ public:
 
 private:
 #ifdef UNIT_TESTS
-	// FRIEND_TEST(SoundIoUnitTest, AudioEngineOutputDevice);
-	// FRIEND_TEST(SoundIoUnitTest, AudioEngineOutputDualChannel);
+	FRIEND_TEST(MetronomePrivateUnitTest, EmptyAtInit);
+	FRIEND_TEST(MetronomePrivateUnitTest, AddMismatchedMeasuresLCMSize);
+	FRIEND_TEST(MetronomePrivateUnitTest, AddDifferentNoteLengthMeasures);
+	FRIEND_TEST(MetronomePrivateUnitTest,
+	            DISABLED_TestStreamsDontUnderflowOrError);
 #endif /* UNIT_TESTS */
 	int bpm;
 	AudioEngine engine;

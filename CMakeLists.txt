@@ -151,8 +151,8 @@ function(metro_gtest_long name)
 	endif()
 endfunction()
 
-#metro_gtest_long(clock_accuracy)
-#metro_gtest(unit)
+metro_gtest_long(clock_accuracy)
+metro_gtest(unit)
 
 #------------------------------------------------------------------------------#
 # CLANG_FORMAT, CPPCLEAN

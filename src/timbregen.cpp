@@ -25,22 +25,22 @@ static float midi2freq(int midi)
 	return 440.0 * pow(2.0, (float(midi) - 69.0) / 12.0);
 }
 
-static void normalize(std::vector<float>& vec, float ratio)
+void metro::Note::normalize(float ratio)
 {
 	// normalize to 1.0 * volume_pct since libsoundio expects floats
 	// between -1.0 and 1.0
-	stk::StkFloat max_elem = -DBL_MAX;
-	for (size_t i = 0; i < vec.size(); ++i)
-		max_elem = std::max(vec[i], max_elem);
+	float max_elem = -FLT_MAX;
+	for (size_t i = 0; i < frames.size(); ++i)
+		max_elem = std::max(frames[i], max_elem);
 
-	stk::StkFloat min_elem = DBL_MAX;
-	for (size_t i = 0; i < vec.size(); ++i)
-		min_elem = std::min(vec[i], min_elem);
+	stk::StkFloat min_elem = FLT_MAX;
+	for (size_t i = 0; i < frames.size(); ++i)
+		min_elem = std::min(frames[i], min_elem);
 
 	max_elem = std::max(std::abs(min_elem), max_elem);
 
-	for (size_t i = 0; i < vec.size(); ++i)
-		vec[i] = (ratio / max_elem) * vec[i];
+	for (size_t i = 0; i < frames.size(); ++i)
+		frames[i] = (ratio / max_elem) * frames[i];
 }
 
 metro::Note::Note(metro::Timbre timbre, float frequency, float volume)
@@ -56,7 +56,7 @@ metro::Note::Note(metro::Timbre timbre, float frequency, float volume)
 		for (size_t i = 0; i < frames.size(); ++i)
 			frames[i] = sine.tick();
 
-		normalize(frames, volume / 100.0);
+		normalize(volume / 100.0);
 	} break;
 	case Drum: {
 		stk::Drummer drummer;

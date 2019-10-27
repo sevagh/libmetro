@@ -31,6 +31,10 @@ private:
 	FRIEND_TEST(SoundIoUnitTest, OutStreamCorrectLatency);
 	FRIEND_TEST(SoundIoUnitTest, OutStreamCorrectSampleRate);
 	FRIEND_TEST(SoundIoUnitTest, OutStreamCorrectRingbufferCapacity);
+	FRIEND_TEST(MetronomePrivateUnitTest, AddMismatchedMeasuresLCMSize);
+	FRIEND_TEST(MetronomePrivateUnitTest, AddDifferentNoteLengthMeasures);
+	FRIEND_TEST(MetronomePrivateUnitTest,
+	            DISABLED_TestStreamsDontUnderflowOrError);
 #endif /* UNIT_TESTS */
 	float latency_s;
 	AudioEngine* parent_engine;

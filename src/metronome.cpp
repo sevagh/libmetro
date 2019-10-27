@@ -130,7 +130,7 @@ void metro_private::MetronomePrivate::stop()
 {
 	tickers_on = false;
 	for (auto& [key, ticker] : tickers) {
-		if (ticker.ticker_thread->joinable())
+		if (ticker.ticker_thread != nullptr && ticker.ticker_thread->joinable())
 			ticker.ticker_thread->join();
 	}
 }
@@ -140,6 +140,7 @@ metro_private::MetronomePrivate::~MetronomePrivate()
 	stop();
 	for (auto& [key, ticker] : tickers) {
 		delete ticker.stream;
-		delete ticker.ticker_thread;
+		if (ticker.ticker_thread != nullptr)
+			delete ticker.ticker_thread;
 	}
 }
