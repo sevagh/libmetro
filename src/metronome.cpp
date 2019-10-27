@@ -1,6 +1,4 @@
 #include "metronome.h"
-#include "audioengine.h"
-#include "libmetro.h"
 #include "outstream.h"
 #include <atomic>
 #include <chrono>

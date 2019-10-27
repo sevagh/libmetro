@@ -1,7 +1,6 @@
 #ifndef AUDIOENGINE_H
 #define AUDIOENGINE_H
 
-#include "libmetro.h"
 #include <chrono>
 #include <soundio/soundio.h>
 

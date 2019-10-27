@@ -99,40 +99,15 @@ TEST(NoteUnitTest, IndexOperatorsSpotCheck)
 	EXPECT_EQ(note2[311], 1234.0);
 }
 
-TEST(NoteUnitTest, AdditionOperatorNormalizes)
+TEST(NoteUnitTest, AdditionOperator)
 {
 	auto note1 = metro::Note(metro::Timbre::Drum, 38.0, 100.0);
 	auto note2 = metro::Note(metro::Timbre::Sine, 440.0, 50.0);
 
 	auto note3 = note1 + note2;
 
-	auto note1_frames = note1.get_frames();
-	auto note2_frames = note2.get_frames();
-	auto note3_frames = note3.get_frames();
-
-	auto note1_min = *std::min_element(
-	    note1_frames.begin(), note1_frames.begin() + note1_frames.size());
-	auto note1_max = *std::max_element(
-	    note1_frames.begin(), note1_frames.begin() + note1_frames.size());
-
-	auto note2_min = *std::min_element(
-	    note2_frames.begin(), note2_frames.begin() + note2_frames.size());
-	auto note2_max = *std::max_element(
-	    note2_frames.begin(), note2_frames.begin() + note2_frames.size());
-
-	auto note3_min = *std::min_element(
-	    note3_frames.begin(), note3_frames.begin() + note3_frames.size());
-	auto note3_max = *std::max_element(
-	    note3_frames.begin(), note3_frames.begin() + note3_frames.size());
-
-	EXPECT_TRUE(note1_min >= -1.0);
-	EXPECT_TRUE(note1_max <= 1.0);
-
-	EXPECT_TRUE(note2_min >= -1.0);
-	EXPECT_TRUE(note2_max <= 1.0);
-
-	EXPECT_TRUE(note3_min >= -1.0);
-	EXPECT_TRUE(note3_max <= 1.0);
+	for (size_t i = 0; i < note1.size(); ++i)
+		EXPECT_NEAR(note3[i], note1[i] + note2[i], 0.001);
 }
 
 TEST(MeasureTest, MeasureSize)

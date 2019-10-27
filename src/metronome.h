@@ -3,7 +3,6 @@
 
 #include "audioengine.h"
 #include "libmetro.h"
-#include "outstream.h"
 #include <atomic>
 #include <chrono>
 #include <map>
@@ -15,6 +14,8 @@
 #endif /* UNIT_TESTS */
 
 namespace metro_private {
+
+class OutStream;
 
 class MetronomePrivate {
 public:

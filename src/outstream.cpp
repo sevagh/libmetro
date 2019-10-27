@@ -1,6 +1,5 @@
 #include "outstream.h"
 #include "audioengine.h"
-#include "libmetro.h"
 #include <chrono>
 #include <cstring>
 #include <functional>

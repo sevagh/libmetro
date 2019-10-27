@@ -82,24 +82,32 @@ else()
   message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
   set(DO_CLANG_TIDY "${CLANG_TIDY_EXE}" "-checks=*,-clang-analyzer-alpha.*")
 endif()
-#uncomment this
-#set_target_properties(
-#	metro PROPERTIES
-#	CXX_CLANG_TIDY "${DO_CLANG_TIDY}"
-#)
+
+option(ENABLE_CLANG_TIDY
+    "compile with clang-tidy" OFF)
+if(ENABLE_CLANG_TIDY AND CLANG_TIDY_EXE)
+    message("CLANG_TIDY: ENABLED")
+    set_target_properties(metro PROPERTIES CXX_CLANG_TIDY "${DO_CLANG_TIDY}")
+else()
+    message("CLANG_TIDY: DISABLED")
+endif()
 
 #------------------------------------------------------------------------------#
 # BINS
 #------------------------------------------------------------------------------#
 
+function(metro_example name)
+	add_executable(example_${name} example/${name}.cpp)
+	target_link_libraries(example_${name} ${METRO_DEPS})
+endfunction()
+
+metro_example(accented_44)
+metro_example(poly_3_2)
+
 function(metro_program name)
 	add_executable(program_${name} programs/${name}.cpp)
 	target_link_libraries(program_${name} ${METRO_DEPS})
 endfunction()
-
-metro_program(click_track)
-metro_program(tap_tempo)
-metro_program(poly_3_2)
 
 #------------------------------------------------------------------------------#
 # INSTALL
@@ -155,12 +163,27 @@ metro_gtest_long(clock_accuracy)
 metro_gtest(unit)
 
 #------------------------------------------------------------------------------#
+# UBSAN
+#------------------------------------------------------------------------------#
+
+option(ENABLE_UBSAN
+    "enable undefined behaviour sanitizer (affects performance)" OFF)
+if(ENABLE_UBSAN)
+    message("UBSAN: ENABLED")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=undefined")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=undefined")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=undefined")
+else()
+    message("UBSAN: DISABLED")
+endif()
+
+#------------------------------------------------------------------------------#
 # CLANG_FORMAT, CPPCLEAN
 #------------------------------------------------------------------------------#
 
 file(GLOB_RECURSE
      ALL_CXX_SOURCE_FILES
-     src/*.cpp src/*.h programs/*.cpp include/*.h test/*.cpp
+     src/*.cpp src/*.h programs/*.cpp include/*.h test/*.cpp example/*.cpp
      )
 
 # Adding clang-format target if executable is found
@@ -182,6 +205,9 @@ if(CPP_CLEAN)
     cpp-clean
     COMMAND cppclean
     --include-path ../include/
+    --include-path ../src/
+    --include-path ${SOUNDIO_INCLUDE_DIR}
+    --include-path ${STK_INCLUDE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}
     )
 endif()
