@@ -37,13 +37,16 @@ $ make
 libmetro targets:
         clean
         build
-        build-ubsan     (needs a clean)
+        build-ubsan             (needs a clean)
         build-clang-tidy        (needs a clean)
         test
         install
         cpp-clean
         clang-analyze
         clang-format
+        doxygen
+        docdev                  (blocking local http server)
+        readmedev               (blocking local http server)
 ```
 
 The basics are build, test, and install. The tests ensure that the libsoundio defaults are cooperating on your system (initializing an output device with stereo output, etc.).
@@ -51,3 +54,12 @@ The basics are build, test, and install. The tests ensure that the libsoundio de
 cpp-clean, build-ubsan, build-clang-tidy, and clang-analyze are different static analyzers and undefined behavior detection/correction tools. They're not mandatory (and in fact libmetro doesn't pass cleanly for most of them), but they provide important suggestions for making the code better.
 
 clang-format is a code formatter tool and should be run before submitting a PR.
+
+Documentation tools are even more optional - I use some Python tools for convenient local testing and rendering of docs:
+
+```
+$ pip3.7 install --user grip \
+                        twisted
+```
+
+The target doxygen regenerates docs using Doxygen. The targets docdev and readmedev serve documentation on local webservers.

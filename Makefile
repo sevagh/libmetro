@@ -17,13 +17,16 @@ help:
 	@printf "libmetro targets:\n"
 	@printf "\tclean\n"
 	@printf "\tbuild\n"
-	@printf "\tbuild-ubsan\t(needs a clean)\n"
+	@printf "\tbuild-ubsan\t\t(needs a clean)\n"
 	@printf "\tbuild-clang-tidy\t(needs a clean)\n"
 	@printf "\ttest\n"
 	@printf "\tinstall\n"
 	@printf "\tcpp-clean\n"
 	@printf "\tclang-analyze\n"
 	@printf "\tclang-format\n"
+	@printf "\tdoxygen\n"
+	@printf "\tdocdev\t\t\t(blocking local http server)\n"
+	@printf "\treadmedev\t\t(blocking local http server)\n"
 
 build: _pre
 	ninja -C build
@@ -58,7 +61,11 @@ doxygen: _pre
 
 docdev:
 	@echo "docs: http://localhost:8080/"
-	@-twistd -no web --path=./docs &>/dev/null
+	@twistd -no web --path=./docs
+
+readmedev:
+	@echo "readme: http://localhost:6419/"
+	@grip
 
 .PHONY:
-	clean _pre build build-ubsan build-clang-tidy test install clang-analyze cpp-clean clang-format doxygen docdev
+	clean _pre build build-ubsan build-clang-tidy test install clang-analyze cpp-clean clang-format doxygen docdev readmedev
