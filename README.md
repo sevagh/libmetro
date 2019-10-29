@@ -38,6 +38,7 @@ $ dnf install make \
                 clang-tools-extra \
                 clang-analyzer \
                 libubsan \
+                libasan \
                 ninja-build \
                 valgrind \
                 gtest-devel \
