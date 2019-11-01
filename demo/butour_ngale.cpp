@@ -41,14 +41,14 @@ int main(int argc, char** argv)
 		// 16th triplets for the double claps
 		metro::Measure measure2(96);
 
-		for (size_t i = 50; i < 72; i += 6) {
+		for (size_t i = 52; i < 74; i += 6) {
 			measure2[i] = metro::Note(metro::Note::Timbre::Drum, 73.42, 100.0);
 			measure2[i + 2]
 			    = metro::Note(metro::Note::Timbre::Drum, 73.42, 100.0);
 		}
 
 		// 16th triplets for the single syncopated claps
-		for (size_t i = 72; i < 96; i += 4)
+		for (size_t i = 74; i < 96; i += 4)
 			measure2[i] = metro::Note(metro::Note::Timbre::Drum, 73.42, 100.0);
 
 		metronome.add_measure(
