@@ -79,8 +79,8 @@ TEST_P(BpmTimerTestListen, ListenTestNaiveSleepVsPreciseSleep)
 	auto measure2 = metro::Measure(3);
 	measure2[0] = beep2;
 
-	outstream1->add_measure(measure1);
-	outstream2->add_measure(measure2);
+	outstream1.add_measure(measure1);
+	outstream2.add_measure(measure2);
 
 	std::cout << "Emitting 100 beeps with a naive sleep (low pitch) and "
 	             "precise sleep (high pitch) simultaneously for bpm "
@@ -91,18 +91,18 @@ TEST_P(BpmTimerTestListen, ListenTestNaiveSleepVsPreciseSleep)
 
 	// precise sleep
 	std::thread([&]() {
-		outstream1->start();
+		outstream1.start();
 		for (size_t i = 0; i < 100; ++i) {
-			std::thread([&]() { outstream1->play_next_note(); }).detach();
+			std::thread([&]() { outstream1.play_next_note(); }).detach();
 			metro_private::precise_sleep_us(period_us);
 		}
 	}).detach();
 
 	// naive sleep
 	std::thread([&]() {
-		outstream2->start();
+		outstream2.start();
 		for (size_t i = 0; i < 100; ++i) {
-			std::thread([&]() { outstream2->play_next_note(); }).detach();
+			std::thread([&]() { outstream2.play_next_note(); }).detach();
 			std::this_thread::sleep_for(period_us);
 		}
 	}).detach();

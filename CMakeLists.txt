@@ -102,10 +102,7 @@ function(metro_example name)
 endfunction()
 
 metro_example(accented_44)
-metro_example(poly_323)
 metro_example(poly_43)
-metro_example(simple_and_odd)
-metro_example(compound)
 
 #------------------------------------------------------------------------------#
 # INSTALL

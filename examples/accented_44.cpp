@@ -1,11 +1,6 @@
 #include "libmetro.h"
 #include <iostream>
 
-//! accented_44 is a simple example of a 4/4 beat
-/*!
- * The only argument is the quarter note bpm. There are accents on the first
- * and third beats.
- */
 int main(int argc, char** argv)
 {
 	if (argc < 2) {
@@ -28,7 +23,7 @@ int main(int argc, char** argv)
 		accented_44[2] = mediumbeat;
 		accented_44[3] = weakbeat;
 
-		metronome.add_measure(metro::Measure::NoteLength::Quarter, accented_44);
+		metronome.add_measure(accented_44);
 		metronome.start_and_loop();
 	}
 	catch (...) {

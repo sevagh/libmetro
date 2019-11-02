@@ -142,9 +142,7 @@ protected:
 	std::chrono::microseconds period_us
 	    = std::chrono::microseconds(600000); // 600,000 us ~= 100bpm
 	metro_private::AudioEngine engine;
-	metro_private::OutStream* stream = engine.new_outstream(period_us);
-
-	~SoundIoUnitTest() { delete stream; }
+	metro_private::OutStream stream = engine.new_outstream(period_us);
 };
 
 TEST_F(SoundIoUnitTest, AudioEngineOutputDevice)
@@ -160,21 +158,21 @@ TEST_F(SoundIoUnitTest, AudioEngineOutputDualChannel)
 TEST_F(SoundIoUnitTest, OutStreamCorrectLatency)
 {
 	float expected_latency = (period_us.count() / 2.0) / 1000000.0;
-	EXPECT_NEAR(stream->outstream->software_latency, expected_latency, 0.01);
+	EXPECT_NEAR(stream.outstream->software_latency, expected_latency, 0.01);
 }
 
 TEST_F(SoundIoUnitTest, OutStreamCorrectSampleRate)
 {
-	EXPECT_NEAR(stream->outstream->sample_rate, metro::SampleRateHz, 0.01);
+	EXPECT_NEAR(stream.outstream->sample_rate, metro::SampleRateHz, 0.01);
 }
 
 TEST_F(SoundIoUnitTest, OutStreamCorrectRingbufferCapacity)
 {
-	int desired_ringbuf_cap = stream->outstream->bytes_per_sample
-	                          * stream->outstream->sample_rate
-	                          * stream->outstream->software_latency;
+	int desired_ringbuf_cap = stream.outstream->bytes_per_sample
+	                          * stream.outstream->sample_rate
+	                          * stream.outstream->software_latency;
 	int nearest_ringbuf_cap = 118784;
-	int real_ringbuf_cap = soundio_ring_buffer_capacity(stream->ringbuf);
+	int real_ringbuf_cap = soundio_ring_buffer_capacity(stream.ringbuf);
 	EXPECT_TRUE(nearest_ringbuf_cap >= desired_ringbuf_cap);
 	EXPECT_EQ(real_ringbuf_cap, nearest_ringbuf_cap);
 }
@@ -185,8 +183,8 @@ TEST(MetronomePrivateUnitTest, EmptyAtInit)
 {
 	auto metronome = metro_private::MetronomePrivate(100);
 	EXPECT_EQ(metronome.bpm, 100);
-	EXPECT_TRUE(metronome.tickers_on);
-	EXPECT_TRUE(metronome.tickers.size() == 0);
+	EXPECT_EQ(metronome.period_us.count(), 600000);
+	EXPECT_TRUE(metronome.ticker_on);
 }
 
 TEST(MetronomePrivateUnitTest, AddMismatchedMeasuresLCMSize)
@@ -202,72 +200,24 @@ TEST(MetronomePrivateUnitTest, AddMismatchedMeasuresLCMSize)
 
 	// the lcm of 5 and 3 is 15, i.e. the pre-computed "total encompassing
 	// measure" will look something like [1/3+1/5, 2/3+2/5, 3/3+3/5, 1/3+4/5, ...
-	metronome.add_measure(metro::Measure::NoteLength::Quarter, measure1);
-	metronome.add_measure(metro::Measure::NoteLength::Quarter, measure2);
+	metronome.add_measure(measure1);
+	metronome.add_measure(measure2);
 
-	metronome.tickers[metro::Measure::NoteLength::Quarter]
-	    .stream->compute_notes();
-	EXPECT_EQ(metronome.tickers[metro::Measure::NoteLength::Quarter]
-	              .stream->notes.size(),
-	          15);
-	EXPECT_EQ(
-	    metronome.tickers[metro::Measure::NoteLength::Quarter].stream->note_index,
-	    0);
+	metronome.stream.compute_notes();
+	EXPECT_EQ(metronome.stream.notes.size(), 15);
+	EXPECT_EQ(metronome.stream.note_index, 0);
 
 	for (size_t i = 0; i < 15; ++i) {
 		// spot check some overlapping notes
 		if (i == 0) {
 			for (size_t j = 0; j < note1.size(); ++j)
-				EXPECT_EQ(
-				    metronome.tickers[metro::Measure::NoteLength::Quarter]
-				        .stream->notes[i][j],
-				    note1[j]);
+				EXPECT_EQ(metronome.stream.notes[i][j], note1[j]);
 		}
 		if (i == 5) {
 			for (size_t j = 0; j < note1.size(); ++j)
-				EXPECT_EQ(
-				    metronome.tickers[metro::Measure::NoteLength::Quarter]
-				        .stream->notes[i][j],
-				    note1[j] + note2[j]);
+				EXPECT_EQ(metronome.stream.notes[i][j], note1[j] + note2[j]);
 		}
 	}
-
-	EXPECT_EQ(metronome.tickers.count(metro::Measure::NoteLength::Half), 0);
-	EXPECT_EQ(metronome.tickers.count(metro::Measure::NoteLength::Quarter), 1);
-	EXPECT_EQ(
-	    metronome.tickers.count(metro::Measure::NoteLength::DottedQuarter), 0);
-	EXPECT_EQ(metronome.tickers.count(metro::Measure::NoteLength::Eighth), 0);
-	EXPECT_EQ(
-	    metronome.tickers.count(metro::Measure::NoteLength::DottedEighth), 0);
-	EXPECT_EQ(
-	    metronome.tickers.count(metro::Measure::NoteLength::Sixteenth), 0);
-}
-
-TEST(MetronomePrivateUnitTest, AddDifferentNoteLengthMeasures)
-{
-	auto metronome = metro_private::MetronomePrivate(100);
-
-	auto note1 = metro::Note(metro::Note::Timbre::Sine, 120.0, 100.0);
-	auto measure1 = metro::Measure(5);
-	measure1[0] = note1;
-
-	auto note2 = metro::Note(metro::Note::Timbre::Sine, 220.0, 100.0);
-	auto measure2 = metro::Measure(5);
-	measure2[0] = note2;
-
-	metronome.add_measure(metro::Measure::NoteLength::Quarter, measure1);
-	metronome.add_measure(metro::Measure::NoteLength::Half, measure1);
-	metronome.add_measure(metro::Measure::NoteLength::Half, measure2);
-
-	EXPECT_EQ(metronome.tickers.count(metro::Measure::NoteLength::Half), 1);
-	EXPECT_EQ(metronome.tickers.count(metro::Measure::NoteLength::Quarter), 1);
-
-	EXPECT_EQ(metronome.tickers[metro::Measure::NoteLength::Half]
-	              .stream->measures.size(),
-	          2);
-	EXPECT_EQ(metronome.tickers[metro::Measure::NoteLength::Quarter]
-	              .stream->measures.size(),
-	          1);
 }
 
 void underflow_callback(struct SoundIoOutStream* outstream)
@@ -294,14 +244,10 @@ TEST(MetronomePrivateUnitTest, DISABLED_TestStreamsDontUnderflowOrError)
 	auto metronome = metro_private::MetronomePrivate(100);
 
 	auto measure = metro::Measure(1);
-	metronome.add_measure(metro::Measure::NoteLength::Quarter, measure);
+	metronome.add_measure(measure);
 
-	metronome.tickers[metro::Measure::NoteLength::Quarter]
-	    .stream->outstream->underflow_callback
-	    = underflow_callback;
-	metronome.tickers[metro::Measure::NoteLength::Quarter]
-	    .stream->outstream->error_callback
-	    = error_callback;
+	metronome.stream.outstream->underflow_callback = underflow_callback;
+	metronome.stream.outstream->error_callback = error_callback;
 
 	metronome.start();
 

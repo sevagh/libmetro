@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['butour_5fngale_2ecpp',['butour_ngale.cpp',['../butour__ngale_8cpp.html',1,'']]]
+  ['note',['Note',['../classmetro_1_1Note.html',1,'metro::Note'],['../classmetro_1_1Note.html#a63607ed4bc314076db55296b0a237aa0',1,'metro::Note::Note()'],['../classmetro_1_1Note.html#abee528c29d868d8b70b85f9707820eb8',1,'metro::Note::Note(Timbre timbre, float frequency, float volume)']]]
 ];

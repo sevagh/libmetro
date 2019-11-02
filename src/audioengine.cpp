@@ -40,8 +40,8 @@ metro_private::AudioEngine::~AudioEngine()
 	soundio_destroy(soundio);
 }
 
-metro_private::OutStream* metro_private::AudioEngine::new_outstream(
+metro_private::OutStream metro_private::AudioEngine::new_outstream(
     std::chrono::microseconds ticker_period)
 {
-	return new metro_private::OutStream(this, ticker_period);
+	return metro_private::OutStream(this, ticker_period);
 }

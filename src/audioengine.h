@@ -20,7 +20,7 @@ public:
 	AudioEngine(const AudioEngine& other) = delete;      // disable copy
 	AudioEngine& operator=(const AudioEngine&) = delete; // disable move
 
-	OutStream* new_outstream(std::chrono::microseconds ticker_period);
+	OutStream new_outstream(std::chrono::microseconds ticker_period);
 	void eventloop();
 
 private:

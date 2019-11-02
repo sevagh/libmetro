@@ -108,7 +108,7 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
 <li>Ensure the underlying C++ code of the library is both <em>correct</em> and <em>well-behaved</em> by testing and verifying the code using industry best practices to protect end-users from C++'s notorious footguns</li>
 </ol>
 <h3>Expansion on point 5</h3>
-<p>Since my goal is to build a library for building metronomes (and not a metronome), it's possible that my demos/examples are incorrect, given that I'm not a musician and I'm studying time signatures for the first time. That's not a big deal. A musician could (and probably should) eyeball the following code:</p>
+<p>Since my goal is to build a library for building metronomes (and not a metronome), it's possible that my demos/examples are musically incorrect, given that I'm studying time signatures for the first time. That's not a big deal. A musician could (and probably should) eyeball the following code:</p>
 <div class="fragment"><div class="line">auto poly1 = metro::Measure(2);</div><div class="line">poly1[0] = metro::Note(metro::Note::Timbre::Drum, 185.0, 100.0)</div><div class="line">    + metro::Note(metro::Note::Timbre::Drum, 207.65, 100.0);</div><div class="line">poly1[1] = metro::Note(metro::Note::Timbre::Drum, 207.65, 50.0);</div><div class="line"></div><div class="line">metronome.add_measure(metro::Measure::NoteLength::Quarter, poly1);</div><div class="line"></div><div class="line">auto poly2 = metro::Measure(3);</div><div class="line">poly2[0] = metro::Note(metro::Note::Timbre::Drum, 73.42, 100.0)</div><div class="line">    + metro::Note(metro::Note::Timbre::Drum, 92.50, 100.0);</div><div class="line">poly2[1] = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);</div><div class="line">poly2[2] = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);</div><div class="line"></div><div class="line">metronome.add_measure(</div><div class="line">metro::Measure::NoteLength::QuarterTriplet, poly2);</div></div><!-- fragment --><p>This is what it sounds like:</p>
 <p> 
 <audio controls="1">
@@ -121,6 +121,11 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
 <p>What a musician <em>shouldn't</em> need to do with libmetro is debug a segmentation fault, or undefined behavior, or a memory leak, or any other (<b>CITATION NEEDED</b>) sharp edges of C++. By providing a library, it's my responsibility to ensure it is well-behaved. If a rhythm expert is forced to debug C++ when using libmetro, that would be a failure of my ultimate objective.</p>
 <h2>Methodology</h2>
 <h3>1. The precise clock</h3>
+<p>The most critical aspect of a metronome is having an accurate timer. A naive ticker implementation is as follows:</p>
+<div class="fragment"><div class="line">int bpm = 100;</div><div class="line"></div><div class="line">auto period_us = std::chrono::duration_cast&lt;std::chrono::microseconds&gt;(</div><div class="line">        std::chrono::duration&lt;double, std::micro&gt;(</div><div class="line">            1000000.0 * (60.0 / bpm)));</div><div class="line"></div><div class="line">// 100bpm period is 600,000 microseconds i.e. tick every 0.6s</div><div class="line"></div><div class="line">while (true) {</div><div class="line">        // insert code to play a click</div><div class="line">        std::this_thread::sleep_for(period_us);</div><div class="line">    }</div><div class="line">}</div></div><!-- fragment --><p>The documentation for <a href="https://en.cppreference.com/w/cpp/thread/sleep_for"><code>std::this_thread::sleep_for</code></a> says:</p>
+<p>&gt;&gt;&gt;Blocks the execution of the current thread for <em>at least</em> the specified sleep_duration. This function may block for longer than sleep_duration due to scheduling or resource contention delays.</p>
+<h3>2. Making it more musical</h3>
+<h3>3. Quality tools - UBSAN, etc.</h3>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->

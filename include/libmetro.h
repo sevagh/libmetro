@@ -111,18 +111,6 @@ private:
  */
 class Measure {
 public:
-	/*! NoteLength enum */
-	enum NoteLength {
-		Half,            /*!< 1/2 * bpm of quarter note */
-		DottedHalf,      /*!< 2/3 * bpm of quarter note */
-		Quarter,         /*!< bpm of quarter note */
-		DottedQuarter,   /*!< 3/2 * bpm of quarter note */
-		Eighth,          /*!< 2 * bpm of quarter note */
-		DottedEighth,    /*!< 3 * bpm of quarter note */
-		Sixteenth,       /*!< 4 * bpm of quarter note */
-		DottedSixteenth, /*!< 6 * bpm of quarter note */
-	};
-
 	//! Measure constructor.
 	/*!
 	 * Assign notes with the index operator e.g.
@@ -161,8 +149,7 @@ private:
  *
  * 1. Create a metronome with the desired quarter note bpm
  * 2. Create measures with notes
- * 3. Add the measures to the metronome with the given
- * metro::Measure::NoteLength
+ * 3. Add the measures to the metronome
  * 4. Start and loop the metronome object
  *
  * The metronome will take care of emitting the notes on your output device and
@@ -182,17 +169,12 @@ public:
 	//! add a measure
 	/*!
 	 * Add a measure to the metronome which will be cycled through at a
-	 * tempo set by param metro::Measure::NoteLength, relative to the
-	 * quarter note bpm.
-	 *
-	 * The goal is to be able to overlay different note durations e.g.
-	 * (half, eighth), each with a separate outstream with a different
-	 * software_latency due to different timing requirements.
+	 * tempo set by the bpm param.
 	 *
 	 * @param[in] note_length: note length of the measure
 	 * @param[in] measure: measure
 	 */
-	void add_measure(Measure::NoteLength note_length, Measure& measure);
+	void add_measure(Measure& measure);
 
 	//! start the loop
 	/*!
