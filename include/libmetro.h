@@ -113,13 +113,14 @@ class Measure {
 public:
 	/*! NoteLength enum */
 	enum NoteLength {
-		Half,             /*!< 1/2 * bpm of quarter note */
-		Quarter,          /*!< bpm of quarter note */
-		QuarterTriplet,   /*!< 3/2 * bpm of quarter note */
-		Eighth,           /*!< 2 * bpm of quarter note */
-		EighthTriplet,    /*!< 3 * bpm of quarter note */
-		Sixteenth,        /*!< 4 * bpm of quarter note */
-		SixteenthTriplet, /*!< 6 * bpm of quarter note */
+		Half,            /*!< 1/2 * bpm of quarter note */
+		DottedHalf,      /*!< 2/3 * bpm of quarter note */
+		Quarter,         /*!< bpm of quarter note */
+		DottedQuarter,   /*!< 3/2 * bpm of quarter note */
+		Eighth,          /*!< 2 * bpm of quarter note */
+		DottedEighth,    /*!< 3 * bpm of quarter note */
+		Sixteenth,       /*!< 4 * bpm of quarter note */
+		DottedSixteenth, /*!< 6 * bpm of quarter note */
 	};
 
 	//! Measure constructor.

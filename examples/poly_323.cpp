@@ -30,8 +30,7 @@ int main(int argc, char** argv)
 		poly2[1] = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);
 		poly2[2] = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);
 
-		metronome.add_measure(
-		    metro::Measure::NoteLength::QuarterTriplet, poly2);
+		metronome.add_measure(metro::Measure::NoteLength::DottedQuarter, poly2);
 		metronome.start_and_loop();
 	}
 	catch (...) {

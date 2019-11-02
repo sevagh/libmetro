@@ -48,10 +48,14 @@ static std::chrono::microseconds bpm2period(metro::Measure::NoteLength ratio,
 		return std::chrono::duration_cast<std::chrono::microseconds>(
 		    std::chrono::duration<double, std::micro>(2.0 * 1000000.0
 		                                              * (60.0 / bpm)));
+	case metro::Measure::NoteLength::DottedHalf:
+		return std::chrono::duration_cast<std::chrono::microseconds>(
+		    std::chrono::duration<double, std::micro>(3.0 / 2.0 * 1000000.0
+		                                              * (60.0 / bpm)));
 	case metro::Measure::NoteLength::Quarter:
 		return std::chrono::duration_cast<std::chrono::microseconds>(
 		    std::chrono::duration<double, std::micro>(1000000.0 * (60.0 / bpm)));
-	case metro::Measure::NoteLength::QuarterTriplet:
+	case metro::Measure::NoteLength::DottedQuarter:
 		return std::chrono::duration_cast<std::chrono::microseconds>(
 		    std::chrono::duration<double, std::micro>(2.0 / 3.0 * 1000000.0
 		                                              * (60.0 / bpm)));
@@ -59,7 +63,7 @@ static std::chrono::microseconds bpm2period(metro::Measure::NoteLength ratio,
 		return std::chrono::duration_cast<std::chrono::microseconds>(
 		    std::chrono::duration<double, std::micro>(1.0 / 2.0 * 1000000.0
 		                                              * (60.0 / bpm)));
-	case metro::Measure::NoteLength::EighthTriplet:
+	case metro::Measure::NoteLength::DottedEighth:
 		return std::chrono::duration_cast<std::chrono::microseconds>(
 		    std::chrono::duration<double, std::micro>(1.0 / 3.0 * 1000000.0
 		                                              * (60.0 / bpm)));
@@ -67,7 +71,7 @@ static std::chrono::microseconds bpm2period(metro::Measure::NoteLength ratio,
 		return std::chrono::duration_cast<std::chrono::microseconds>(
 		    std::chrono::duration<double, std::micro>(1.0 / 4.0 * 1000000.0
 		                                              * (60.0 / bpm)));
-	case metro::Measure::NoteLength::SixteenthTriplet:
+	case metro::Measure::NoteLength::DottedSixteenth:
 		return std::chrono::duration_cast<std::chrono::microseconds>(
 		    std::chrono::duration<double, std::micro>(1.0 / 6.0 * 1000000.0
 		                                              * (60.0 / bpm)));

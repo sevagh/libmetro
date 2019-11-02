@@ -6,8 +6,8 @@
  * The arguments are 'numerator denonimator bpm', where bpm is the bpm of the
  * quarter note. The numerator must be divisible by 3 (and != 3), and the
  * denominator must be one of 4,8,16 which use
- * metro::Measure::NoteLength::{QuarterTriplet, EighthTriplet,
- * SixteenthTriplet} respectively.
+ * metro::Measure::NoteLength::{DottedQuarter, DottedEighth,
+ * DottedSixteenth} respectively.
  *
  * Valid examples are 6/4, 9/8, 12/16, 15/8.
  */
@@ -35,13 +35,13 @@ int main(int argc, char** argv)
 	metro::Measure::NoteLength l;
 	switch (den) {
 	case 4:
-		l = metro::Measure::QuarterTriplet;
+		l = metro::Measure::DottedQuarter;
 		break;
 	case 8:
-		l = metro::Measure::EighthTriplet;
+		l = metro::Measure::DottedEighth;
 		break;
 	case 16:
-		l = metro::Measure::SixteenthTriplet;
+		l = metro::Measure::DottedSixteenth;
 		break;
 	default:
 		std::cerr << num << "/" << den << " is not supported" << std::endl;

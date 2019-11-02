@@ -235,10 +235,10 @@ TEST(MetronomePrivateUnitTest, AddMismatchedMeasuresLCMSize)
 	EXPECT_EQ(metronome.tickers.count(metro::Measure::NoteLength::Half), 0);
 	EXPECT_EQ(metronome.tickers.count(metro::Measure::NoteLength::Quarter), 1);
 	EXPECT_EQ(
-	    metronome.tickers.count(metro::Measure::NoteLength::QuarterTriplet), 0);
+	    metronome.tickers.count(metro::Measure::NoteLength::DottedQuarter), 0);
 	EXPECT_EQ(metronome.tickers.count(metro::Measure::NoteLength::Eighth), 0);
 	EXPECT_EQ(
-	    metronome.tickers.count(metro::Measure::NoteLength::EighthTriplet), 0);
+	    metronome.tickers.count(metro::Measure::NoteLength::DottedEighth), 0);
 	EXPECT_EQ(
 	    metronome.tickers.count(metro::Measure::NoteLength::Sixteenth), 0);
 }

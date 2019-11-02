@@ -4,25 +4,29 @@ Open a GitHub issue for any questions you may have.
 
 ### In a nutshell
 
-A traditional African polyrhythm recreated in [67 lines of C++](./demo/butour_ngale.cpp):
+Libmetro should empower users to create custom metronomes to practice a specific time signature, polyrhythm, or any other complex rhythmic feature. A typical metronome is only a click track with a bpm, and the user is expected to play time signatures etc. over the clicks, simply using the clicks to help keep time.
 
-https://sevagh.github.io/libmetro/md__home_sevagh_repos_libmetro_doxygen_3_musicdemos.html
+An example of a 4:3 polyrhythmic metronome that can help somebody learn how to play a 4:3 on a drum kit can be as follows:
+
+1. Play accented 4/4 clicks for 10 measures with timbre 1 (drummer plays the 4/4 alongside, 10 times)
+2. Play accented 3/4 clicks for 10 measures with timbre 2 (drummer plays the 3/4 alongside, 10 times)
+3. Play both overlaid to create the 4:3 for 10 measures (drummer plays both pieces, 10 times)
+
+This can be expressed easily with libmetro, and can be seen in [`examples/poly_4_3.cpp`](./examples/poly_4_3.cpp), or seen in action [here](LINK COMING). Ignoring argument parsing etc., the important parts of the code look like:
+
+```c++
+```
+
+Full API documentation, high-level overview, and various sample clips and design docs are available at https://sevagh.github.io/libmetro
 
 ### Project structure
-
-A description of the project, API docs, and various sample clips are available at: https://sevagh.github.io/libmetro
 
 The libmetro sources are:
 
 * [include](./include) - the single header file, `libmetro.h`, that you'll need to use libmetro
 * [src](./src) - the source code of libmetro, split into private header files for modular design and readability
 * [test](./test) - various unit tests
-
-Programs built with libmetro are:
-
-* [example](./example) - very basic examples, the gentlest introduction to libmetro
-* [demo](./demo) - demo programs implementing specific time signatures from real songs and live music
-* [programs](./programs) - more complex programs that implement a variety of simple, odd, compound and polyrhythmic time signatures
+* [examples](./examples) - various examples (polyrhythms, compound/odd/simple time signatures, additive meter)
 
 ### Developer guide
 

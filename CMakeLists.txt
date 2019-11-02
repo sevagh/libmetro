@@ -97,28 +97,15 @@ endif()
 #------------------------------------------------------------------------------#
 
 function(metro_example name)
-	add_executable(example_${name} example/${name}.cpp)
+	add_executable(example_${name} examples/${name}.cpp)
 	target_link_libraries(example_${name} ${METRO_DEPS})
 endfunction()
 
 metro_example(accented_44)
-metro_example(poly_3_2)
-
-function(metro_program name)
-	add_executable(program_${name} programs/${name}.cpp)
-	target_link_libraries(program_${name} ${METRO_DEPS})
-endfunction()
-
-metro_program(simple_and_odd)
-metro_program(compound)
-metro_program(polyrhythm)
-
-function(metro_demo name)
-	add_executable(demo_${name} demo/${name}.cpp)
-	target_link_libraries(demo_${name} ${METRO_DEPS})
-endfunction()
-
-metro_demo(butour_ngale)
+metro_example(poly_323)
+metro_example(poly_43)
+metro_example(simple_and_odd)
+metro_example(compound)
 
 #------------------------------------------------------------------------------#
 # INSTALL
@@ -194,7 +181,7 @@ endif()
 
 file(GLOB_RECURSE
      ALL_CXX_SOURCE_FILES
-     src/*.cpp src/*.h programs/*.cpp include/*.h test/*.cpp example/*.cpp demo/*.cpp
+     src/*.cpp src/*.h include/*.h test/*.cpp examples/*.cpp
      )
 
 # Adding clang-format target if executable is found
