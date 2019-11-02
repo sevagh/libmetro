@@ -2,6 +2,7 @@
 #define LIBMETRO_H
 
 #include <chrono>
+#include <string>
 #include <vector>
 
 /** \mainpage
@@ -75,6 +76,16 @@ public:
 	 */
 	Note(Timbre timbre, float frequency, float volume);
 
+	//! Note constructor with convenient string represenation.
+	//
+	// Parses a string in the format timbre,freq,vol
+	// e.g. sine,440.0,50.0
+	//
+	/*!
+	 * @param[in] triplet: string in format 'timbre,freq,vol'
+	 */
+	Note(std::string triplet);
+
 	//! index into underlying vector of floats.
 	float& operator[](size_t index) { return frames[index]; };
 
@@ -125,6 +136,26 @@ public:
 	Measure(int num_notes)
 	    : notes(num_notes){};
 
+	//! Measure constructor.
+	/*!
+	 * Create a measure by parsing a measure description txt file.
+	 *
+	 * The format of the file is as follows. Lines are separated with '\n'
+	 * Fields are space-separated.
+	 *
+	 * 	# number of beats in the measure
+	 * 	measure_length 4
+	 *
+	 * 	# beats at index of the measure
+	 * 	0 sine,440.0,10.0 drum,73.42,100.0 drum,92.5,100.0
+	 * 	1 sine,440.0,10.0 drum,73.42,50.0
+	 * 	2 sine,440.0,10.0 drum,73.42,65.0
+	 * 	3 sine,440.0,10.0 drum,73.42,50.0
+	 *
+	 * @param[in] path: path to txt file
+	 */
+	Measure(const char* path);
+
 	//! index into underlying vector of Notes.
 	Note& operator[](size_t index) { return notes[index]; };
 
@@ -159,11 +190,12 @@ class Metronome {
 public:
 	//! Metronome constructor.
 	/*!
-	 * Create a metronome with the given quarter note bpm.
+	 * Create a metronome with the given bpm.
 	 *
-	 * @param[in] bpm: bpm of the quarter note
+	 * @param[in] bpm: bpm to cycle through the measure
 	 */
 	Metronome(int bpm);
+
 	~Metronome();
 
 	//! add a measure

@@ -57,7 +57,8 @@ set(METRO_SOURCES
     src/audioengine.cpp
     src/outstream.cpp
     src/metronome.cpp
-    src/timbregen.cpp)
+    src/timbregen.cpp
+    src/fileparser.cpp)
 
 set(METRO_DEPS
     metro
@@ -103,6 +104,7 @@ endfunction()
 
 metro_example(accented_44)
 metro_example(poly_43)
+metro_example(from_file)
 
 #------------------------------------------------------------------------------#
 # INSTALL

@@ -26,8 +26,8 @@ int main(int argc, char** argv)
 		metronome.add_measure(accented_44);
 		metronome.start_and_loop();
 	}
-	catch (...) {
-		std::cerr << "exception" << std::endl;
+	catch (const std::exception& exc) {
+		std::cerr << "exception: " << exc.what() << std::endl;
 		return 1;
 	}
 	return 0;

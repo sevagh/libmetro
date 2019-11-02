@@ -1,0 +1,8 @@
+# number of beats in the measure
+measure_length 4
+
+# beats at index of the measure
+0 sine,440.0,10.0 drum,73.42,100.0 drum,92.5,100.0
+1 sine,440.0,10.0 drum,73.42,50.0
+2 sine,440.0,10.0 drum,73.42,65.0
+3 sine,440.0,10.0 drum,73.42,50.0
