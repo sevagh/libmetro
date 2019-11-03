@@ -11,9 +11,13 @@
 metro::Measure::Measure(const char* path)
 {
 	std::ifstream infile(path);
+	if (infile.fail())
+		throw std::runtime_error(std::string("error loading file ") + path);
+
 	std::string line;
 
 	size_t measure_len;
+	bool measure_len_seen = false;
 
 	std::vector<size_t> input_note_indices;
 	std::vector<metro::Note> input_notes;
@@ -37,6 +41,7 @@ metro::Measure::Measure(const char* path)
 				throw std::runtime_error("line measure_length can only have 1 "
 				                         "field");
 			measure_len = std::stoi(tokens[1]);
+			measure_len_seen = true;
 			continue;
 		}
 
@@ -58,6 +63,9 @@ metro::Measure::Measure(const char* path)
 			continue;
 		}
 	}
+
+	if (!measure_len_seen)
+		throw std::runtime_error("Missing 'measure_length' in text file");
 
 	notes = std::vector<metro::Note>(measure_len);
 

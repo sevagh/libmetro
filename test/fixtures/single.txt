@@ -1,0 +1,3 @@
+measure_length 1
+
+0 sine,440.0,100.0

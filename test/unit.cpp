@@ -136,6 +136,63 @@ TEST(MeasureTest, MeasureIndexOperator)
 		EXPECT_EQ(measure[0][i], note3[i]);
 }
 
+TEST(MeasureTest, MeasureBadTextFilesThrowExceptions)
+{
+	EXPECT_THROW(metro::Measure("../test/fixtures/"
+	                            "invalid_missing_measure_len.txt"),
+	             std::runtime_error);
+}
+
+TEST(MeasureTest, MeasureBadTimbresJustBlank)
+{
+	EXPECT_NO_THROW(metro::Measure("../test/fixtures/invalid_timbres.txt"));
+	auto measure = metro::Measure("../test/fixtures/invalid_timbres.txt");
+
+	EXPECT_EQ(measure.size(), 1);
+	for (size_t i = 0; i < measure[0].size(); ++i) // blank notes
+		EXPECT_EQ(measure[0][i], 0.0);
+}
+
+TEST(MeasureTest, MeasureFromTextFileIsEquivalent)
+{
+	auto measure11 = metro::Measure(0);
+	auto measure12 = metro::Measure("../test/fixtures/blank.txt");
+
+	EXPECT_EQ(measure11.size(), measure12.size());
+	for (size_t i = 0; i < measure11.size(); i++) {
+		EXPECT_EQ(measure11[i].size(), measure12[i].size());
+		for (size_t j = 0; j < measure11[i].size(); ++j)
+			EXPECT_EQ(measure11[i][j], measure12[i][j]);
+	}
+
+	auto measure21 = metro::Measure(1);
+	measure21[0] = metro::Note(metro::Note::Timbre::Sine, 440.0, 100.0);
+
+	auto measure22 = metro::Measure("../test/fixtures/single.txt");
+
+	EXPECT_EQ(measure21.size(), measure22.size());
+	for (size_t i = 0; i < measure21.size(); i++) {
+		EXPECT_EQ(measure21[i].size(), measure22[i].size());
+		for (size_t j = 0; j < measure21[i].size(); ++j)
+			EXPECT_EQ(measure21[i][j], measure22[i][j]);
+	}
+
+	auto measure31 = metro::Measure(3);
+	measure31[0] = metro::Note(metro::Note::Timbre::Sine, 440.0, 100.0)
+	               + metro::Note(metro::Note::Timbre::Sine, 110.0, 35.0);
+	measure31[2] = metro::Note(metro::Note::Timbre::Sine, 440.0, 100.0)
+	               + metro::Note(metro::Note::Timbre::Drum, 73.5, 38.0);
+
+	auto measure32 = metro::Measure("../test/fixtures/multiple.txt");
+
+	EXPECT_EQ(measure31.size(), measure32.size());
+	for (size_t i = 0; i < measure31.size(); i++) {
+		EXPECT_EQ(measure31[i].size(), measure32[i].size());
+		for (size_t j = 0; j < measure31[i].size(); ++j)
+			EXPECT_EQ(measure31[i][j], measure32[i][j]);
+	}
+}
+
 namespace metro_private {
 class SoundIoUnitTest : public ::testing::Test {
 protected:

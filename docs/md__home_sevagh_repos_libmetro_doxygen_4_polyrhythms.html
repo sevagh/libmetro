@@ -104,7 +104,7 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
 <iframe width="434" height="192" src="https://www.youtube.com/embed/V31kBcV3k38" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </p>
 <h3>libmetro representation</h3>
-<p>Polyrhythms are expressed rather simply. They need to be manually constructed using the least common multiple of both rhythms, which is a familiar exercise to anyone studying polyrythms or following basic tutorials (as I did - linked right below).</p>
+<p>Polyrhythms are expressed rather simply in libmetro. They need to be manually constructed in a single measure using the least common multiple of both rhythms, which is a familiar exercise to anyone studying polyrythms or following basic tutorials (as I did - linked right below).</p>
 <p>Resources, tutorials:</p>
 <ul>
 <li><a href="https://bouncemetronome.com/video-resources/polyrhythms">https://bouncemetronome.com/video-resources/polyrhythms</a></li>
@@ -113,7 +113,7 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
 <li><a href="https://www.youtube.com/watch?v=b29H5RLcijs">https://www.youtube.com/watch?v=b29H5RLcijs</a></li>
 </ul>
 <p>As before, the metronome files below can be viewed <a href="https://github.com/sevagh/libmetro/tree/master/sample_metronomes">here</a>.</p>
-<h4>3:2 example</h4>
+<h3>3:2 example</h3>
 <p>To create a 3:2, we need to find the LCM of 3 and 2, which is 6, spread the triple at indices 0,2,4, and the duple at indices 0,3:</p>
 <p>poly_32.txt:</p>
 <div class="fragment"><div class="line">measure_length 6</div><div class="line"></div><div class="line">0 sine,440.0,10.0 drum,73.42,100.0 drum,92.5,100.0 drum,207.65,100.0 drum,185.0,100.0</div><div class="line">1 sine,440.0,10.0</div><div class="line">2 sine,440.0,10.0 drum,73.42,50.0</div><div class="line">3 sine,440.0,10.0 drum,207.65,50.0</div><div class="line">4 sine,440.0,10.0 drum,73.42,50.0</div><div class="line">5 sine,440.0,10.0</div></div><!-- fragment --><p>You'll see see I added sine wave beeps/clicks to make clear how the triples and duples are overlaid on 6 beats:</p>
@@ -133,7 +133,7 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
   </source>
 </audio>
 </p>
-<h4>4:3 with a pedagogical twist</h4>
+<h3>4:3 with a pedagogical twist</h3>
 <p>There's a fully-fledged <a href="https://github.com/sevagh/libmetro/blob/master/examples/poly_43.cpp">pure-C++ 4:3 example</a>. where one can specify how many measures of 4, 3, 4:3, and only clicks (no beats) to play.</p>
 <p>The idea is that you could practice X measures of 4, Y measures of 3, Z measures of 4:3, and W measures of only clicks (on which you're expected to correctly play the 4:3), repeated over and over. This can perhaps be of value to drummers.</p>
 <p>Note that this concept is expressible with the text file method, but requires one to copy/paste blocks of measures (and change the indices manually), which is tedious.</p>
@@ -141,6 +141,16 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
 <p> 
 <audio controls="1">
   <source src="./static/poly_43.wav"
+          type="audio/wav">
+  </source>
+</audio>
+</p>
+<h3>5:3</h3>
+<p>poly_53.txt:</p>
+<div class="fragment"><div class="line">measure_length 15</div><div class="line"></div><div class="line"># 5:3</div><div class="line">0 drum,73.42,100.0 drum,92.5,100.0 drum,207.65,100.0 drum,185.0,100.0</div><div class="line">3 drum,73.42,50.0</div><div class="line">5 drum,207.65,50.0</div><div class="line">6 drum,73.42,50.0</div><div class="line">9 drum,73.42,50.0</div><div class="line">10 drum,207.65,50.0</div><div class="line">12 drum,73.42,50.0</div></div><!-- fragment --><p>5:3, 300bpm:</p>
+<p> 
+<audio controls="1">
+  <source src="./static/poly_53.wav"
           type="audio/wav">
   </source>
 </audio>

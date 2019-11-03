@@ -24,7 +24,7 @@ EDM example (not 100% certain on this one):
 
 ### libmetro representation
 
-Polyrhythms are expressed rather simply. They need to be manually constructed using the least common multiple of both rhythms, which is a familiar exercise to anyone studying polyrythms or following basic tutorials (as I did - linked right below).
+Polyrhythms are expressed rather simply in libmetro. They need to be manually constructed in a single measure using the least common multiple of both rhythms, which is a familiar exercise to anyone studying polyrythms or following basic tutorials (as I did - linked right below).
 
 Resources, tutorials:
 
@@ -35,7 +35,7 @@ Resources, tutorials:
 
 As before, the metronome files below can be viewed [here](https://github.com/sevagh/libmetro/tree/master/sample_metronomes).
 
-#### 3:2 example
+### 3:2 example
 
 To create a 3:2, we need to find the LCM of 3 and 2, which is 6, spread the triple at indices 0,2,4, and the duple at indices 0,3:
 
@@ -74,7 +74,7 @@ You'll see see I added sine wave beeps/clicks to make clear how the triples and 
 </audio>
 \endhtmlonly
 
-#### 4:3 with a pedagogical twist
+### 4:3 with a pedagogical twist
 
 There's a fully-fledged [pure-C++ 4:3 example](https://github.com/sevagh/libmetro/blob/master/examples/poly_43.cpp). where one can specify how many measures of 4, 3, 4:3, and only clicks (no beats) to play.
 
@@ -92,3 +92,29 @@ Test run with parameters 2 2 2 2 300, i.e. 2 measures of 4, 2 measures of 3, 2 m
 </audio>
 \endhtmlonly
 
+### 5:3
+
+poly_53.txt:
+
+```
+measure_length 15
+
+# 5:3
+0 drum,73.42,100.0 drum,92.5,100.0 drum,207.65,100.0 drum,185.0,100.0
+3 drum,73.42,50.0
+5 drum,207.65,50.0
+6 drum,73.42,50.0
+9 drum,73.42,50.0
+10 drum,207.65,50.0
+12 drum,73.42,50.0
+```
+
+5:3, 300bpm:
+
+\htmlonly
+<audio controls="1">
+  <source src="./static/poly_53.wav"
+          type="audio/wav">
+  </source>
+</audio>
+\endhtmlonly
