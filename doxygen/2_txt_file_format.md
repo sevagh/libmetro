@@ -5,7 +5,6 @@ This is an experimental syntax aimed at simplifying the configuration and mainte
 Fields are space-separated, lines are newline-separated. Comments start with `#`:
 
 ```
-$ cat sample_metronomes/accented_44_with_clicks.txt
 # number of beats in the measure
 measure_length 4
 
@@ -49,4 +48,4 @@ metronome.add_measure(measure);
 
 The bpm is not part of the metronome file, since it's assumed that the user will be changing bpm frequently.
 
-Examples can be seen in FIX LINK. An example program that parses and plays metronome txt files is HERE.
+Examples can be seen [here](https://github.com/sevagh/libmetro/tree/master/sample_metronomes). There is also an example program that parses and plays metronome txt files [here](https://github.com/sevagh/libmetro/blob/master/examples/from_file.cpp).
