@@ -59,13 +59,9 @@ clang-format: _pre
 doxygen: _pre
 	ninja -C build doc-doxygen
 
-docdev:
+doxydev:
 	@echo "docs: http://localhost:8080/"
 	@twistd -no web --path=./docs
-
-readmedev:
-	@echo "readme: http://localhost:6419/"
-	@grip
 
 .PHONY:
 	clean _pre build build-ubsan build-clang-tidy test install clang-analyze cpp-clean clang-format doxygen docdev readmedev

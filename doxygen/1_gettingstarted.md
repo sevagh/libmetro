@@ -1,12 +1,14 @@
 ### Getting started
 
-The goal of libmetro is to simplify the development of specialized metronomes, e.g. simple, odd, compound, additive, and polyrhythmic click/drum tracks for practicing. Many of the examples and programs are adapted from the excellent [Bounce Metronome](https://bouncemetronome.com/audio/downloadable-audio-clips/audio-clips-time-signatures-additive-rhythms-and-polyrhythm) website.
+The goal of libmetro is to simplify the development of specialized metronomes, e.g. simple, odd, compound, additive, and polyrhythmic click/drum tracks for practicing.
 
-The provided classes are Metronome, Note, and Measure. The bpm of the metronome should **always be given as the bpm of the quarter note**.
+The provided classes are Metronome, Note, and Measure.
 
 A Note is a convenience wrapper around a vector of floats representing a single sound - choices of timbre include `Timbre::{Sine, Drum}`.
 
-A Measure is a convenience wrapper around a vector of Notes representing a measure. Measures are added to a metronome with their note length, represented with the enum `NoteLength::{Half, Quarter, QuarterTriplet, Eighth, EighthTriplet, Sixteenth, SixteenthTriplet}`.
+A Measure is a convenience wrapper around a vector of Notes representing a measure. Measures are added to a metronome.
+
+Measures can be registered onto a Metronome object, and the bpm of the metronome determines the frequency at which the notes in the measures are cycled through.
 
 ### Basic usage
 
@@ -28,47 +30,15 @@ accented_44[1] = weakbeat;
 accented_44[2] = mediumbeat;
 accented_44[3] = weakbeat;
 
-metronome.add_measure(metro::Measure::NoteLength::Quarter, accented_44);
+metronome.add_measure(accented_44);
 metronome.start_and_loop();
 ```
+
+This is what it sounds like:
 
 \htmlonly
 <audio controls="1">
   <source src="./static/accented_4_4_demo.wav"
-          type="audio/wav">
-  </source>
-</audio>
-\endhtmlonly
-
-Here's a more complex example of a 3:2 polyrhythm/cross-rhythm. The triples are played with snares (+ hihat for the downbeat), and the duples are played with cowbell (+ tambourine for the downbeat):
-
-```
-#include "libmetro.h"
-
-int bpm = 100;
-auto metronome = metro::Metronome(bpm);
-
-auto poly1 = metro::Measure(2);
-poly1[0] = metro::Note(metro::Note::Timbre::Drum, 185.0, 100.0)
-           + metro::Note(metro::Note::Timbre::Drum, 207.65, 100.0);
-poly1[1] = metro::Note(metro::Note::Timbre::Drum, 207.65, 50.0);
-
-metronome.add_measure(metro::Measure::NoteLength::Quarter, poly1);
-
-auto poly2 = metro::Measure(3);
-poly2[0] = metro::Note(metro::Note::Timbre::Drum, 73.42, 100.0)
-           + metro::Note(metro::Note::Timbre::Drum, 92.50, 100.0);
-poly2[1] = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);
-poly2[2] = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);
-
-metronome.add_measure(
-    metro::Measure::NoteLength::QuarterTriplet, poly2);
-metronome.start_and_loop();
-```
-
-\htmlonly
-<audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
           type="audio/wav">
   </source>
 </audio>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>libmetro: Member List</title>
+<title>libmetro: Simple, odd, compound</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -66,7 +66,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('classmetro_1_1Note.html','');});
+$(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen_3_simple_odd_compound.html','');});
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -84,26 +84,48 @@ $(document).ready(function(){initNavTree('classmetro_1_1Note.html','');});
 </iframe>
 </div>
 
-<div class="header">
+<div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">metro::Note Member List</div>  </div>
+<div class="title">Simple, odd, compound </div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p>This is the complete list of members for <a class="el" href="classmetro_1_1Note.html">metro::Note</a>, including all inherited members.</p>
-<table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classmetro_1_1Note.html#ac56a7a9dd84fe603c1650e154cb9e939ad7d0d9df672c5fac07da6595dfd38362">Drum</a> enum value</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classmetro_1_1Note.html#a805875ea408b485a3b9b131893d0b031">get_frames</a>()</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classmetro_1_1Note.html#a63607ed4bc314076db55296b0a237aa0">Note</a>()</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classmetro_1_1Note.html#abee528c29d868d8b70b85f9707820eb8">Note</a>(Timbre timbre, float frequency, float volume)</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classmetro_1_1Note.html#a77d47d67aa72f47f2c187a573f8b02e9">Note</a>(std::string triplet)</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classmetro_1_1Note.html#ae11a8f59cf152f737234ccbce0fca9e3">operator+</a>(const Note &amp;other)</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classmetro_1_1Note.html#a757af438166e24fe16e80a8a09d3cc3a">operator[]</a>(size_t index)</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classmetro_1_1Note.html#af947fd8a25889b82dee37373b27d418f">operator[]</a>(size_t index) const</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classmetro_1_1Note.html#ac56a7a9dd84fe603c1650e154cb9e939a305b0c28c79d7dda339b977d433edd2c">Sine</a> enum value</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classmetro_1_1Note.html#afe6cd1f8f7d228b4879d964571bc64b1">size</a>()</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classmetro_1_1Note.html#ac56a7a9dd84fe603c1650e154cb9e939">Timbre</a> enum name</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"></td></tr>
-</table></div><!-- contents -->
+<div class="textblock"><p>These examples are simple, so I don't cover exhaustive cases. E.g., going from 5/4 to 7/4 just means adding 2 more weakbeats. The metronome files used to generate the clips can be viewed <a href="https://github.com/sevagh/libmetro/tree/master/sample_metronomes">here</a>. Tutorials used:</p>
+<ul>
+<li><a href="https://www.dummies.com/art-center/music/piano/understanding-simple-and-compound-time-signatures/">https://www.dummies.com/art-center/music/piano/understanding-simple-and-compound-time-signatures/</a></li>
+<li><a href="https://www.studybass.com/lessons/reading-music/time-signatures/">https://www.studybass.com/lessons/reading-music/time-signatures/</a></li>
+<li><a href="https://www.musictheory.net/lessons/15">https://www.musictheory.net/lessons/15</a></li>
+</ul>
+<h3>bpm caveat</h3>
+<p>As mentioned previously, the bpm of the metronome determines the frequency at which a measure's notes are played. This may not correspond to the musically correct bpm. E.g. for 9/8 (which you'll see below), libmetro doesn't do any triplet divisions but steps through the measure the same as any other.</p>
+<h3>simple</h3>
+<p>simple_34.txt: </p><div class="fragment"><div class="line">measure_length 3</div><div class="line"></div><div class="line">0 drum,207.65,100.0 drum,185.0,100.0</div><div class="line">1 drum,207.65,40.0</div><div class="line">2 drum,207.65,40.0</div></div><!-- fragment --><p>3/4, 120bpm</p>
+<p> 
+<audio controls="1">
+  <source src="./static/34.wav"
+          type="audio/wav">
+  </source>
+</audio>
+</p>
+<h3>odd</h3>
+<p>odd_54.txt: </p><div class="fragment"><div class="line">measure_length 5</div><div class="line"></div><div class="line">0 drum,207.65,100.0 drum,185.0,100.0</div><div class="line">1 drum,207.65,40.0</div><div class="line">2 drum,207.65,40.0</div><div class="line">3 drum,207.65,40.0</div><div class="line">4 drum,207.65,40.0</div></div><!-- fragment --><p>5/4, 170bpm</p>
+<p> 
+<audio controls="1">
+  <source src="./static/54.wav"
+          type="audio/wav">
+  </source>
+</audio>
+</p>
+<h3>compound</h3>
+<p>compound_98.txt: </p><div class="fragment"><div class="line">measure_length 9</div><div class="line"></div><div class="line">0 drum,207.65,100.0 drum,185.0,100.0</div><div class="line">1 drum,207.65,40.0</div><div class="line">2 drum,207.65,40.0</div><div class="line"></div><div class="line">3 drum,207.65,65.0 drum,185.0,50.0</div><div class="line">4 drum,207.65,40.0</div><div class="line">5 drum,207.65,40.0</div><div class="line"></div><div class="line">6 drum,207.65,65.0 drum,185.0,50.0</div><div class="line">7 drum,207.65,40.0</div><div class="line">8 drum,207.65,40.0</div></div><!-- fragment --><p>9/8, 240bpm</p>
+<p> 
+<audio controls="1">
+  <source src="./static/98.wav"
+          type="audio/wav">
+  </source>
+</audio>
+ </p>
+</div></div><!-- PageDoc -->
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

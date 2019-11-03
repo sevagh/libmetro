@@ -5,15 +5,15 @@ int main(int argc, char** argv)
 {
 	if (argc < 5) {
 		std::cerr << "usage: " << argv[0]
-		          << " bpm measures1 measures2 measures1+2 [invert]"
+		          << " measures1 measures2 measures1+2 bpm [invert]"
 		          << std::endl;
 		return 1;
 	}
 
-	int bpm = std::stoi(argv[1]);
-	int n_measures1 = std::stoi(argv[2]);
-	int n_measures2 = std::stoi(argv[3]);
-	int n_measures12 = std::stoi(argv[4]);
+	int n_measures1 = std::stoi(argv[1]);
+	int n_measures2 = std::stoi(argv[2]);
+	int n_measures12 = std::stoi(argv[3]);
+	int bpm = std::stoi(argv[4]);
 
 	metro::Note downbeat1, weakbeat1, downbeat2, weakbeat2;
 

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.15"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>libmetro: Member List</title>
+<title>libmetro: libmetro txt file format</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -66,7 +66,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
-$(document).ready(function(){initNavTree('classmetro_1_1Note.html','');});
+$(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen_2_txt_file_format.html','');});
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -84,26 +84,19 @@ $(document).ready(function(){initNavTree('classmetro_1_1Note.html','');});
 </iframe>
 </div>
 
-<div class="header">
+<div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">metro::Note Member List</div>  </div>
+<div class="title">libmetro txt file format </div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p>This is the complete list of members for <a class="el" href="classmetro_1_1Note.html">metro::Note</a>, including all inherited members.</p>
-<table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classmetro_1_1Note.html#ac56a7a9dd84fe603c1650e154cb9e939ad7d0d9df672c5fac07da6595dfd38362">Drum</a> enum value</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classmetro_1_1Note.html#a805875ea408b485a3b9b131893d0b031">get_frames</a>()</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classmetro_1_1Note.html#a63607ed4bc314076db55296b0a237aa0">Note</a>()</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classmetro_1_1Note.html#abee528c29d868d8b70b85f9707820eb8">Note</a>(Timbre timbre, float frequency, float volume)</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classmetro_1_1Note.html#a77d47d67aa72f47f2c187a573f8b02e9">Note</a>(std::string triplet)</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classmetro_1_1Note.html#ae11a8f59cf152f737234ccbce0fca9e3">operator+</a>(const Note &amp;other)</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classmetro_1_1Note.html#a757af438166e24fe16e80a8a09d3cc3a">operator[]</a>(size_t index)</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="classmetro_1_1Note.html#af947fd8a25889b82dee37373b27d418f">operator[]</a>(size_t index) const</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classmetro_1_1Note.html#ac56a7a9dd84fe603c1650e154cb9e939a305b0c28c79d7dda339b977d433edd2c">Sine</a> enum value</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="classmetro_1_1Note.html#afe6cd1f8f7d228b4879d964571bc64b1">size</a>()</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classmetro_1_1Note.html#ac56a7a9dd84fe603c1650e154cb9e939">Timbre</a> enum name</td><td class="entry"><a class="el" href="classmetro_1_1Note.html">metro::Note</a></td><td class="entry"></td></tr>
-</table></div><!-- contents -->
+<div class="textblock"><p>This is an experimental syntax aimed at simplifying the configuration and maintenance of multiple metronomes, vs. coding each one in C++ (which can get tedious).</p>
+<p>Fields are space-separated, lines are newline-separated. Comments start with <code>#</code>:</p>
+<div class="fragment"><div class="line">$ cat sample_metronomes/accented_44_with_clicks.txt</div><div class="line"># number of beats in the measure</div><div class="line">measure_length 4</div><div class="line"></div><div class="line"># beats at index of the measure</div><div class="line">0 sine,440.0,10.0 drum,73.42,100.0 drum,92.5,100.0 </div><div class="line">1 sine,440.0,10.0 drum,73.42,50.0</div><div class="line">2 sine,440.0,10.0 drum,73.42,65.0</div><div class="line">3 sine,440.0,10.0 drum,73.42,50.0</div></div><!-- fragment --><p>Measures can be instantiated from text files:</p>
+<div class="fragment"><div class="line">auto metronome = metro::Metronome(bpm);</div><div class="line"></div><div class="line">auto measure = metro::Measure(&quot;./sample_metronomes/accented_44_with_clicks.txt&quot;);</div><div class="line"></div><div class="line">metronome.add_measure(measure);</div></div><!-- fragment --><p>This is equivalent to the following C++ code written using libmetro's lower-level constructs:</p>
+<div class="fragment"><div class="line">auto metronome = metro::Metronome(bpm);</div><div class="line"></div><div class="line">auto downbeat = metro::Note(metro::Note::Timbre::Drum, 73.42, 100.0) + </div><div class="line">                metro::Note(metro::Note::Timbre::Drum, 92.5, 100.0);</div><div class="line">auto weakbeat = metro::Note(metro::Note::Timbre::Sine, 73.42, 50.0);</div><div class="line">auto mediumbeat = metro::Note(metro::Note::Timbre::Drum, 73.42, 65.0);</div><div class="line"></div><div class="line">auto click = metro::Note(metro::Note::Timbre::Sine, 440.0, 10.0);</div><div class="line"></div><div class="line">metro::Measure measure(4);</div><div class="line">measure[0] = click + downbeat;</div><div class="line">measure[1] = click + weakbeat;</div><div class="line">measure[2] = click + mediumbeat;</div><div class="line">measure[3] = click + weakbeat;</div><div class="line"></div><div class="line">metronome.add_measure(measure);</div></div><!-- fragment --><p>The bpm is not part of the metronome file, since it's assumed that the user will be changing bpm frequently.</p>
+<p>Examples can be seen in FIX LINK. An example program that parses and plays metronome txt files is HERE. </p>
+</div></div><!-- PageDoc -->
+</div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->

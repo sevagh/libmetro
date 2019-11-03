@@ -26,9 +26,9 @@ var NAVTREE =
   [ "libmetro", "index.html", [
     [ "Overview", "index.html#intro_sec", null ],
     [ "Getting started", "md__home_sevagh_repos_libmetro_doxygen_1_gettingstarted.html", null ],
-    [ "Complete examples", "md__home_sevagh_repos_libmetro_doxygen_2_completeexamples.html", null ],
-    [ "Additive demo", "md__home_sevagh_repos_libmetro_doxygen_3_additive.html", null ],
-    [ "MUMT-306 project report", "md__home_sevagh_repos_libmetro_doxygen_4_mumt306.html", null ],
+    [ "libmetro txt file format", "md__home_sevagh_repos_libmetro_doxygen_2_txt_file_format.html", null ],
+    [ "Simple, odd, compound", "md__home_sevagh_repos_libmetro_doxygen_3_simple_odd_compound.html", null ],
+    [ "MUMT-306 project report", "md__home_sevagh_repos_libmetro_doxygen_5_mumt306.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [

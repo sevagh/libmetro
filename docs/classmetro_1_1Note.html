@@ -114,6 +114,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:abee528c29d868d8b70b85f9707820eb8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmetro_1_1Note.html#abee528c29d868d8b70b85f9707820eb8">Note</a> (<a class="el" href="classmetro_1_1Note.html#ac56a7a9dd84fe603c1650e154cb9e939">Timbre</a> timbre, float frequency, float volume)</td></tr>
 <tr class="memdesc:abee528c29d868d8b70b85f9707820eb8"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classmetro_1_1Note.html" title="Note class.">Note</a> constructor with timbre.  <a href="#abee528c29d868d8b70b85f9707820eb8">More...</a><br /></td></tr>
 <tr class="separator:abee528c29d868d8b70b85f9707820eb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77d47d67aa72f47f2c187a573f8b02e9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmetro_1_1Note.html#a77d47d67aa72f47f2c187a573f8b02e9">Note</a> (std::string triplet)</td></tr>
+<tr class="memdesc:a77d47d67aa72f47f2c187a573f8b02e9"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classmetro_1_1Note.html" title="Note class.">Note</a> constructor with convenient string represenation.  <a href="#a77d47d67aa72f47f2c187a573f8b02e9">More...</a><br /></td></tr>
+<tr class="separator:a77d47d67aa72f47f2c187a573f8b02e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a757af438166e24fe16e80a8a09d3cc3a"><td class="memItemLeft" align="right" valign="top"><a id="a757af438166e24fe16e80a8a09d3cc3a"></a>
 float &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmetro_1_1Note.html#a757af438166e24fe16e80a8a09d3cc3a">operator[]</a> (size_t index)</td></tr>
 <tr class="memdesc:a757af438166e24fe16e80a8a09d3cc3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">index into underlying vector of floats. <br /></td></tr>
@@ -166,7 +169,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 </div>
 <h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a63607ed4bc314076db55296b0a237aa0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a63607ed4bc314076db55296b0a237aa0">&#9670;&nbsp;</a></span>Note() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a63607ed4bc314076db55296b0a237aa0">&#9670;&nbsp;</a></span>Note() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -194,7 +197,7 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 </div>
 </div>
 <a id="abee528c29d868d8b70b85f9707820eb8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abee528c29d868d8b70b85f9707820eb8">&#9670;&nbsp;</a></span>Note() <span class="overload">[2/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#abee528c29d868d8b70b85f9707820eb8">&#9670;&nbsp;</a></span>Note() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -231,6 +234,32 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
     <tr><td class="paramdir">[in]</td><td class="paramname">timbre</td><td>Sine or Drum. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">frequency</td><td>for Sine, frequency represents the frequency. For Drum, frequency represents the frequency to General MIDI percussion note number.</td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">volume</td><td>loudness in percent, i.e. 100% is max volume </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a77d47d67aa72f47f2c187a573f8b02e9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a77d47d67aa72f47f2c187a573f8b02e9">&#9670;&nbsp;</a></span>Note() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">metro::Note::Note </td>
+          <td>(</td>
+          <td class="paramtype">std::string&#160;</td>
+          <td class="paramname"><em>triplet</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="classmetro_1_1Note.html" title="Note class.">Note</a> constructor with convenient string represenation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">triplet</td><td>string in format 'timbre,freq,vol' </td></tr>
   </table>
   </dd>
 </dl>
