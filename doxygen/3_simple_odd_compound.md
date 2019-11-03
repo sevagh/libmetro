@@ -2,7 +2,7 @@
 
 These examples are simple, so I don't cover exhaustive cases. E.g., going from 5/4 to 7/4 just means adding 2 more weakbeats. The metronome files used to generate the clips can be viewed [here](https://github.com/sevagh/libmetro/tree/master/sample_metronomes).
 
-Tutorials used:
+Resources, tutorials:
 
 * https://www.dummies.com/art-center/music/piano/understanding-simple-and-compound-time-signatures/
 * https://www.studybass.com/lessons/reading-music/time-signatures/

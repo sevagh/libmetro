@@ -3,9 +3,9 @@
 
 int main(int argc, char** argv)
 {
-	if (argc < 5) {
+	if (argc < 6) {
 		std::cerr << "usage: " << argv[0]
-		          << " measures1 measures2 measures1+2 bpm [invert]"
+		          << " measures1 measures2 measures1+2 nmeasures0 bpm"
 		          << std::endl;
 		return 1;
 	}
@@ -13,34 +13,18 @@ int main(int argc, char** argv)
 	int n_measures1 = std::stoi(argv[1]);
 	int n_measures2 = std::stoi(argv[2]);
 	int n_measures12 = std::stoi(argv[3]);
-	int bpm = std::stoi(argv[4]);
+	int n_measures0 = std::stoi(argv[4]);
+	int bpm = std::stoi(argv[5]);
 
-	metro::Note downbeat1, weakbeat1, downbeat2, weakbeat2;
+	// timbre1, snare + hihat
+	auto downbeat1 = metro::Note(metro::Note::Timbre::Drum, 73.42, 100.0)
+	                 + metro::Note(metro::Note::Timbre::Drum, 92.50, 100.0);
+	auto weakbeat1 = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);
 
-	// pass anything as 'invert', this pretty much turns a 4:3 into a 3:4 by
-	// swapping the timbres
-	if (argc == 6) {
-		// timbre2, snare + hihat
-		downbeat2 = metro::Note(metro::Note::Timbre::Drum, 73.42, 100.0)
-		            + metro::Note(metro::Note::Timbre::Drum, 92.50, 100.0);
-		weakbeat2 = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);
-
-		// timbre1, cowbell + tambourine
-		downbeat1 = metro::Note(metro::Note::Timbre::Drum, 185.0, 100.0)
-		            + metro::Note(metro::Note::Timbre::Drum, 207.65, 100.0);
-		weakbeat1 = metro::Note(metro::Note::Timbre::Drum, 207.65, 50.0);
-	}
-	else {
-		// timbre1, snare + hihat
-		downbeat1 = metro::Note(metro::Note::Timbre::Drum, 73.42, 100.0)
-		            + metro::Note(metro::Note::Timbre::Drum, 92.50, 100.0);
-		weakbeat1 = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);
-
-		// timbre2, cowbell + tambourine
-		downbeat2 = metro::Note(metro::Note::Timbre::Drum, 185.0, 100.0)
-		            + metro::Note(metro::Note::Timbre::Drum, 207.65, 100.0);
-		weakbeat2 = metro::Note(metro::Note::Timbre::Drum, 207.65, 50.0);
-	}
+	// timbre2, cowbell + tambourine
+	auto downbeat2 = metro::Note(metro::Note::Timbre::Drum, 185.0, 100.0)
+	                 + metro::Note(metro::Note::Timbre::Drum, 207.65, 100.0);
+	auto weakbeat2 = metro::Note(metro::Note::Timbre::Drum, 207.65, 50.0);
 
 	try {
 		auto metronome = metro::Metronome(bpm);
@@ -49,7 +33,7 @@ int main(int argc, char** argv)
 		click[0] = metro::Note(metro::Note::Timbre::Sine, 440.0, 5.0);
 
 		auto poly1 = metro::Measure(12 * n_measures1 + 12 * n_measures2
-		                            + 12 * n_measures12);
+		                            + 12 * n_measures12 + 12 * n_measures0);
 
 		// measures with just the first rhythm
 		for (size_t i = 0; i < ( size_t )n_measures1; ++i) {
