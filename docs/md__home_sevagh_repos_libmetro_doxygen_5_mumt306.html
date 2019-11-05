@@ -92,40 +92,62 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
 <div class="textblock"><h2>Objectives</h2>
 <p>My original objective was to write a polyrhythmic metronome. As I started working on libmetro, the objectives became more concrete:</p>
 <ol type="1">
-<li>Write a library for building basic metronomes i.e. set a bpm for a sine wave click track<ol type="a">
-<li>Use a real-time audio library and learn how to use ringbuffers and other techniques of high-performance real-time audio code</li>
+<li>Write a library for building basic metronomes i.e. set a bpm for a sine wave click track. The cornerstone of libmetro is the use of a real-time audio library, <a href="http://libsound.io/">http://libsound.io/</a>. To use it effectively, I had to learn how to use ringbuffers and other techniques of real-time audio code.</li>
+<li>Support additional timbres by using <a href="https://github.com/thestk/stk">https://github.com/thestk/stk</a> drum sounds. This is important when playing simultaneous rhythms (e.g. 4:3) to distinguish each rhythm by timbre.</li>
+<li>Learn (some of) the theory behind rhythm and time signatures, and implement them alongside the basic click track e.g. polyrhythms, compound time.</li>
+<li>Ensure the resulting code is easy to read and understand - don't let the ugly bits of C++ show too much.</li>
+<li>Ensure the underlying code of the library is as correct and well-behaved as possible by testing and verifying the code using industry best practices. Users should only focus on whether or not their metronomes sound good, and not need to debug a segmentation fault, undefined behavior, or a memory leak.</li>
 </ol>
-</li>
-<li>Support additional timbres by using Stk drum sounds<ol type="a">
-<li>This is important for playing simultaneous tracks (e.g. a 3/8 over a 2/4) to distinguish each track by timbre</li>
-</ol>
-</li>
-<li>Learn more complex time signatures, and implement them alongside the basic metronome e.g. polyrhythms, compound time, syncoptation</li>
-<li>Ensure the resulting code looks more 'music' than 'C++'<ol type="a">
-<li>A counterpart to point 4 is that I drew inspiration from Max/MSP's synthesis objects (metro, cycle) to design the resulting C++ API.</li>
-</ol>
-</li>
-<li>Ensure the underlying C++ code of the library is both <em>correct</em> and <em>well-behaved</em> by testing and verifying the code using industry best practices to protect end-users from C++'s notorious footguns</li>
-</ol>
-<h3>Expansion on point 5</h3>
-<p>Since my goal is to build a library for building metronomes (and not a metronome), it's possible that my demos/examples are musically incorrect, given that I'm studying time signatures for the first time. That's not a big deal. A musician could (and probably should) eyeball the following code:</p>
-<div class="fragment"><div class="line">auto poly1 = metro::Measure(2);</div><div class="line">poly1[0] = metro::Note(metro::Note::Timbre::Drum, 185.0, 100.0)</div><div class="line">    + metro::Note(metro::Note::Timbre::Drum, 207.65, 100.0);</div><div class="line">poly1[1] = metro::Note(metro::Note::Timbre::Drum, 207.65, 50.0);</div><div class="line"></div><div class="line">metronome.add_measure(metro::Measure::NoteLength::Quarter, poly1);</div><div class="line"></div><div class="line">auto poly2 = metro::Measure(3);</div><div class="line">poly2[0] = metro::Note(metro::Note::Timbre::Drum, 73.42, 100.0)</div><div class="line">    + metro::Note(metro::Note::Timbre::Drum, 92.50, 100.0);</div><div class="line">poly2[1] = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);</div><div class="line">poly2[2] = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);</div><div class="line"></div><div class="line">metronome.add_measure(</div><div class="line">metro::Measure::NoteLength::QuarterTriplet, poly2);</div></div><!-- fragment --><p>This is what it sounds like:</p>
+<h2>Methodology</h2>
+<h3>1. Real-time audio</h3>
+<p>The following articles are a good introduction to the challenges of real-time audio code:</p>
+<ul>
+<li><a href="http://www.rossbencina.com/code/real-time-audio-programming-101-time-waits-for-nothing">http://www.rossbencina.com/code/real-time-audio-programming-101-time-waits-for-nothing</a></li>
+<li><a href="http://atastypixel.com/blog/four-common-mistakes-in-audio-development/">http://atastypixel.com/blog/four-common-mistakes-in-audio-development/</a></li>
+</ul>
+<p>The gist of is that the audio callback thread - the code that's sending audio data directly to the sound device - should only ever send audio to the sound device. Any code that has no guaranteed execution times (e.g. network calls, waiting for mutexes, sleeps, bad algorithms) might interrupt the audio callback thread from executing, and that's a big no-no - it can lead to glitchy audio or worse.</p>
+<p>Since a metronome is timer-based, I make use of sleeps heavily in the code. In practice, libmetro's timer-based execution is kept separate from the audio callback thread - the two components communicate with a <a href="https://libsoundio.dpldocs.info/soundio.soundio.SoundIoRingBuffer.html">ringbuffer</a>. Here's a high-level diagram describing how a click track works in libmetro:</p>
+<img src="./static/ringbuf.png" width="654" height="300" alt="" class="inline"/>
+<p>The soundio code in libmetro has been adapted mostly unchanged from the <a href="https://github.com/andrewrk/libsoundio/tree/master/example">soundio examples</a>.</p>
+<h3>2. Evolution of libmetro's UX</h3>
+<h4>V0: too much C++</h4>
+<p>The original UX seemed fine... to me. The person who spent 100% of their time writing 100% of the code. Taking a step back, the idea of asking "non-technical users" to write <a href="https://en.cppreference.com/w/cpp/language/lambda">lambda functions</a> to create a metronome would most likely discourage many users. I exposed parts of libmetro that still exist today - but the user need not be aware of them. It was possible to encapsulate them more neatly.</p>
+<p>Original 4/4 drum track:</p>
+<div class="fragment"><div class="line">int bpm = std::stoi(argv[1]);</div><div class="line">auto tempo = metro::Tempo(bpm);</div><div class="line"></div><div class="line">auto audio_engine = metro::audio::Engine();</div><div class="line">auto stream = audio_engine.new_outstream(tempo.period_us);</div><div class="line"></div><div class="line">auto hihat = metro::timbre::Drum(42, 100);</div><div class="line">auto snare = metro::timbre::Drum(38, 100);</div><div class="line">auto bass = metro::timbre::Drum(45, 100);</div><div class="line"></div><div class="line">metro::Measure beat22(std::vector&lt;metro::QuarterNote&gt;({</div><div class="line">    [&amp;]() {</div><div class="line">        stream.play_timbres({&amp;hihat, &amp;snare});</div><div class="line">    },</div><div class="line">    [&amp;]() { stream.play_timbres({&amp;hihat}); },</div><div class="line">    [&amp;]() {</div><div class="line">        stream.play_timbres({&amp;hihat, &amp;bass});</div><div class="line">    },</div><div class="line">    [&amp;]() { stream.play_timbres({&amp;hihat}); },</div><div class="line">}));</div><div class="line"></div><div class="line">tempo.register_measure(beat22);</div><div class="line">tempo.start();</div><div class="line"></div><div class="line">audio_engine.eventloop();</div></div><!-- fragment --><p>This doesn't seem horrendously complex, but the lambda syntax (i.e. <code>[&amp;]() { }</code>) is new to C++ in the 2011 standard, so making it a mandatory part of libmetro's user-facing functionality did not make sense.</p>
+<h4>V1: too much music</h4>
+<p>After learning a tiny bit about time signatures (mostly from YouTube tutorials), I went too far. I created many separate ticking timers in the metronome object, distinguished by their note duration.</p>
+<p>I defined an enum with the values Whole, Half, HalfTriplet, Quarter, QuarterTriplet, Eighth, EighthTriplet, Sixteenth, SixteenthTriplet, each with a separate bpm computed from the input bpm (expected to be the quarter note bpm).</p>
+<p>My first 3:2 polyrhythm is one where I threw together 3 "QuarterTriplet" notes and 2 "Quarter" notes and expected things to Just Work. This is what it sounded like:</p>
 <p> 
 <audio controls="1">
-  <source src="./static/poly_3_2_demo.wav"
+  <source src="./static/bad_poly32.wav"
           type="audio/wav">
   </source>
 </audio>
 </p>
-<p>I think it's a 3:2 polyrhythm. Wikipedia (<b>CITATION NEEDED</b>) says it might be a cross-rhythm, or hemiola. The code describes that this is 3 dotted quarter notes played over 2 quarter notes. My musician friend says it sounds good, but he could just be flattering me. Either way, the corrections a musician would make to the above code should be in the musical features only.</p>
-<p>What a musician <em>shouldn't</em> need to do with libmetro is debug a segmentation fault, or undefined behavior, or a memory leak, or any other (<b>CITATION NEEDED</b>) sharp edges of C++. By providing a library, it's my responsibility to ensure it is well-behaved. If a rhythm expert is forced to debug C++ when using libmetro, that would be a failure of my ultimate objective.</p>
-<h2>Methodology</h2>
-<h3>1. The precise clock</h3>
+<p>This is what the code looked like:</p>
+<div class="fragment"><div class="line">auto metronome = metro::Metronome(bpm);</div><div class="line"></div><div class="line">auto poly1 = metro::Measure(2);</div><div class="line">poly1[0] = metro::Note(metro::Note::Timbre::Drum, 185.0, 100.0)</div><div class="line">           + metro::Note(metro::Note::Timbre::Drum, 207.65, 100.0);</div><div class="line">poly1[1] = metro::Note(metro::Note::Timbre::Drum, 207.65, 50.0);</div><div class="line"></div><div class="line">metronome.add_measure(metro::Measure::NoteLength::Quarter, poly1);</div><div class="line"></div><div class="line">auto poly2 = metro::Measure(3);</div><div class="line">poly2[0] = metro::Note(metro::Note::Timbre::Drum, 73.42, 100.0)</div><div class="line">           + metro::Note(metro::Note::Timbre::Drum, 92.50, 100.0);</div><div class="line">poly2[1] = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);</div><div class="line">poly2[2] = metro::Note(metro::Note::Timbre::Drum, 73.42, 50.0);</div><div class="line"></div><div class="line">metronome.add_measure(</div><div class="line">    metro::Measure::NoteLength::QuarterTriplet, poly2);</div><div class="line">metronome.start_and_loop();</div></div><!-- fragment --><p>I quickly realized that being too clever with a topic (rhythm, time signatures, beats) that I am a complete newbie to was absolutely futile.</p>
+<h4>V2: just right</h4>
+<p>The final UX of libmetro is more "automated manual" than fully-automatic-but-incorrect as in V1. When following YouTube tutorials on how one should create a 3:2 or 4:3 polyrhythm by considering the least common multiple, I reverted to exposing a single timer, and expect that the user should lay the beats out in a measure - probably the way that they already know a 4:3 works.</p>
+<p>This led to the simplest code, and the best sounding metronomes.</p>
+<div class="fragment"><div class="line">auto metronome = metro::Metronome(100);</div><div class="line"></div><div class="line">// lcm of 3 and 4 is 12</div><div class="line">auto measure = metro::Measure(12);</div><div class="line"></div><div class="line">measure[0] = downbeat1 + downbeat2;  // &lt;----- 1/4, 1/3</div><div class="line"></div><div class="line">measure[3] = weakbeat1;              // &lt;----- 2/4</div><div class="line">measure[6] = weakbeat1;              // &lt;----- 3/4</div><div class="line">measure[9] = weakbeat1;              // &lt;----- 4/4</div><div class="line"></div><div class="line">measure[4] = weakbeat2;              // &lt;----- 2/3</div><div class="line">measure[8] = weakbeat2;              // &lt;----- 3/3</div><div class="line"></div><div class="line">metronome.add_measure(measure);</div><div class="line">metronome.start_and_loop();</div></div><!-- fragment --><h4>V3: the experimental text file format</h4>
+<p>I thought that the above example (V2) could be easily expressed in a text file, eliminating the need for users to write code at all. This is what it looks like:</p>
+<div class="fragment"><div class="line">measure_length 12</div><div class="line"></div><div class="line">0 drum,73.42,100.0 drum,92.5,100.0 drum,207.65,100.0 drum,185.0,100.0</div><div class="line">3 drum,73.42,50.0</div><div class="line">4 drum,207.65,50.0</div><div class="line">6 drum,73.42,50.0</div><div class="line">8 drum,207.65,50.0</div><div class="line">9 drum,73.42,50.0</div></div><!-- fragment --><p>You can read more about it <a href="./md__home_sevagh_repos_libmetro_doxygen_2_txt_file_format.html">in this doc</a>.</p>
+<h3>3. Tests and code quality tools</h3>
+<h4>Unit tests</h4>
 <p>The most critical aspect of a metronome is having an accurate timer. A naive ticker implementation is as follows:</p>
 <div class="fragment"><div class="line">int bpm = 100;</div><div class="line"></div><div class="line">auto period_us = std::chrono::duration_cast&lt;std::chrono::microseconds&gt;(</div><div class="line">        std::chrono::duration&lt;double, std::micro&gt;(</div><div class="line">            1000000.0 * (60.0 / bpm)));</div><div class="line"></div><div class="line">// 100bpm period is 600,000 microseconds i.e. tick every 0.6s</div><div class="line"></div><div class="line">while (true) {</div><div class="line">        // insert code to play a click</div><div class="line">        std::this_thread::sleep_for(period_us);</div><div class="line">    }</div><div class="line">}</div></div><!-- fragment --><p>The documentation for <a href="https://en.cppreference.com/w/cpp/thread/sleep_for"><code>std::this_thread::sleep_for</code></a> says:</p>
 <p>&gt;&gt;&gt;Blocks the execution of the current thread for <em>at least</em> the specified sleep_duration. This function may block for longer than sleep_duration due to scheduling or resource contention delays.</p>
-<h3>2. Making it more musical</h3>
-<h3>3. Quality tools - UBSAN, etc.</h3>
+<p>Writing a unit test to measure the clock accuracy led me to discover how badly the naive ticker was drifting, and led to the creation of a more precise timer:</p>
+<div class="fragment"><div class="line">void precise_sleep_us(std::chrono::microseconds dur_us)</div><div class="line">{</div><div class="line">        auto start_tick = std::chrono::steady_clock::now();</div><div class="line">        while (std::chrono::duration_cast&lt;std::chrono::microseconds&gt;(</div><div class="line">                   std::chrono::steady_clock::now() - start_tick)</div><div class="line">               &lt; dur_us)</div><div class="line">                std::this_thread::sleep_for(std::chrono::nanoseconds(1));</div><div class="line">}</div></div><!-- fragment --><p>This might be familiar from the first exam - it's better to sleep in tiny amounts (since sleeping is non-premptible) to exercise finer-grained control over execution times. Here's an example of a naive ticker vs precise ticker, playing a 4-note measure that consists of 1 beep and 3 silences, at 500, 700, and 900bpm. Notice the out-of-sync beeps - that's the naive clock drifting away from the expected bpm:</p>
+<p> 
+<audio controls="1">
+  <source src="./static/ticker_vs_ticker.wav"
+          type="audio/wav">
+  </source>
+</audio>
+</p>
+<p>The clock accuracy unit test verifies that the precise sleep stays within 2% clock drift (i.e. it ticks when it's expected to, +-2% at most). Of course, this is hardware and platform-dependent, but it's better than the naive clock. </p>
 </div></div><!-- PageDoc -->
 </div><!-- contents -->
 </div><!-- doc-content -->
