@@ -77,9 +77,9 @@ metro::Note::Note(std::string triplet)
 	std::string substr;
 	std::stringstream nested_ss(triplet);
 
-	metro::Note::Timbre timbre;
-	float freq;
-	float vol;
+	metro::Note::Timbre timbre = metro::Note::Timbre::Sine;
+	float freq = 0.0;
+	float vol = 0.0;
 
 	int j = 0;
 	while (std::getline(nested_ss, substr, ',')) {
