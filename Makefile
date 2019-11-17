@@ -39,7 +39,7 @@ build-clang-tidy: EXTRA_CMAKE_FLAGS=$(CLANG_TIDY_FLAGS)
 build-clang-tidy: clean
 build-clang-tidy: build
 
-test: build-ubsan
+test: build
 	ninja -C build test
 
 install: build
