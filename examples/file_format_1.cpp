@@ -16,7 +16,7 @@ int main(int argc, char** argv)
 		auto metronome = metro::Metronome(bpm);
 
 		// create measure from txt file
-		auto measure = metro::Measure(path);
+		auto measure = metro::Measure(path, metro::Measure::FileFormat::One);
 		metronome.add_measure(measure);
 
 		metronome.start_and_loop();

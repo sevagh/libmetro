@@ -136,27 +136,31 @@ TEST(MeasureTest, MeasureIndexOperator)
 		EXPECT_EQ(measure[0][i], note3[i]);
 }
 
-TEST(MeasureTest, MeasureBadTextFilesThrowExceptions)
+TEST(MeasureTest, MeasureBadTextFilesThrowExceptionsFileFormat1)
 {
 	EXPECT_THROW(metro::Measure("../test/fixtures/"
-	                            "invalid_missing_measure_len.txt"),
+	                            "invalid_missing_measure_len.txt",
+	                            metro::Measure::FileFormat::One),
 	             std::runtime_error);
 }
 
-TEST(MeasureTest, MeasureBadTimbresJustBlank)
+TEST(MeasureTest, MeasureBadTimbresJustBlankFileFormat1)
 {
-	EXPECT_NO_THROW(metro::Measure("../test/fixtures/invalid_timbres.txt"));
-	auto measure = metro::Measure("../test/fixtures/invalid_timbres.txt");
+	EXPECT_NO_THROW(metro::Measure("../test/fixtures/invalid_timbres.txt",
+	                               metro::Measure::FileFormat::One));
+	auto measure = metro::Measure("../test/fixtures/invalid_timbres.txt",
+	                              metro::Measure::FileFormat::One);
 
 	EXPECT_EQ(measure.size(), 1);
 	for (size_t i = 0; i < measure[0].size(); ++i) // blank notes
 		EXPECT_EQ(measure[0][i], 0.0);
 }
 
-TEST(MeasureTest, MeasureFromTextFileIsEquivalent)
+TEST(MeasureTest, MeasureFromTextFileIsEquivalentFileFormat1)
 {
 	auto measure11 = metro::Measure(0);
-	auto measure12 = metro::Measure("../test/fixtures/blank.txt");
+	auto measure12 = metro::Measure(
+	    "../test/fixtures/blank.txt", metro::Measure::FileFormat::One);
 
 	EXPECT_EQ(measure11.size(), measure12.size());
 	for (size_t i = 0; i < measure11.size(); i++) {
@@ -168,7 +172,8 @@ TEST(MeasureTest, MeasureFromTextFileIsEquivalent)
 	auto measure21 = metro::Measure(1);
 	measure21[0] = metro::Note(metro::Note::Timbre::Sine, 440.0, 100.0);
 
-	auto measure22 = metro::Measure("../test/fixtures/single.txt");
+	auto measure22 = metro::Measure(
+	    "../test/fixtures/single.txt", metro::Measure::FileFormat::One);
 
 	EXPECT_EQ(measure21.size(), measure22.size());
 	for (size_t i = 0; i < measure21.size(); i++) {
@@ -183,7 +188,8 @@ TEST(MeasureTest, MeasureFromTextFileIsEquivalent)
 	measure31[2] = metro::Note(metro::Note::Timbre::Sine, 440.0, 100.0)
 	               + metro::Note(metro::Note::Timbre::Drum, 73.5, 38.0);
 
-	auto measure32 = metro::Measure("../test/fixtures/multiple.txt");
+	auto measure32 = metro::Measure(
+	    "../test/fixtures/multiple.txt", metro::Measure::FileFormat::One);
 
 	EXPECT_EQ(measure31.size(), measure32.size());
 	for (size_t i = 0; i < measure31.size(); i++) {

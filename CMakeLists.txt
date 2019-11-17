@@ -104,7 +104,8 @@ endfunction()
 
 metro_example(accented_44)
 metro_example(poly_43)
-metro_example(from_file)
+metro_example(file_format_1)
+metro_example(file_format_2)
 
 #------------------------------------------------------------------------------#
 # INSTALL

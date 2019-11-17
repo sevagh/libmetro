@@ -122,6 +122,12 @@ private:
  */
 class Measure {
 public:
+	/*! FileFormat enum */
+	enum FileFormat {
+		One, /*!< first experimental file format */
+		Two, /*!< second experimental file format */
+	};
+
 	//! Measure constructor.
 	/*!
 	 * Assign notes with the index operator e.g.
@@ -154,7 +160,7 @@ public:
 	 *
 	 * @param[in] path: path to txt file
 	 */
-	Measure(const char* path);
+	Measure(const char* path, FileFormat file_format);
 
 	//! index into underlying vector of Notes.
 	Note& operator[](size_t index) { return notes[index]; };
