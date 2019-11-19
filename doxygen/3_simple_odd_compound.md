@@ -1,6 +1,6 @@
-### Simple, odd, compound
+# Simple, odd, compound
 
-These examples are simple, so I don't cover exhaustive cases. E.g., going from 5/4 to 7/4 just means adding 2 more weakbeats. The metronome files used to generate the clips can be viewed [here](https://github.com/sevagh/libmetro/tree/master/sample_metronomes).
+These examples are simple, so I don't cover exhaustive cases. E.g., going from 5/4 to 7/4 just means adding 2 more weakbeats. The metronome files used to generate the clips can be viewed [here](https://github.com/sevagh/libmetro/tree/master/sample_metronomes1) and [here](https://github.com/sevagh/libmetro/tree/master/sample_metronomes2).
 
 Resources, tutorials:
 
@@ -8,11 +8,11 @@ Resources, tutorials:
 * https://www.studybass.com/lessons/reading-music/time-signatures/
 * https://www.musictheory.net/lessons/15
 
-### bpm caveat
+## bpm caveat
 
 As mentioned previously, the bpm of the metronome determines the frequency at which a measure's notes are played. This may not correspond to the musically correct bpm. E.g. for 9/8 (which you'll see below), libmetro doesn't do any triplet divisions but steps through the measure the same as any other.
 
-### simple
+## simple
 
 simple_34.txt:
 ```
@@ -33,7 +33,7 @@ measure_length 3
 </audio>
 \endhtmlonly
 
-### odd
+## odd
 
 odd_54.txt:
 ```
@@ -56,7 +56,7 @@ measure_length 5
 </audio>
 \endhtmlonly
 
-### compound
+## compound
 
 compound_98.txt:
 ```

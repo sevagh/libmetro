@@ -4,7 +4,7 @@ Polyrhythm is the original motivator of libmetro. Polyrhythm as defined by brita
 
 >Polyrhythm, also called Cross-rhythm, the simultaneous combination of contrasting rhythms in a musical composition. Rhythmic conflicts, or cross-rhythms, may occur within a single metre (e.g., two eighth notes against triplet eighths) or may be reinforced by simultaneous combinations of conflicting metres.
 
-I first learned of polyrhythm through metal bands (Meshuggah, Animals as Leaders, Periphery, Plini, etc.):
+I first learned of polyrhythm through metal bands (Meshuggah, Animals as Leaders, Periphery, etc.):
 
 \htmlonly
 <iframe width="434" height="192" src="https://www.youtube.com/embed/T4gTgM0UepQ?start=130" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -14,12 +14,6 @@ Polyrhythm features in African music (and may have even originated there):
 
 \htmlonly
 <iframe width="434" height="192" src="https://www.youtube.com/embed/haGWi5lTibI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-\endhtmlonly
-
-EDM example (not 100% certain on this one):
-
-\htmlonly
-<iframe width="434" height="192" src="https://www.youtube.com/embed/V31kBcV3k38" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 \endhtmlonly
 
 ### libmetro representation
@@ -33,13 +27,13 @@ Resources, tutorials:
 * https://www.youtube.com/watch?v=_37pioTK_gA
 * https://www.youtube.com/watch?v=b29H5RLcijs
 
-As before, the metronome files below can be viewed [here](https://github.com/sevagh/libmetro/tree/master/sample_metronomes).
+As before, the metronome files below can be viewed [here](https://github.com/sevagh/libmetro/tree/master/sample_metronomes1) and [here](https://github.com/sevagh/libmetro/tree/master/sample_metronomes2).
 
 ### 3:2 example
 
 To create a 3:2, we need to find the LCM of 3 and 2, which is 6, spread the triple at indices 0,2,4, and the duple at indices 0,3:
 
-poly_32.txt:
+poly_32.txt, file format 1:
 
 ```
 measure_length 6
@@ -50,6 +44,13 @@ measure_length 6
 3 sine,440.0,10.0 drum,207.65,50.0
 4 sine,440.0,10.0 drum,73.42,50.0
 5 sine,440.0,10.0
+```
+
+This looks better in file format 2:
+
+```
+1 0 1 0 1 0
+1 0 0 1 0 0
 ```
 
 You'll see see I added sine wave beeps/clicks to make clear how the triples and duples are overlaid on 6 beats:
@@ -94,7 +95,7 @@ Test run with parameters 2 2 2 2 300, i.e. 2 measures of 4, 2 measures of 3, 2 m
 
 ### 5:3
 
-poly_53.txt:
+poly_53.txt, file format 1:
 
 ```
 measure_length 15
@@ -107,6 +108,13 @@ measure_length 15
 9 drum,73.42,50.0
 10 drum,207.65,50.0
 12 drum,73.42,50.0
+```
+
+poly_53.txt, file format 2:
+
+```
+1 0 0 1 0 0 1 0 0 1 0 0 1 0 0
+1 0 0 0 0 1 0 0 0 0 1 0 0 0 0
 ```
 
 5:3, 300bpm:

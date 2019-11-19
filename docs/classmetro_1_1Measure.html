@@ -86,6 +86,7 @@ $(document).ready(function(){initNavTree('classmetro_1_1Measure.html','');});
 
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classmetro_1_1Measure-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -98,14 +99,21 @@ $(document).ready(function(){initNavTree('classmetro_1_1Measure.html','');});
 
 <p><code>#include &lt;<a class="el" href="libmetro_8h_source.html">libmetro.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:aaef919c87cef83a4818ce8743065b03d"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmetro_1_1Measure.html#aaef919c87cef83a4818ce8743065b03d">FileFormat</a> { <a class="el" href="classmetro_1_1Measure.html#aaef919c87cef83a4818ce8743065b03daba46e2f0bff87507e7d066ac5a0c2c16">One</a>, 
+<a class="el" href="classmetro_1_1Measure.html#aaef919c87cef83a4818ce8743065b03da79ec9b5ea1d07925af80eab9a4690820">Two</a>
+ }</td></tr>
+<tr class="separator:aaef919c87cef83a4818ce8743065b03d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac3798661271bc6abd49cf3ec0b725b0a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmetro_1_1Measure.html#ac3798661271bc6abd49cf3ec0b725b0a">Measure</a> (int num_notes)</td></tr>
 <tr class="memdesc:ac3798661271bc6abd49cf3ec0b725b0a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classmetro_1_1Measure.html" title="Measure class.">Measure</a> constructor.  <a href="#ac3798661271bc6abd49cf3ec0b725b0a">More...</a><br /></td></tr>
 <tr class="separator:ac3798661271bc6abd49cf3ec0b725b0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54e05353ac5c950c8ad5daf89d028feb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmetro_1_1Measure.html#a54e05353ac5c950c8ad5daf89d028feb">Measure</a> (const char *path)</td></tr>
-<tr class="memdesc:a54e05353ac5c950c8ad5daf89d028feb"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classmetro_1_1Measure.html" title="Measure class.">Measure</a> constructor.  <a href="#a54e05353ac5c950c8ad5daf89d028feb">More...</a><br /></td></tr>
-<tr class="separator:a54e05353ac5c950c8ad5daf89d028feb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a695ca1b10e723ebbf2ceaf023d959463"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmetro_1_1Measure.html#a695ca1b10e723ebbf2ceaf023d959463">Measure</a> (const char *path, <a class="el" href="classmetro_1_1Measure.html#aaef919c87cef83a4818ce8743065b03d">FileFormat</a> file_format)</td></tr>
+<tr class="memdesc:a695ca1b10e723ebbf2ceaf023d959463"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classmetro_1_1Measure.html" title="Measure class.">Measure</a> constructor.  <a href="#a695ca1b10e723ebbf2ceaf023d959463">More...</a><br /></td></tr>
+<tr class="separator:a695ca1b10e723ebbf2ceaf023d959463"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f5c329bbda3fa8db3f773c0e521e681"><td class="memItemLeft" align="right" valign="top"><a id="a5f5c329bbda3fa8db3f773c0e521e681"></a>
 <a class="el" href="classmetro_1_1Note.html">Note</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmetro_1_1Measure.html#a5f5c329bbda3fa8db3f773c0e521e681">operator[]</a> (size_t index)</td></tr>
 <tr class="memdesc:a5f5c329bbda3fa8db3f773c0e521e681"><td class="mdescLeft">&#160;</td><td class="mdescRight">index into underlying vector of Notes. <br /></td></tr>
@@ -127,7 +135,29 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 <div class="textblock"><p><a class="el" href="classmetro_1_1Measure.html" title="Measure class.">Measure</a> class. </p>
 <p>Measures wrap a vector of Notes to represent a measure.</p>
 <p>Unset indices of a measure will contain an empty note. As explained in the <a class="el" href="classmetro_1_1Note.html" title="Note class.">Note</a> documentation, this is to keep the real-time audio streams "warm" by always emitting the correct amount of samples to obey timing, even in a metronome tick that doesn't have a sound. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="aaef919c87cef83a4818ce8743065b03d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaef919c87cef83a4818ce8743065b03d">&#9670;&nbsp;</a></span>FileFormat</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="classmetro_1_1Measure.html#aaef919c87cef83a4818ce8743065b03d">metro::Measure::FileFormat</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>FileFormat enum </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aaef919c87cef83a4818ce8743065b03daba46e2f0bff87507e7d066ac5a0c2c16"></a>One&#160;</td><td class="fielddoc"><p>first experimental file format </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aaef919c87cef83a4818ce8743065b03da79ec9b5ea1d07925af80eab9a4690820"></a>Two&#160;</td><td class="fielddoc"><p>second experimental file format </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ac3798661271bc6abd49cf3ec0b725b0a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ac3798661271bc6abd49cf3ec0b725b0a">&#9670;&nbsp;</a></span>Measure() <span class="overload">[1/2]</span></h2>
 
@@ -164,8 +194,8 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
 
 </div>
 </div>
-<a id="a54e05353ac5c950c8ad5daf89d028feb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54e05353ac5c950c8ad5daf89d028feb">&#9670;&nbsp;</a></span>Measure() <span class="overload">[2/2]</span></h2>
+<a id="a695ca1b10e723ebbf2ceaf023d959463"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a695ca1b10e723ebbf2ceaf023d959463">&#9670;&nbsp;</a></span>Measure() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -174,16 +204,26 @@ size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="cl
           <td class="memname">metro::Measure::Measure </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>path</em></td><td>)</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="classmetro_1_1Measure.html#aaef919c87cef83a4818ce8743065b03d">FileFormat</a>&#160;</td>
+          <td class="paramname"><em>file_format</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p><a class="el" href="classmetro_1_1Measure.html" title="Measure class.">Measure</a> constructor. </p>
 <p>Create a measure by parsing a measure description txt file.</p>
-<p>The format of the file is as follows. Lines are separated with '<br />
-' Fields are space-separated. </p><pre class="fragment"># number of beats in the measure
+<p><b>FileFormat::One</b></p>
+<p>Lines are newline-separated. Comments start with '#' </p><pre class="fragment"># number of beats in the measure
 measure_length 4
 
 # beats at index of the measure
@@ -191,6 +231,13 @@ measure_length 4
 1 sine,440.0,10.0 drum,73.42,50.0
 2 sine,440.0,10.0 drum,73.42,65.0
 3 sine,440.0,10.0 drum,73.42,50.0
+</pre><p><b>FileFormat::Two</b></p>
+<p>Lines are newline-separated. Comments start with '#' </p><pre class="fragment"># every string should have the same length
+# the first 1 represents a downbeat
+# subsequent 1s represent weak beats
+# this is a way to visualize how polyrhythms overlay on one another
+1 0 1 0 1 0
+1 0 0 1 0 0
 </pre><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">path</td><td>path to txt file </td></tr>

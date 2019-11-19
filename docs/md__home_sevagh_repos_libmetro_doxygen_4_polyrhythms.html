@@ -91,17 +91,13 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
 <div class="contents">
 <div class="textblock"><p>Polyrhythm is the original motivator of libmetro. Polyrhythm as defined by britannica.com is:</p>
 <p>&gt;Polyrhythm, also called Cross-rhythm, the simultaneous combination of contrasting rhythms in a musical composition. Rhythmic conflicts, or cross-rhythms, may occur within a single metre (e.g., two eighth notes against triplet eighths) or may be reinforced by simultaneous combinations of conflicting metres.</p>
-<p>I first learned of polyrhythm through metal bands (Meshuggah, Animals as Leaders, Periphery, Plini, etc.):</p>
+<p>I first learned of polyrhythm through metal bands (Meshuggah, Animals as Leaders, Periphery, etc.):</p>
 <p> 
 <iframe width="434" height="192" src="https://www.youtube.com/embed/T4gTgM0UepQ?start=130" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </p>
 <p>Polyrhythm features in African music (and may have even originated there):</p>
 <p> 
 <iframe width="434" height="192" src="https://www.youtube.com/embed/haGWi5lTibI" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</p>
-<p>EDM example (not 100% certain on this one):</p>
-<p> 
-<iframe width="434" height="192" src="https://www.youtube.com/embed/V31kBcV3k38" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 </p>
 <h3>libmetro representation</h3>
 <p>Polyrhythms are expressed rather simply in libmetro. They need to be manually constructed in a single measure using the least common multiple of both rhythms, which is a familiar exercise to anyone studying polyrythms or following basic tutorials (as I did - linked right below).</p>
@@ -112,11 +108,12 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
 <li><a href="https://www.youtube.com/watch?v=_37pioTK_gA">https://www.youtube.com/watch?v=_37pioTK_gA</a></li>
 <li><a href="https://www.youtube.com/watch?v=b29H5RLcijs">https://www.youtube.com/watch?v=b29H5RLcijs</a></li>
 </ul>
-<p>As before, the metronome files below can be viewed <a href="https://github.com/sevagh/libmetro/tree/master/sample_metronomes">here</a>.</p>
+<p>As before, the metronome files below can be viewed <a href="https://github.com/sevagh/libmetro/tree/master/sample_metronomes1">here</a> and <a href="https://github.com/sevagh/libmetro/tree/master/sample_metronomes2">here</a>.</p>
 <h3>3:2 example</h3>
 <p>To create a 3:2, we need to find the LCM of 3 and 2, which is 6, spread the triple at indices 0,2,4, and the duple at indices 0,3:</p>
-<p>poly_32.txt:</p>
-<div class="fragment"><div class="line">measure_length 6</div><div class="line"></div><div class="line">0 sine,440.0,10.0 drum,73.42,100.0 drum,92.5,100.0 drum,207.65,100.0 drum,185.0,100.0</div><div class="line">1 sine,440.0,10.0</div><div class="line">2 sine,440.0,10.0 drum,73.42,50.0</div><div class="line">3 sine,440.0,10.0 drum,207.65,50.0</div><div class="line">4 sine,440.0,10.0 drum,73.42,50.0</div><div class="line">5 sine,440.0,10.0</div></div><!-- fragment --><p>You'll see see I added sine wave beeps/clicks to make clear how the triples and duples are overlaid on 6 beats:</p>
+<p>poly_32.txt, file format 1:</p>
+<div class="fragment"><div class="line">measure_length 6</div><div class="line"></div><div class="line">0 sine,440.0,10.0 drum,73.42,100.0 drum,92.5,100.0 drum,207.65,100.0 drum,185.0,100.0</div><div class="line">1 sine,440.0,10.0</div><div class="line">2 sine,440.0,10.0 drum,73.42,50.0</div><div class="line">3 sine,440.0,10.0 drum,207.65,50.0</div><div class="line">4 sine,440.0,10.0 drum,73.42,50.0</div><div class="line">5 sine,440.0,10.0</div></div><!-- fragment --><p>This looks better in file format 2:</p>
+<div class="fragment"><div class="line">1 0 1 0 1 0</div><div class="line">1 0 0 1 0 0</div></div><!-- fragment --><p>You'll see see I added sine wave beeps/clicks to make clear how the triples and duples are overlaid on 6 beats:</p>
 <p>3:2, 250bpm:</p>
 <p> 
 <audio controls="1">
@@ -146,8 +143,9 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
 </audio>
 </p>
 <h3>5:3</h3>
-<p>poly_53.txt:</p>
-<div class="fragment"><div class="line">measure_length 15</div><div class="line"></div><div class="line"># 5:3</div><div class="line">0 drum,73.42,100.0 drum,92.5,100.0 drum,207.65,100.0 drum,185.0,100.0</div><div class="line">3 drum,73.42,50.0</div><div class="line">5 drum,207.65,50.0</div><div class="line">6 drum,73.42,50.0</div><div class="line">9 drum,73.42,50.0</div><div class="line">10 drum,207.65,50.0</div><div class="line">12 drum,73.42,50.0</div></div><!-- fragment --><p>5:3, 300bpm:</p>
+<p>poly_53.txt, file format 1:</p>
+<div class="fragment"><div class="line">measure_length 15</div><div class="line"></div><div class="line"># 5:3</div><div class="line">0 drum,73.42,100.0 drum,92.5,100.0 drum,207.65,100.0 drum,185.0,100.0</div><div class="line">3 drum,73.42,50.0</div><div class="line">5 drum,207.65,50.0</div><div class="line">6 drum,73.42,50.0</div><div class="line">9 drum,73.42,50.0</div><div class="line">10 drum,207.65,50.0</div><div class="line">12 drum,73.42,50.0</div></div><!-- fragment --><p>poly_53.txt, file format 2:</p>
+<div class="fragment"><div class="line">1 0 0 1 0 0 1 0 0 1 0 0 1 0 0</div><div class="line">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0</div></div><!-- fragment --><p>5:3, 300bpm:</p>
 <p> 
 <audio controls="1">
   <source src="./static/poly_53.wav"

@@ -1,0 +1,5 @@
+measure_length 3
+
+0 sine,440.0,100.0 sine,110.0,35.0
+# implicit blank note at 1
+2 sine,440.0,100.0 drum,73.5,38.0

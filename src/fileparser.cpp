@@ -9,7 +9,7 @@
 
 static std::vector<std::vector<metro::Note>> beats{
     {metro::Note(metro::Note::Timbre::Drum, 73.42, 100.0)
-         + metro::Note(metro::Note::Timbre::Drum, 73.42, 100.0), // downbeat 0
+         + metro::Note(metro::Note::Timbre::Drum, 92.50, 100.0), // downbeat 0
      metro::Note{metro::Note::Timbre::Drum, 73.42, 50.0}},       // weakbeat 0
     {metro::Note(metro::Note::Timbre::Drum, 207.65, 100.0)
          + metro::Note(metro::Note::Timbre::Drum, 185.0, 100.0), // downbeat 1

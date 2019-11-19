@@ -146,8 +146,9 @@ public:
 	/*!
 	 * Create a measure by parsing a measure description txt file.
 	 *
-	 * The format of the file is as follows. Lines are separated with '\n'
-	 * Fields are space-separated.
+	 * **FileFormat::One**
+	 *
+	 * Lines are newline-separated. Comments start with '#'
 	 *
 	 * 	# number of beats in the measure
 	 * 	measure_length 4
@@ -157,6 +158,17 @@ public:
 	 * 	1 sine,440.0,10.0 drum,73.42,50.0
 	 * 	2 sine,440.0,10.0 drum,73.42,65.0
 	 * 	3 sine,440.0,10.0 drum,73.42,50.0
+	 *
+	 * **FileFormat::Two**
+	 *
+	 * Lines are newline-separated. Comments start with '#'
+	 *
+	 * 	# every string should have the same length
+	 * 	# the first 1 represents a downbeat
+	 * 	# subsequent 1s represent weak beats
+	 * 	# this is a way to visualize how polyrhythms overlay on one another
+	 * 	1 0 1 0 1 0
+	 * 	1 0 0 1 0 0
 	 *
 	 * @param[in] path: path to txt file
 	 */

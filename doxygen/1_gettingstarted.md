@@ -1,4 +1,4 @@
-### Getting started
+# Getting started
 
 The goal of libmetro is to simplify the development of specialized metronomes, e.g. simple, odd, compound, additive, and polyrhythmic click/drum tracks for practicing.
 
@@ -10,7 +10,7 @@ A Measure is a convenience wrapper around a vector of Notes representing a measu
 
 Measures can be registered onto a Metronome object, and the bpm of the metronome determines the frequency at which the notes in the measures are cycled through.
 
-### Basic usage
+## Basic usage
 
 Here's a simple example of an accented 4/4 beat with sine waves:
 
