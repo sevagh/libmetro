@@ -114,6 +114,7 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
   </source>
 </audio>
 </p>
+<p>A downside of my code is that I had great difficulty implementing an example with a gradual tempo change without introducing glitchy audio, due to how I rely on libsoundio's <a href="http://libsound.io/doc-2.0.0/structSoundIoOutStream.html#a20aac1422d3cc64b679616bb8447f06d">software latency</a> parameter to make my timings work correctly. In one attempt I constantly created new metronome objects, which sort of worked, but the amount of hacks I had to add to the code made it not worthwhile to support.</p>
 <h3>Evolution of libmetro's UX</h3>
 <h4>V0: too much C++</h4>
 <p>The first version of the UX exposed too much "wiring", e.g. requiring the users to write <a href="https://en.cppreference.com/w/cpp/language/lambda">lambda functions</a> to create a metronome. Original 4/4 drum track:</p>
@@ -175,9 +176,42 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
 <div class="fragment"><div class="line">[5/16] Building CXX object CMakeFiles/metro.dir/src/timbregen.cpp.o</div><div class="line">../src/timbregen.cpp:106:2: warning: 2nd function call argument is an uninitialized value</div><div class="line">        populate_frames(frames, timbre, freq, vol);</div><div class="line">        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</div><div class="line">../src/timbregen.cpp:106:2: warning: 3rd function call argument is an uninitialized value</div><div class="line">        populate_frames(frames, timbre, freq, vol);</div><div class="line">        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</div><div class="line">../src/timbregen.cpp:106:2: warning: 4th function call argument is an uninitialized value</div><div class="line">        populate_frames(frames, timbre, freq, vol);</div><div class="line">        ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~</div></div><!-- fragment --><p>The problem in the code is in the text file format parser:</p>
 <div class="fragment"><div class="line">metro::Note::Timbre timbre;</div><div class="line">float freq;</div><div class="line">float vol;</div><div class="line"></div><div class="line">// logic to parse the text file and extract values of timbre, freq, vol</div><div class="line"></div><div class="line">populate_frames(frames, timbre, freq, vol);</div></div><!-- fragment --><p>The problem is that if the parsing logic never reaches the code that sets those variables (entirely possible - pass it a blank file, an invalid file, etc.), those values are used uninitialized, and uninitialized values in C++ have <a href="https://wiki.sei.cmu.edu/confluence/display/c/EXP33-C.+Do+not+read+uninitialized+memory">unpredictable values</a> - it's that undefined behavior again.</p>
 <p>Let's see it in a minimal example:</p>
-<div class="fragment"><div class="line">#include &lt;iostream&gt;</div><div class="line"></div><div class="line">class Airplane {</div><div class="line">public:</div><div class="line">        void set_cruising_altitude(float altitude) {</div><div class="line">                std::cout &lt;&lt; &quot;Setting airplane altitude to: &quot; &lt;&lt; altitude &lt;&lt; std::endl;</div><div class="line">        }</div><div class="line">};</div><div class="line"></div><div class="line">class Autopilot {</div><div class="line">public:</div><div class="line">        Autopilot(int knots) : knots(knots) { };</div><div class="line">        float get_cruising_altitude() {</div><div class="line">                return cruising_altitude;</div><div class="line">        }</div><div class="line">private:</div><div class="line">        int knots;</div><div class="line">        float cruising_altitude;</div><div class="line">};</div><div class="line"></div><div class="line">int main()</div><div class="line">{</div><div class="line">        auto plane = Airplane();</div><div class="line"></div><div class="line">        int desired_knots = 60;</div><div class="line">        auto autopilot = Autopilot(desired_knots);</div><div class="line"></div><div class="line">        plane.set_cruising_altitude(autopilot.get_cruising_altitude());</div><div class="line"></div><div class="line">        return 0;</div><div class="line">}</div></div><!-- fragment --><p>I chose ridiculously names in the example to make a somewhat serious point that bad C/C++ code is a real issue in safety-critical applications. In action:</p>
+<div class="fragment"><div class="line">#include &lt;iostream&gt;</div><div class="line"></div><div class="line">class Airplane {</div><div class="line">public:</div><div class="line">        void set_cruising_altitude(float altitude) {</div><div class="line">                std::cout &lt;&lt; &quot;Setting airplane altitude to: &quot; &lt;&lt; altitude &lt;&lt; std::endl;</div><div class="line">        }</div><div class="line">};</div><div class="line"></div><div class="line">class Autopilot {</div><div class="line">public:</div><div class="line">        Autopilot(int knots) : knots(knots) { };</div><div class="line">        float get_cruising_altitude() {</div><div class="line">                return cruising_altitude;</div><div class="line">        }</div><div class="line">private:</div><div class="line">        int knots;</div><div class="line">        float cruising_altitude;</div><div class="line">};</div><div class="line"></div><div class="line">int main()</div><div class="line">{</div><div class="line">        auto plane = Airplane();</div><div class="line"></div><div class="line">        int desired_knots = 60;</div><div class="line">        auto autopilot = Autopilot(desired_knots);</div><div class="line"></div><div class="line">        plane.set_cruising_altitude(autopilot.get_cruising_altitude());</div><div class="line"></div><div class="line">        return 0;</div><div class="line">}</div></div><!-- fragment --><p>I chose ridiculous names in the example to make the serious point that bad C/C++ code is problematic in safety-critical applications. In action:</p>
 <div class="fragment"><div class="line">sevagh:ub-test $ ./a.out</div><div class="line">Setting airplane altitude to: 4.59121e-41</div></div><!-- fragment --><h2>Results</h2>
-<p>I'll refer you to the other subpages in these docs to see libmetro's usage docs, and hear it in action:</p>
+<p>Here are a series of metronomes implemented with libmetro:</p>
+<p>5/4</p>
+<p> 
+<audio controls="1">
+  <source src="./static/54.wav"
+          type="audio/wav">
+  </source>
+</audio>
+</p>
+<p>9/8</p>
+<p> 
+<audio controls="1">
+  <source src="./static/98.wav"
+          type="audio/wav">
+  </source>
+</audio>
+</p>
+<p>4:3</p>
+<p> 
+<audio controls="1">
+  <source src="./static/poly_43_noclicks.wav"
+          type="audio/wav">
+  </source>
+</audio>
+</p>
+<p>Some complicated polyrhythm</p>
+<p> 
+<audio controls="1">
+  <source src="./static/poly_325.wav"
+          type="audio/wav">
+  </source>
+</audio>
+</p>
+<p>Other subpages in these docs contain the full results, including usage docs and multiple examples:</p>
 <ul>
 <li><a href="./md__home_sevagh_repos_libmetro_doxygen_1_gettingstarted.html">Getting started</a></li>
 <li><a href="./md__home_sevagh_repos_libmetro_doxygen_2_txt_file_format.html">Txt file format</a></li>
