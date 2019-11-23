@@ -108,11 +108,11 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
 <li><a href="https://www.youtube.com/watch?v=_37pioTK_gA">https://www.youtube.com/watch?v=_37pioTK_gA</a></li>
 <li><a href="https://www.youtube.com/watch?v=b29H5RLcijs">https://www.youtube.com/watch?v=b29H5RLcijs</a></li>
 </ul>
-<p>As before, the metronome files below can be viewed <a href="https://github.com/sevagh/libmetro/tree/master/sample_metronomes1">here</a> and <a href="https://github.com/sevagh/libmetro/tree/master/sample_metronomes2">here</a>.</p>
+<p>As before, the metronome files below can be viewed <a href="https://github.com/sevagh/libmetro/tree/master/sample_metronomes">here</a>.</p>
 <h3>3:2 example</h3>
 <p>To create a 3:2, we need to find the LCM of 3 and 2, which is 6, spread the triple at indices 0,2,4, and the duple at indices 0,3:</p>
 <p>poly_32.txt, file format 1:</p>
-<div class="fragment"><div class="line">measure_length 6</div><div class="line"></div><div class="line">0 sine,440.0,10.0 drum,73.42,100.0 drum,92.5,100.0 drum,207.65,100.0 drum,185.0,100.0</div><div class="line">1 sine,440.0,10.0</div><div class="line">2 sine,440.0,10.0 drum,73.42,50.0</div><div class="line">3 sine,440.0,10.0 drum,207.65,50.0</div><div class="line">4 sine,440.0,10.0 drum,73.42,50.0</div><div class="line">5 sine,440.0,10.0</div></div><!-- fragment --><p>This looks better in file format 2:</p>
+<div class="fragment"><div class="line">measure_length 6</div><div class="line"></div><div class="line">0 sine,440.0,10.0 drum,73.42,100.0 drum,92.5,100.0 drum,207.65,100.0 drum,185.0,100.0</div><div class="line">1 sine,440.0,10.0</div><div class="line">2 sine,440.0,10.0 drum,73.42,50.0</div><div class="line">3 sine,440.0,10.0 drum,207.65,50.0</div><div class="line">4 sine,440.0,10.0 drum,73.42,50.0</div><div class="line">5 sine,440.0,10.0</div></div><!-- fragment --><p>This looks better in file format 2, in poly_32_format2.txt:</p>
 <div class="fragment"><div class="line">1 0 1 0 1 0</div><div class="line">1 0 0 1 0 0</div></div><!-- fragment --><p>You'll see see I added sine wave beeps/clicks to make clear how the triples and duples are overlaid on 6 beats:</p>
 <p>3:2, 250bpm:</p>
 <p> 
@@ -144,11 +144,22 @@ $(document).ready(function(){initNavTree('md__home_sevagh_repos_libmetro_doxygen
 </p>
 <h3>5:3</h3>
 <p>poly_53.txt, file format 1:</p>
-<div class="fragment"><div class="line">measure_length 15</div><div class="line"></div><div class="line"># 5:3</div><div class="line">0 drum,73.42,100.0 drum,92.5,100.0 drum,207.65,100.0 drum,185.0,100.0</div><div class="line">3 drum,73.42,50.0</div><div class="line">5 drum,207.65,50.0</div><div class="line">6 drum,73.42,50.0</div><div class="line">9 drum,73.42,50.0</div><div class="line">10 drum,207.65,50.0</div><div class="line">12 drum,73.42,50.0</div></div><!-- fragment --><p>poly_53.txt, file format 2:</p>
+<div class="fragment"><div class="line">measure_length 15</div><div class="line"></div><div class="line"># 5:3</div><div class="line">0 drum,73.42,100.0 drum,92.5,100.0 drum,207.65,100.0 drum,185.0,100.0</div><div class="line">3 drum,73.42,50.0</div><div class="line">5 drum,207.65,50.0</div><div class="line">6 drum,73.42,50.0</div><div class="line">9 drum,73.42,50.0</div><div class="line">10 drum,207.65,50.0</div><div class="line">12 drum,73.42,50.0</div></div><!-- fragment --><p>poly_53_format2.txt:</p>
 <div class="fragment"><div class="line">1 0 0 1 0 0 1 0 0 1 0 0 1 0 0</div><div class="line">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0</div></div><!-- fragment --><p>5:3, 300bpm:</p>
 <p> 
 <audio controls="1">
   <source src="./static/poly_53.wav"
+          type="audio/wav">
+  </source>
+</audio>
+</p>
+<h3>I don't even know</h3>
+<p>A suggestion from Victor of a more complicated polyrhythm - named '325' because it can be thought of as '3:2 over 5 beats':</p>
+<p>poly_325_format2.txt:</p>
+<div class="fragment"><div class="line">1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0</div><div class="line">1 0 0 1 0 1 1 0 0 1 0 1 1 0 0 1 0 1 1 0 0 1 0 1 1 0 0 1 0 1</div></div><!-- fragment --><p>At 394bpm:</p>
+<p> 
+<audio controls="1">
+  <source src="./static/poly_325.wav"
           type="audio/wav">
   </source>
 </audio>

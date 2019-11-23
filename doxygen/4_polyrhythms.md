@@ -27,7 +27,7 @@ Resources, tutorials:
 * https://www.youtube.com/watch?v=_37pioTK_gA
 * https://www.youtube.com/watch?v=b29H5RLcijs
 
-As before, the metronome files below can be viewed [here](https://github.com/sevagh/libmetro/tree/master/sample_metronomes1) and [here](https://github.com/sevagh/libmetro/tree/master/sample_metronomes2).
+As before, the metronome files below can be viewed [here](https://github.com/sevagh/libmetro/tree/master/sample_metronomes).
 
 ### 3:2 example
 
@@ -46,7 +46,7 @@ measure_length 6
 5 sine,440.0,10.0
 ```
 
-This looks better in file format 2:
+This looks better in file format 2, in poly_32_format2.txt:
 
 ```
 1 0 1 0 1 0
@@ -110,7 +110,7 @@ measure_length 15
 12 drum,73.42,50.0
 ```
 
-poly_53.txt, file format 2:
+poly_53_format2.txt:
 
 ```
 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0
@@ -122,6 +122,27 @@ poly_53.txt, file format 2:
 \htmlonly
 <audio controls="1">
   <source src="./static/poly_53.wav"
+          type="audio/wav">
+  </source>
+</audio>
+\endhtmlonly
+
+### I don't even know
+
+A suggestion from Victor of a more complicated polyrhythm - named '325' because it can be thought of as '3:2 over 5 beats':
+
+poly_325_format2.txt:
+
+```
+1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0
+1 0 0 1 0 1 1 0 0 1 0 1 1 0 0 1 0 1 1 0 0 1 0 1 1 0 0 1 0 1
+```
+
+At 394bpm:
+
+\htmlonly
+<audio controls="1">
+  <source src="./static/poly_325.wav"
           type="audio/wav">
   </source>
 </audio>

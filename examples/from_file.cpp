@@ -3,28 +3,28 @@
 
 int main(int argc, char** argv)
 {
-	if (argc < 3) {
+	if (argc < 3 || argc > 4) {
 		std::cerr << "Usage: " << argv[0]
-		          << " /path/to/metro/txt/file file_format bpm" << std::endl;
+		          << " /path/to/metro/txt/file bpm [file_format]" << std::endl;
 		exit(1);
 	}
 
 	const char* path = argv[1];
-	int file_format = std::stoi(argv[2]);
-	int bpm = std::stoi(argv[3]);
+	int bpm = std::stoi(argv[2]);
 
 	auto ff = metro::Measure::FileFormat::One;
-
-	switch (file_format) {
-	case 0:
-		break;
-	case 1:
-		ff = metro::Measure::FileFormat::Two;
-		break;
-	default:
-		std::cerr << "File formats are 0 (::One) and 1 (::Two)" << std::endl;
-		exit(1);
-	};
+	if (argc == 4) {
+		switch (std::stoi(argv[3])) {
+		case 1:
+			break;
+		case 2:
+			ff = metro::Measure::FileFormat::Two;
+			break;
+		default:
+			std::cerr << "File formats are 1 and 2" << std::endl;
+			exit(1);
+		};
+	}
 
 	try {
 		auto metronome = metro::Metronome(bpm);
