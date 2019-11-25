@@ -34,8 +34,8 @@ metro_private::OutStream::OutStream(metro_private::AudioEngine* parent_engine,
 	outstream->sample_rate = metro::SampleRateHz;
 
 	if ((err = soundio_outstream_open(outstream)))
-		throw std::runtime_error(std::string("unable to open device: ")
-		                         + soundio_strerror(err));
+		throw metro::MetroException(std::string("unable to open device: ")
+		                            + soundio_strerror(err));
 
 	int ringbuf_capacity = outstream->software_latency * outstream->sample_rate
 	                       * outstream->bytes_per_frame;
@@ -44,8 +44,8 @@ metro_private::OutStream::OutStream(metro_private::AudioEngine* parent_engine,
 	    = soundio_ring_buffer_create(parent_engine->soundio, ringbuf_capacity);
 
 	if (!ringbuf)
-		throw std::runtime_error("unable to create ring buffer: out of "
-		                         "memory");
+		throw metro::MetroException("unable to create ring buffer: out of "
+		                            "memory");
 
 	outstream->userdata = reinterpret_cast<void*>(ringbuf);
 
@@ -71,8 +71,8 @@ void metro_private::OutStream::start()
 	int err;
 	compute_notes();
 	if ((err = soundio_outstream_start(outstream)))
-		throw std::runtime_error(std::string("unable to start device: ")
-		                         + soundio_strerror(err));
+		throw metro::MetroException(std::string("unable to start device: ")
+		                            + soundio_strerror(err));
 }
 
 bool metro_private::OutStream::has_measures() { return measures.size() != 0; }
@@ -159,8 +159,8 @@ static void write_callback(struct SoundIoOutStream* outstream,
 				return;
 			if ((err = soundio_outstream_begin_write(
 			         outstream, &areas, &frame_count)))
-				throw std::runtime_error(std::string("begin write error: ")
-				                         + soundio_strerror(err));
+				throw metro::MetroException(std::string("begin write error: ")
+				                            + soundio_strerror(err));
 			if (frame_count <= 0)
 				return;
 			for (int frame = 0; frame < frame_count; frame += 1) {
@@ -170,8 +170,8 @@ static void write_callback(struct SoundIoOutStream* outstream,
 				}
 			}
 			if ((err = soundio_outstream_end_write(outstream)))
-				throw std::runtime_error(std::string("end write error: ")
-				                         + soundio_strerror(err));
+				throw metro::MetroException(std::string("end write error: ")
+				                            + soundio_strerror(err));
 			frames_left -= frame_count;
 		}
 	}
@@ -184,8 +184,8 @@ static void write_callback(struct SoundIoOutStream* outstream,
 
 		if ((err
 		     = soundio_outstream_begin_write(outstream, &areas, &frame_count)))
-			throw std::runtime_error(std::string("begin write error: ")
-			                         + soundio_strerror(err));
+			throw metro::MetroException(std::string("begin write error: ")
+			                            + soundio_strerror(err));
 
 		if (frame_count <= 0)
 			break;
@@ -200,8 +200,8 @@ static void write_callback(struct SoundIoOutStream* outstream,
 		}
 
 		if ((err = soundio_outstream_end_write(outstream)))
-			throw std::runtime_error(std::string("end write error: ")
-			                         + soundio_strerror(err));
+			throw metro::MetroException(std::string("end write error: ")
+			                            + soundio_strerror(err));
 
 		frames_left -= frame_count;
 	}

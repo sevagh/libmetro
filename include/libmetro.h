@@ -2,6 +2,7 @@
 #define LIBMETRO_H
 
 #include <chrono>
+#include <stdexcept>
 #include <string>
 #include <vector>
 
@@ -30,6 +31,13 @@ namespace metro {
  * sample rate (if they need or want to).
  */
 const float SampleRateHz = 48000.0;
+
+//! If anything goes wrong in libmetro, a MetroException is thrown
+class MetroException : public std::runtime_error {
+public:
+	MetroException(std::string msg)
+	    : std::runtime_error(msg){};
+};
 
 //! Note class
 /*!

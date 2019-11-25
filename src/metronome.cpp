@@ -48,8 +48,8 @@ metro_private::MetronomePrivate::MetronomePrivate(int bpm)
     , ticker_on({true})
 {
 	if (!std::chrono::steady_clock::is_steady)
-		throw std::runtime_error("std::chrono::steady_clock is unsteady on "
-		                         "this platform");
+		throw metro::MetroException("std::chrono::steady_clock is unsteady on "
+		                            "this platform");
 }
 
 void metro_private::MetronomePrivate::add_measure(metro::Measure& measure)
@@ -59,7 +59,6 @@ void metro_private::MetronomePrivate::add_measure(metro::Measure& measure)
 
 void metro_private::MetronomePrivate::start()
 {
-
 	auto blocking_ticker = [&](std::atomic<bool>& on) {
 		stream.start();
 		while (on) {

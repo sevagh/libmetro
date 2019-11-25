@@ -22,7 +22,7 @@ metro::Measure::Measure(const char* path,
 {
 	std::ifstream infile(path);
 	if (infile.fail())
-		throw std::runtime_error(std::string("error loading file ") + path);
+		throw metro::MetroException(std::string("error loading file ") + path);
 
 	std::string line;
 
@@ -51,9 +51,9 @@ metro::Measure::Measure(const char* path,
 
 			if (tokens[0].compare("measure_length") == 0) {
 				if (tokens.size() > 2)
-					throw std::runtime_error("line measure_length can only "
-					                         "have 1 "
-					                         "field");
+					throw metro::MetroException("line measure_length can only "
+					                            "have 1 "
+					                            "field");
 				measure_len = std::stoi(tokens[1]);
 				measure_len_seen = true;
 				continue;
@@ -79,7 +79,8 @@ metro::Measure::Measure(const char* path,
 		}
 
 		if (!measure_len_seen)
-			throw std::runtime_error("Missing 'measure_length' in text file");
+			throw metro::MetroException("Missing 'measure_length' in text "
+			                            "file");
 
 		notes = std::vector<metro::Note>(measure_len);
 
@@ -110,8 +111,8 @@ metro::Measure::Measure(const char* path,
 				notes.resize(measure_len);
 			}
 			else if (tokens.size() != measure_len)
-				throw std::runtime_error("lines must have same number of "
-				                         "tokens");
+				throw metro::MetroException("lines must have same number of "
+				                            "tokens");
 
 			try {
 				for (size_t i = 0; i < tokens.size(); ++i) {

@@ -141,7 +141,7 @@ TEST(MeasureTest, MeasureBadTextFilesThrowExceptionsFileFormat1)
 	EXPECT_THROW(metro::Measure("../test/fixtures1/"
 	                            "invalid_missing_measure_len.txt",
 	                            metro::Measure::FileFormat::One),
-	             std::runtime_error);
+	             metro::MetroException);
 }
 
 TEST(MeasureTest, MeasureBadTimbresJustBlankFileFormat1)
@@ -204,7 +204,7 @@ TEST(MeasureTest, MeasureBadTextFilesThrowExceptionsFileFormat2)
 	EXPECT_THROW(metro::Measure("../test/fixtures2/"
 	                            "invalid_mismatched_len.txt",
 	                            metro::Measure::FileFormat::Two),
-	             std::runtime_error);
+	             metro::MetroException);
 }
 
 TEST(MeasureTest, MeasureUnrecognizedLinesJustBlankFileFormat2)

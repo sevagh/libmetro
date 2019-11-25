@@ -91,7 +91,7 @@ metro::Note::Note(std::string triplet)
 				timbre = metro::Note::Timbre::Drum;
 			}
 			else {
-				throw std::runtime_error("invalid timbre requested");
+				throw metro::MetroException("invalid timbre requested");
 			}
 		}
 		else if (j == 1) {
