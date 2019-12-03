@@ -127,11 +127,11 @@ poly_53_format2.txt:
 </audio>
 \endhtmlonly
 
-### I don't even know
+### More complex example
 
-A suggestion from Victor of a more complicated polyrhythm - named '325' because it can be thought of as '3:2 over 5 beats':
+A suggestion from Victor of a more complicated polyrhythm - named '35_swing' because it can be thought of as '3/5, 5 as a swing pattern':
 
-poly_325_format2.txt:
+poly_35_swing_format2.txt:
 
 ```
 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0
@@ -142,7 +142,7 @@ At 394bpm:
 
 \htmlonly
 <audio controls="1">
-  <source src="./static/poly_325.wav"
+  <source src="./static/poly_35_swing.wav"
           type="audio/wav">
   </source>
 </audio>
