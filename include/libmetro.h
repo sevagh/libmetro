@@ -44,13 +44,7 @@ public:
  * Notes wrap a vector of floats to represent a sound. Notes are always
  * 2*48,000 = 96,000 samples long (1 second of data per channel, 2 channels).
  *
- * The real-time, high bpm nature of a metronome requires a low latency on
- * the outstream callback to check for new data at high bpms.
- * Notes of different duration (half, quarter, etc.) are played by adjusting
- * the software_latency of the outstream but supplying the same 96,000 sample
- * notes.
- *
- * Excerpt from SoundIo documentation:
+ * The actual duration of 96,000 depends on the software_latency param in libsoundio:
  *
  * >Ignoring hardware latency, this is the number of seconds it takes for the
  * last sample in a full buffer to be played.
