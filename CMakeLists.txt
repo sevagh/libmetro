@@ -58,7 +58,8 @@ set(METRO_SOURCES
     src/outstream.cpp
     src/metronome.cpp
     src/timbregen.cpp
-    src/fileparser.cpp)
+    src/fileparser.cpp
+    src/cwrapper.cpp)
 
 set(METRO_DEPS
     metro
@@ -107,6 +108,17 @@ metro_example(poly_43)
 metro_example(from_file)
 
 #------------------------------------------------------------------------------#
+# C BIN
+#------------------------------------------------------------------------------#
+
+function(metro_c_example name)
+	add_executable(example_${name} examples/${name}.c)
+	target_link_libraries(example_${name} ${METRO_DEPS})
+endfunction()
+
+metro_c_example(44_c)
+
+#------------------------------------------------------------------------------#
 # INSTALL
 #------------------------------------------------------------------------------#
 
@@ -115,7 +127,7 @@ install(TARGETS metro
     LIBRARY DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_FULL_LIBDIR})
 
-install(FILES include/libmetro.h include/libmetro_synthesis.h DESTINATION include/libmetro)
+install(FILES include/libmetro.h include/cmetro.h DESTINATION include/libmetro)
 
 #------------------------------------------------------------------------------#
 # TESTS
