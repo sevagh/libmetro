@@ -49,6 +49,10 @@ endif()
 
 find_package(SoundIo REQUIRED)
 find_package(Stk REQUIRED)
+if(BUILD_STATIC)
+  find_package(ALSA REQUIRED)
+  find_package(JACK REQUIRED)
+endif()
 
 # ------------------------------------------------------------------------------#
 # LIBS
@@ -56,13 +60,13 @@ find_package(Stk REQUIRED)
 
 include_directories(
   "${PROJECT_SOURCE_DIR}/src" "${PROJECT_SOURCE_DIR}/include"
-  ${GTEST_INCLUDE_DIRS} ${SOUNDIO_INCLUDE_DIR} ${STK_INCLUDE_DIR})
+  ${GTEST_INCLUDE_DIRS} ${SOUNDIO_INCLUDE_DIR} ${STK_INCLUDE_DIR} ${PULSEAUDIO_INCLUDE_DIR} ${ALSA_INCLUDE_DIR})
 link_directories(${GTEST_LIBRARY_DIRS})
 
 set(METRO_SOURCES src/audioengine.cpp src/outstream.cpp src/metronome.cpp
                   src/timbregen.cpp src/fileparser.cpp src/cwrapper.cpp)
 
-set(METRO_DEPS metro ${SOUNDIO_LIBRARY} ${STK_LIBRARY})
+set(METRO_DEPS metro ${SOUNDIO_LIBRARY} ${STK_LIBRARY} ${PULSEAUDIO_LIBRARY} ${ALSA_LIBRARY})
 
 if(BUILD_STATIC)
   message("LIBMETRO: Building static library")

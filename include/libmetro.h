@@ -44,7 +44,8 @@ public:
  * Notes wrap a vector of floats to represent a sound. Notes are always
  * 2*48,000 = 96,000 samples long (1 second of data per channel, 2 channels).
  *
- * The actual duration of 96,000 depends on the software_latency param in libsoundio:
+ * The actual duration of 96,000 depends on the software_latency param in
+ * libsoundio:
  *
  * >Ignoring hardware latency, this is the number of seconds it takes for the
  * last sample in a full buffer to be played.

@@ -16,90 +16,97 @@
 #define BEAT_2 207.65
 
 struct note {
-	void *obj;
+	void* obj;
 };
 
 struct measure {
-	void *obj;
+	void* obj;
 };
 
 struct metronome {
-	void *obj;
+	void* obj;
 };
 
-struct note *note_create_drum_downbeat_1()
+struct note* note_create_drum_downbeat_1()
 {
-	struct note *n;
-	metro::Note *note;
+	struct note* n;
+	metro::Note* note;
 
 	try {
-		note = new metro::Note(metro::Note(metro::Note::Timbre::Drum, DOWNBEAT_1, DOWNBEAT_VOL) + metro::Note(metro::Note::Timbre::Drum, BEAT_1, DOWNBEAT_VOL));
-	} 
+		note = new metro::Note(
+		    metro::Note(metro::Note::Timbre::Drum, DOWNBEAT_1, DOWNBEAT_VOL)
+		    + metro::Note(metro::Note::Timbre::Drum, BEAT_1, DOWNBEAT_VOL));
+	}
 	catch (const std::exception& exc) {
 		std::cerr << "exception: " << exc.what() << std::endl;
 		return NULL;
 	}
 
-	n = (struct note*)std::malloc(sizeof(struct note*));
+	n = ( struct note* )std::malloc(sizeof(struct note*));
 	n->obj = note;
 	return n;
 }
 
-struct note *note_create_drum_beat_1()
+struct note* note_create_drum_beat_1()
 {
-	struct note *n;
-	metro::Note *note;
+	struct note* n;
+	metro::Note* note;
 
 	try {
-		note = new metro::Note(metro::Note(metro::Note::Timbre::Drum, BEAT_1, BEAT_VOL));
-	} 
+		note = new metro::Note(
+		    metro::Note(metro::Note::Timbre::Drum, BEAT_1, BEAT_VOL));
+	}
 	catch (const std::exception& exc) {
 		std::cerr << "exception: " << exc.what() << std::endl;
 		return NULL;
 	}
 
-	n = (struct note*)std::malloc(sizeof(struct note*));
+	n = ( struct note* )std::malloc(sizeof(struct note*));
 	n->obj = note;
 	return n;
 }
 
-struct note *note_create_drum_downbeat_2()
+struct note* note_create_drum_downbeat_2()
 {
-	struct note *n;
-	metro::Note *note;
+	struct note* n;
+	metro::Note* note;
 
 	try {
-		note = new metro::Note(metro::Note(metro::Note::Timbre::Drum, DOWNBEAT_2, DOWNBEAT_VOL) + metro::Note(metro::Note::Timbre::Drum, BEAT_2, DOWNBEAT_VOL));
-	} 
+		note = new metro::Note(
+		    metro::Note(metro::Note::Timbre::Drum, DOWNBEAT_2, DOWNBEAT_VOL)
+		    + metro::Note(metro::Note::Timbre::Drum, BEAT_2, DOWNBEAT_VOL));
+	}
 	catch (const std::exception& exc) {
 		std::cerr << "exception: " << exc.what() << std::endl;
 		return NULL;
 	}
 
-	n = (struct note*)std::malloc(sizeof(struct note*));
+	n = ( struct note* )std::malloc(sizeof(struct note*));
 	n->obj = note;
 	return n;
 }
 
-struct note *note_create_drum_beat_2()
+struct note* note_create_drum_beat_2()
 {
-	struct note *n;
-	metro::Note *note;
+	struct note* n;
+	metro::Note* note;
 
 	try {
-		note = new metro::Note(metro::Note(metro::Note::Timbre::Drum, BEAT_2, BEAT_VOL));
-	} 
+		note = new metro::Note(
+		    metro::Note(metro::Note::Timbre::Drum, BEAT_2, BEAT_VOL));
+	}
 	catch (const std::exception& exc) {
 		std::cerr << "exception: " << exc.what() << std::endl;
 		return NULL;
 	}
 
-	n = (struct note*)std::malloc(sizeof(struct note*));
+	n = ( struct note* )std::malloc(sizeof(struct note*));
 	n->obj = note;
 	return n;
 }
 
-void note_destroy(struct note *n) {
+void note_destroy(struct note* n)
+{
 	if (n == NULL) {
 		return;
 	}
@@ -107,25 +114,26 @@ void note_destroy(struct note *n) {
 	free(n);
 }
 
-struct measure *measure_create(int size)
+struct measure* measure_create(int size)
 {
-	struct measure *m;
-	metro::Measure *measure;
+	struct measure* m;
+	metro::Measure* measure;
 
 	try {
 		measure = new metro::Measure(size);
-	} 
+	}
 	catch (const std::exception& exc) {
 		std::cerr << "exception: " << exc.what() << std::endl;
 		return NULL;
 	}
 
-	m = (struct measure*)std::malloc(sizeof(struct measure*));
+	m = ( struct measure* )std::malloc(sizeof(struct measure*));
 	m->obj = measure;
 	return m;
 }
 
-int measure_set_note(struct measure *m, int index, struct note *n) {
+int measure_set_note(struct measure* m, int index, struct note* n)
+{
 	try {
 		auto m_ = static_cast<metro::Measure*>(m->obj);
 		auto n_ = static_cast<metro::Note*>(n->obj);
@@ -139,7 +147,8 @@ int measure_set_note(struct measure *m, int index, struct note *n) {
 	return 0;
 }
 
-void measure_destroy(struct measure *m) {
+void measure_destroy(struct measure* m)
+{
 	if (m == NULL) {
 		return;
 	}
@@ -147,24 +156,26 @@ void measure_destroy(struct measure *m) {
 	free(m);
 }
 
-struct metronome *metronome_create(int bpm) {
-	struct metronome *m;
-	metro::Metronome *metro;
+struct metronome* metronome_create(int bpm)
+{
+	struct metronome* m;
+	metro::Metronome* metro;
 
 	try {
 		metro = new metro::Metronome(bpm);
-	} 
+	}
 	catch (const std::exception& exc) {
 		std::cerr << "exception: " << exc.what() << std::endl;
 		return NULL;
 	}
 
-	m = (struct metronome*)std::malloc(sizeof(struct metronome*));
+	m = ( struct metronome* )std::malloc(sizeof(struct metronome*));
 	m->obj = metro;
 	return m;
 }
 
-int metronome_add_measure(struct metronome *metro, struct measure *measure) {
+int metronome_add_measure(struct metronome* metro, struct measure* measure)
+{
 	try {
 		auto metro_ = static_cast<metro::Metronome*>(metro->obj);
 		auto measure_ = static_cast<metro::Measure*>(measure->obj);
@@ -178,7 +189,8 @@ int metronome_add_measure(struct metronome *metro, struct measure *measure) {
 	return 0;
 }
 
-int metronome_start_and_loop(struct metronome *metro) {
+int metronome_start_and_loop(struct metronome* metro)
+{
 	try {
 		auto metro_ = static_cast<metro::Metronome*>(metro->obj);
 		metro_->start_and_loop();
@@ -190,7 +202,8 @@ int metronome_start_and_loop(struct metronome *metro) {
 	return 0;
 }
 
-void metronome_destroy(struct metronome *m) {
+void metronome_destroy(struct metronome* m)
+{
 	if (m == NULL) {
 		return;
 	}
