@@ -20,22 +20,33 @@ static void write_callback(struct SoundIoOutStream* outstream,
 
 metro_private::OutStream::OutStream(metro_private::AudioEngine* parent_engine,
                                     std::chrono::microseconds ticker_period)
-    : latency_s(pick_best_latency(ticker_period))
+    : latency_s(0)
     , parent_engine(parent_engine)
 {
 	int err;
+
+	auto best_latency = pick_best_latency(ticker_period);
 
 	outstream = soundio_outstream_create(parent_engine->device);
 
 	outstream->format = SoundIoFormatFloat32NE;
 	outstream->write_callback = write_callback;
 
-	outstream->software_latency = latency_s;
+	// try to get the desired latency
+	outstream->software_latency = best_latency;
 	outstream->sample_rate = metro::SampleRateHz;
 
 	if ((err = soundio_outstream_open(outstream)))
 		throw metro::MetroException(std::string("unable to open device: ")
 		                            + soundio_strerror(err));
+
+	// use the actual software latency since its not guaranteed
+	// that we can set it to whatever we want
+	latency_s = outstream->software_latency;
+
+	// adjust the sampling rate to account for the ratio of requested:received
+	// software latency
+	outstream->sample_rate = metro::SampleRateHz / (latency_s / best_latency);
 
 	int ringbuf_capacity = outstream->software_latency * outstream->sample_rate
 	                       * outstream->bytes_per_frame;

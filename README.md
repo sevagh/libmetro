@@ -1,6 +1,6 @@
 Libmetro is a C++ library for developing interesting metronome variants.
 
-Full API documentation, high-level overview, tutorials, and various sample clips and design docs are available at https://sevagh.github.io/libmetro
+View the full API documentation, overview, tutorials, and examples [here](https://sevagh.github.io/libmetro). View the changelog [here](./CHANGELOG.md).
 
 ### Developer guide
 
