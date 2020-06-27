@@ -2,6 +2,8 @@ Libmetro is a C++ library for developing interesting metronome variants.
 
 Full API documentation, high-level overview, tutorials, and various sample clips and design docs are available at https://sevagh.github.io/libmetro
 
+View [changelog here](./CHANGELOG.md).
+
 ### Developer guide
 
 Libmetro is built using cmake + Ninja (Ninja is a faster alternative to make). The provided top-level Makefile is for convenient access to the cmake targets. Libmetro builds and compiles using both clang and gcc, and targets the C++2a/C++20 standards.
